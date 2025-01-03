@@ -41,25 +41,21 @@
 ## カードの種類
 ---
 
-基本は2つに分かれます。
-1. 術
-2. 道具
+基本は3つに分かれます。
+- 術
+- 通常道具
+- 罠道具
 
-上記のカードにはさらに以下の2つに分かれます。
-1. 通常
-2. 罠
+#### 術 
+盤面の指定された石を取り除いて発動できます。
+相手の術に応じて発動することもできます。
+石を取り除けない場合は発動に失敗します。
 
-#### 1-1 通常術 
-盤面の指定された石を取り除いて使用できます。
+#### 通常道具
+ItemZoneへ出す事で発動できます。
 
-#### 1-2 罠術
-一度伏せてから石を取り除いて使用します。
-
-#### 2-1 通常道具
-条件なしで使用できます。
-
-#### 2-1 罠道具
-一度伏せてから使用します。
+#### 罠道具
+一度ItemZoneへ伏せてから発動できます。
 
 ---
 ## 術の属性
@@ -86,27 +82,28 @@
 カードを重ね合わせて強力な状態にすることを指します。
 
 #### ライブラリ
-20～30枚で構成された術カードで同じカードは2枚まで入れられます。
+20～30枚で構成された術カードで同じ名前のカードは2枚まで入れられます。
 
 #### 道具袋
 道具カードを用意したものになります。
-こちらもライブラリと同じで同じカードは2枚まで入れられます。
+こちらもライブラリと同じで同じ名前のカードは2枚まで入れられます。
 
-#### 盤面
+#### フィールド
 ゲームを行うための場所になります。
-盤面は以下の構成になります。
+フィールドは以下の構成になります。
 
-- StoneZone
+- 盤面
   - 石を置く場所です
-  - 12×12のマス目上に配置します
+  - 13×13のマス目上に配置します
 - MagicZone
   - 発動した術カードを置く場所です
   - ここに配置されたカードのポイントが10点を超えると勝利になります
-- TrapZone
-  - 罠カードを置く場所です
-  - 罠カードは3枚までおけます
+- ItemZone
+  - 道具カードを置く場所です
+  - 道具カードは3枚までおけます
+    - 道具カードが3枚伏せられてしまうと、ライブラリから道具カードを発動することはできません
 - TrashZone
-  - 使用した道具を置く場所です
+  - 使用後の条件にてカードを置く場所です
 
 #### 石
 ゲームの要となる要素です。
@@ -148,59 +145,80 @@
 ``` mermaid
 graph TD;
 
-Player[UseCheckCardPlayer]
-OtherPlayer[UseCheckCard:OtherPlayer]
+Player[Player:PlayMagic]
+OtherPlayer[OtherPlayer:PlayMagic]
 
-Start-->UseItem
-UseItem-->SetStone
-SetStone-->Player
-Player-->OtherPlayer
-OtherPlayer-->SetTrap
-SetTrap-->End
+Start-->Player:UseItem
+Player:UseItem-->Player:PutStone
+Player:PutStone-->OtherPlayer
+OtherPlayer-->Player
+Player-->Player:SetItem
+Player:SetItem-->End
 
 ```
 
 1. UseItem
-  ターンプレイヤーは道具カードを手札から利用します
-2. SetStone
+  ターンプレイヤーは道具を手札から利用します
+2. PutStone
   ターンプレイヤーは石を1～3個を盤面に置きます
-3. UseCheckCard:OtherPlayer
-  アザープレイヤーは手札からカードを利用するかの確認をします※
+3. OtherPlayer:PlayMagic
+  アザープレイヤーは手札から術を利用するかの確認をします※
     - 複数人いる場合は次に自身のターンになる人の順に確認します
-4. UseCheckCard:Player
-  ターンプレイヤーは手札からカードを利用するかの確認をします※
-5. SetTrap
-  ターンプレイヤーは手札の罠カードをTrapZoneへ配置することができます
+4. Player:PlayMagic
+  ターンプレイヤーは手札から術を利用するかの確認をします※
+5. SetItem
+  ターンプレイヤーは手札の罠道具をItemZoneへ配置することができます
 6. End
   次のターンへ移行しターンプレイヤーを切り替えます
 
-#### 上記の手順のうち、UseItemとUseCheckCardの部分の詳細手順を記述します
+#### 上記の手順のうち、PlayMagicの部分の詳細手順を記述します
 
 ``` mermaid
 graph TD;
 
-CardCheck{CardCheck}
-TrapCheck{TrapCheck}
+CheckMagic{User:CheckMagic}
+OtherUserCheckCard{OtherUser:CheckCard}
+UserCheckCard{User:CheckTrap}
 
-Start-->CardCheck
-CardCheck-->|カードを発動する場合|UserUseCard
-CardCheck-->|カードを発動しない場合|End
-UserUseCard-->TrapCheck
-TrapCheck-->|トラップカードを発動する場合|PlayUnUserTrapCard
-TrapCheck-->|トラップカードを発動しない場合|PlayUserUseCard
-PlayUnUserTrapCard-->PlayUserUseCard
-PlayUserUseCard-->End
+Start-->CheckMagic
+CheckMagic-->|カードを発動する場合|User:OpenMagic
+CheckMagic-->|カードを発動しない場合|End
+User:OpenMagic-->OtherUserCheckCard
+OtherUserCheckCard-->|カードを発動する場合|OtherUser:MagicOrTrap
+OtherUserCheckCard-->|カードを発動しない場合|UseCards
+OtherUser:MagicOrTrap-->UserCheckCard
+UserCheckCard-->|罠を発動する場合|User:Trap
+UserCheckCard-->|罠を発動しない場合|UseCards
+User:Trap-->UseCards
+UseCards-->End
 
 ```
 
-1. CardCheck
-ユーザーは石の配置に基づき、手札にあるカードを利用するか確認し、利用しない場合はこの時点でこの手順を終了します
-2. UserUseCard
-ユーザーはカードを場に出します
-3. TrapCheck
-ユーザーではないプレイヤーはトラップを確認し、発動するかどうかを決めます。
-4. PlayUnUserTrapCard
-トラップカードを利用する場合、表にしてカードの内容を行います
-5. PlayUserUseCard
-利用した石を取り除き、カードの内容を行います
+1. CheckMagic
+プレイヤーは石の配置に基づき、手札にあるカードを利用するか確認し、利用しない場合はこの時点でこの手順を終了します
+2. OpenMagic
+ユーザーは術を場に出します
+3. OtherUser:CheckCard
+ユーザーではないプレイヤーは術と罠を確認します。
+4. OtherUser:OpenMagicOrTrap
+3でカードを発動する場合ユーザーではないプレイヤーはカードを場に出します。
+5. User:Trap
+4に対してユーザープレイヤーは罠を利用する場合、表にしてカードを発動ます
+6. UseCards
+場に出した全てのカードは最後に出されたカードから順に処理を行います。
+以下の図はカードの出た順番と実行する順番を表したものです。
+
+```mermaid
+sequenceDiagram
+
+participant PlayCard1
+participant PlayCard2
+participant PlayCard3
+
+PlayCard1->>PlayCard3 : カードを出した順番
+PlayCard3->>PlayCard1 : カードを実行する順番
+
+```
+
+
 
