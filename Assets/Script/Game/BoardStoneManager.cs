@@ -38,7 +38,7 @@ public class BoardStoneManager : MonoBehaviour
 
         var child = stoneList[_x].stoneList[_y].transform.GetChild(stoneList[_x].stoneList[_y].transform.childCount - 1);
         child.parent = null;
-        Destroy(child);
+        Destroy(child.gameObject);
     }
 
 
