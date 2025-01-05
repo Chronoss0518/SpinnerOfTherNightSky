@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
+using static UnityEditor.Progress;
 
 public class MagicZoneManager : MonoBehaviour
 {
@@ -50,7 +51,8 @@ public class MagicZoneManager : MonoBehaviour
     public void RemoveCard(int _num,bool _sortFlg = false)
     {
         if (!IsNumTest(_num)) return;
-        Destroy(magicList[_num]);
+        magicList[_num].transform.SetParent(null);
+        Destroy(magicList[_num].gameObject);
         if(_sortFlg) CardSort();
     }
 

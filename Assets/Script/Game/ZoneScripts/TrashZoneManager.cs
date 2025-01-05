@@ -25,7 +25,8 @@ public class TrashZoneManager : MonoBehaviour
         if (!IsNumTest(_num)) return;
         var item = trashList[_num];
         if (item == null) return;
-        Destroy(item);
+        item.transform.SetParent(null);
+        Destroy(item.gameObject);
         CardSort();
     }
 

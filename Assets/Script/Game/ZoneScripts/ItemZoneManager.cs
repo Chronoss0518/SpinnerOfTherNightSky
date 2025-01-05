@@ -24,6 +24,8 @@ public class ItemZoneManager : MonoBehaviour
         if (!IsNumTest(_num)) return;
         var item = items[_num];
         if (item == null) return;
+        item.transform.SetParent(null);
+        Destroy(item.gameObject);
     }
 
     public void OpenCard(int _num)
