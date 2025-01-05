@@ -4,7 +4,6 @@ using UnityEngine;
 
 public class GameManager : MonoBehaviour
 {
-
     public enum MainStep
     {
         TurnStart,
@@ -32,10 +31,16 @@ public class GameManager : MonoBehaviour
     List<Player> players = new List<Player>();
 
     [SerializeField]
-    BoardStoneManager stoneBoard;
+    int nowPlayerCount = 0;
+
+    [SerializeField]
+    BoardStoneManager stoneBoard = null;
 
     [SerializeField]
     Player playerPrefab = null;
+
+    List<CardScript>stack { get; set; } = new List<CardScript>();
+
 
     public BoardStoneManager stoneBoardObj { get { return stoneBoard; } }
 
@@ -61,4 +66,9 @@ public class GameManager : MonoBehaviour
     {
         
     }
+
+
+
+
+
 }
