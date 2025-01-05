@@ -12,7 +12,7 @@ public class CardScript : MonoBehaviour
     }
 
     [SerializeField]
-    RawImage front = null, back = null;
+    Image front = null, back = null;
 
     public string name { get; private set; } = "";
 
@@ -20,6 +20,6 @@ public class CardScript : MonoBehaviour
 
     public CardType type { get; private set; } = CardType.Magic;
 
-    public void SetFrontTexture(Texture _tex){ if (front != null) front.texture = _tex; }
-    public void SetBackTexture(Texture _tex) { if (back != null) back.texture = _tex; }
+    public void SetFrontTexture(Sprite _tex){ if (front != null) front.sprite = _tex; }
+    public void SetBackTexture(Sprite _tex) { if (back != null) back.sprite = _tex; }
 }
