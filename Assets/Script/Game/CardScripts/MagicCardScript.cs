@@ -24,19 +24,18 @@ public class MagicCardScript : CardScriptBase
 
         attribute = CardAttribute.Winter;
 
-        if (_attribute < (int)(CardAttribute.Winter) * 3)
-            attribute = CardAttribute.Autumn;
+        if (_attribute >= (int)(attribute) * 3) return;
+        attribute = CardAttribute.Autumn;
 
-        if (_attribute < (int)(CardAttribute.Autumn) * 3)
-            attribute = CardAttribute.Summer;
+        if (_attribute >= (int)(attribute) * 3) return;
+        attribute = CardAttribute.Summer;
 
-        if (_attribute < (int)(CardAttribute.Summer) * 3)
-            attribute = CardAttribute.Spring;
+        if (_attribute >= (int)(attribute) * 3) return;
+        attribute = CardAttribute.Spring;
     }
 
     public int point { get; private set; } = 0;
 
     public void SetPoint(int _point) { point = _point; }
-
 
 }
