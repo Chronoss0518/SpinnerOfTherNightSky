@@ -16,6 +16,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     MagicZoneManager myMagicZone;
 
+    public GameObject stoneModel { get; private set; } = null;
 
     public void SetGameManager(GameManager _gameManager) {  gameManager = _gameManager; }
 
@@ -24,9 +25,6 @@ public class Player : MonoBehaviour
     public TrashZoneManager TrashZone { get { return myTrashZone; } }
 
     public MagicZoneManager MagicZone { get {return myMagicZone; } }
-
-    
-
 
 
 }
