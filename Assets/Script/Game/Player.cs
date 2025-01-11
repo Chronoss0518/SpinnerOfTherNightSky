@@ -5,16 +5,22 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField]
-    GameManager gameManager;
+    GameManager gameManager = null;
 
     [SerializeField]
-    ItemZoneManager myItemZone;
+    Book book = null;
 
     [SerializeField]
-    TrashZoneManager myTrashZone;
+    ItemZoneManager myItemZone = null;
 
     [SerializeField]
-    MagicZoneManager myMagicZone;
+    TrashZoneManager myTrashZone = null;
+
+    [SerializeField]
+    MagicZoneManager myMagicZone = null;
+
+    [SerializeField]
+    ControllerBase controller = null;
 
     public GameObject stoneModel { get; private set; } = null;
 
@@ -25,6 +31,22 @@ public class Player : MonoBehaviour
     public TrashZoneManager TrashZone { get { return myTrashZone; } }
 
     public MagicZoneManager MagicZone { get {return myMagicZone; } }
+
+
+    public void SetCPUController()
+    {
+
+    }
+
+    public void SetNetController()
+    {
+
+    }
+
+    public void SetPlayerController()
+    {
+
+    }
 
 
 }
