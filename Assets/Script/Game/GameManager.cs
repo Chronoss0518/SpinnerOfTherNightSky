@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 
 public class GameManager : MonoBehaviour
 {
@@ -27,10 +28,10 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
-    [SerializeField]
+    [SerializeField,ReadOnly]
     List<Player> players = new List<Player>();
 
-    [SerializeField]
+    [SerializeField, ReadOnly]
     int nowPlayerCount = 0;
 
     [SerializeField]
@@ -39,11 +40,15 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Player playerPrefab = null;
 
-    List<CardScript>stack { get; set; } = new List<CardScript>();
-
+    [SerializeField, ReadOnly]
+    List<CardScript>stack = new List<CardScript>();
 
     public BoardStoneManager stoneBoardObj { get { return stoneBoard; } }
 
+    [SerializeField, ReadOnly]
+    Manager manager = Manager.ins;
+
+    bool initFlg { get; set; } = false;
 
     MainStep mainStep = MainStep.TurnStart;
     PlayMagicStep playMagicStep = PlayMagicStep.StartStep;
@@ -58,17 +63,60 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        
+        for(int i = 0;i < (int)(manager.memberNum); i++)
+        {
+            var player = Instantiate(playerPrefab.gameObject);
+            var playerCom = player.GetComponent<Player>();
+            playerCom.SetGameManager(this);
+            players.Add(playerCom);
+        }
     }
 
     // Update is called once per frame
     void Update()
     {
-        
+        StartDice();
+
+        if (!initFlg) return;
+
+        TurnStart();
+
+        P_UseItem();
+
+
+        TurnEnd();
     }
 
 
+    void StartDice()
+    {
+        if (initFlg) return;
+    }
 
+    void TurnStart()
+    {
+        if (mainStep != MainStep.TurnStart) return;
+
+        mainStep = MainStep.P_UseItem;
+    }
+
+    void P_UseItem()
+    {
+        if (mainStep != MainStep.P_UseItem) return;
+
+
+        mainStep = MainStep.P_UseItem;
+    }
+
+    void TurnEnd()
+    {
+        if (mainStep != MainStep.TurnEnd) return;
+
+        mainStep = MainStep.TurnStart;
+
+        nowPlayerCount++;
+        nowPlayerCount %= players.Count;
+    }
 
 
 }

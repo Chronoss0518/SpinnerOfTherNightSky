@@ -1,14 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 
 public class Book : MonoBehaviour
 {
     public const int CARD_SOCKET_MAX_SIZE = 32;
     public const int PAGE_MAX_SIZE = 4;
 
-    [SerializeField]
-    GameObject[] cardSocketList = null;
+    [SerializeField, ReadOnly]
+    List<GameObject> cardSocketList = new List<GameObject>();
 
     [SerializeField]
     Page[] paperObject = null;
@@ -22,6 +23,21 @@ public class Book : MonoBehaviour
     [SerializeField]
     Animator animator = null;
 
+    void Start()
+    {
+        
+        for(int i = 0;i<paperObject.Length;i++)
+        {
+            var page = paperObject[i];
+            page.SetFrontPageActive(false);
+            page.SetBackPageActive(false);
+            if (i > 0) SetPageSocket(page.getBackCardSocket);
+            if (i < PAGE_MAX_SIZE) SetPageSocket(page.getFrontCardSocket);
+        }
+        UpdateSelectedCard();
+
+    }
+
     void Update()
     {
         if (animator == null) return;
@@ -30,7 +46,13 @@ public class Book : MonoBehaviour
 
     public void NextPage()
     {
-        if (nowPage >= PAGE_MAX_SIZE) return;
+        if (IsAnimation()) return;
+        
+        if (nowPage >= PAGE_MAX_SIZE - 1) return;
+
+        paperObject[nowPage].SetFrontPageActive(false);
+        paperObject[nowPage + 1].SetBackPageActive(false);
+        nowPage++;
         UpdateSelectedCard();
 
         ActiveTest(backButton, true);
@@ -40,9 +62,14 @@ public class Book : MonoBehaviour
 
     public void BackPage()
     {
-        if (nowPage <= 0) return;
+        if (IsAnimation()) return;
 
+        if (nowPage < 1) return;
 
+        paperObject[nowPage].SetFrontPageActive(false);
+        paperObject[nowPage + 1].SetBackPageActive(false);
+
+        nowPage--;
         UpdateSelectedCard();
 
         ActiveTest(nextButton, true);
@@ -68,7 +95,8 @@ public class Book : MonoBehaviour
 
     void UpdateSelectedCard()
     {
-
+        paperObject[nowPage].SetFrontPageActive(true);
+        paperObject[nowPage + 1].SetBackPageActive(true);
     }
     bool IsNumTest(int _num){ return (_num <= 0 && _num < CARD_SOCKET_MAX_SIZE); }
 
@@ -78,4 +106,24 @@ public class Book : MonoBehaviour
         _target.SetActive(_active);
     }
 
+
+    void SetPageSocket(GameObject[] _sockets)
+    {
+        foreach(var socket in _sockets)
+        {
+            cardSocketList.Add(socket);
+        }
+    }
+
+    bool IsAnimation()
+    {
+        if (animator == null) return true;
+        var info = animator.GetCurrentAnimatorStateInfo(0);
+
+        if (!info.IsName("Page" + (nowPage + 1).ToString())) return true;
+        if (info.normalizedTime < 1.0f) return true;
+
+        return false;
+
+    }
 }
