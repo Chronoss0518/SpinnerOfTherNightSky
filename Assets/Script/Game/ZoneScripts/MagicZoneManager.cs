@@ -3,8 +3,10 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
-using static UnityEditor.Progress;
 
+#if UNITY_EDITOR
+using static UnityEditor.Progress;
+#endif
 public class MagicZoneManager : MonoBehaviour
 {
 
