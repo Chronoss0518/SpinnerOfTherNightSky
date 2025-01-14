@@ -23,10 +23,17 @@ public class Book : MonoBehaviour
     [SerializeField]
     Animator animator = null;
 
-    void Start()
+    [SerializeField]
+    GameObject cardPrefab = null;
+
+    bool initFlg = false;
+
+    public void Init()
     {
+        if (initFlg) return;
+        initFlg = true;
         
-        for(int i = 0;i<paperObject.Length;i++)
+        for (int i = 0; i<paperObject.Length; i++)
         {
             var page = paperObject[i];
             page.SetFrontPageActive(false);
@@ -35,13 +42,14 @@ public class Book : MonoBehaviour
             if (i < PAGE_MAX_SIZE) SetPageSocket(page.getFrontCardSocket);
         }
         UpdateSelectedCard();
-
     }
 
-    void Update()
+    public void InitCard(CardData[] _cardList)
     {
-        if (animator == null) return;
-        animator.SetInteger("PageCount",nowPage);
+        foreach(var card in _cardList)
+        {
+            PutCard(card);
+        }
     }
 
     public void NextPage()
@@ -54,6 +62,8 @@ public class Book : MonoBehaviour
         paperObject[nowPage + 1].SetBackPageActive(false);
         nowPage++;
         UpdateSelectedCard();
+
+        animator.SetInteger("PageCount", nowPage);
 
         ActiveTest(backButton, true);
         if (nowPage < PAGE_MAX_SIZE) return;
@@ -72,16 +82,27 @@ public class Book : MonoBehaviour
         nowPage--;
         UpdateSelectedCard();
 
+        animator.SetInteger("PageCount", nowPage);
+
         ActiveTest(nextButton, true);
         if (nowPage > 0) return;
         ActiveTest(backButton, false);
+    }
+
+    public void PutCard(CardData _card)
+    {
+        if (_card == null) return;
+        Debug.Log("Init Book Pos:[" + _card.initBookPos.ToString() + "]");
+        var obj = Instantiate(cardPrefab, cardSocketList[_card.initBookPos].transform);
+        var script = obj.GetComponent<CardScript>();
+        script.Init(_card);
     }
 
     public void PutCard(CardScript _card)
     {
         if (_card == null) return;
 
-        Instantiate(_card, cardSocketList[_card.initBookPos].transform);
+        Instantiate(_card.gameObject, cardSocketList[_card.initBookPos].transform);
     }
 
     public void RemoveCard(int _num, bool _sortFlg = false)
