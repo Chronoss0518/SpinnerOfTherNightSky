@@ -5,6 +5,8 @@ using UnityEngine;
 [System.Serializable]
 public class Manager
 {
+    public const bool IS_MOCK = true;
+
     private Manager() { }
 
     public static Manager ins { get; private set; } = new Manager();
