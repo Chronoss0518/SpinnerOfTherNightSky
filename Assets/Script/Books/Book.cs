@@ -36,12 +36,16 @@ public class Book : MonoBehaviour
         for (int i = 0; i<paperObject.Length; i++)
         {
             var page = paperObject[i];
-            page.SetFrontPageActive(false);
-            page.SetBackPageActive(false);
+            page.SetFrontPageActive(true);
+            page.SetBackPageActive(true);
             if (i > 0) SetPageSocket(page.getBackCardSocket);
             if (i < PAGE_MAX_SIZE) SetPageSocket(page.getFrontCardSocket);
         }
         UpdateSelectedCard();
+
+
+        ActiveTest(nextButton, true);
+        ActiveTest(backButton, false);
     }
 
     public void InitCard(CardData[] _cardList)
@@ -58,15 +62,15 @@ public class Book : MonoBehaviour
         
         if (nowPage >= PAGE_MAX_SIZE - 1) return;
 
-        paperObject[nowPage].SetFrontPageActive(false);
-        paperObject[nowPage + 1].SetBackPageActive(false);
+        //paperObject[nowPage].SetFrontPageActive(false);
+        //paperObject[nowPage + 1].SetBackPageActive(false);
         nowPage++;
         UpdateSelectedCard();
 
         animator.SetInteger("PageCount", nowPage);
 
         ActiveTest(backButton, true);
-        if (nowPage < PAGE_MAX_SIZE) return;
+        if (nowPage < PAGE_MAX_SIZE - 1) return;
         ActiveTest(nextButton, false);
     }
 
@@ -76,8 +80,8 @@ public class Book : MonoBehaviour
 
         if (nowPage < 1) return;
 
-        paperObject[nowPage].SetFrontPageActive(false);
-        paperObject[nowPage + 1].SetBackPageActive(false);
+        //paperObject[nowPage].SetFrontPageActive(false);
+        //paperObject[nowPage + 1].SetBackPageActive(false);
 
         nowPage--;
         UpdateSelectedCard();
@@ -92,7 +96,6 @@ public class Book : MonoBehaviour
     public void PutCard(CardData _card)
     {
         if (_card == null) return;
-        Debug.Log("Init Book Pos:[" + _card.initBookPos.ToString() + "]");
         var obj = Instantiate(cardPrefab, cardSocketList[_card.initBookPos].transform);
         var script = obj.GetComponent<CardScript>();
         script.Init(_card);
@@ -116,8 +119,8 @@ public class Book : MonoBehaviour
 
     void UpdateSelectedCard()
     {
-        paperObject[nowPage].SetFrontPageActive(true);
-        paperObject[nowPage + 1].SetBackPageActive(true);
+        //paperObject[nowPage].SetFrontPageActive(true);
+        //paperObject[nowPage + 1].SetBackPageActive(true);
     }
     bool IsNumTest(int _num){ return (_num <= 0 && _num < CARD_SOCKET_MAX_SIZE); }
 
