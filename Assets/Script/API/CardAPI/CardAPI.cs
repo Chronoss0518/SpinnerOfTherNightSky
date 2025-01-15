@@ -107,42 +107,31 @@ abstract public class CardAPIBase
         public BookCardDataDTO[] data = null;
     }
 
-    abstract public IEnumerator GetCard(
-        int id, 
-        System.Action<GetCardResponse> _success);
+    abstract public IEnumerator<GetCardResponse> GetCard(int id);
 
-    abstract public IEnumerator GetCardAll(
-        System.Action<GetCardAllResponse> _success);
+    abstract public IEnumerator<GetCardAllResponse> GetCardAll();
 
-    abstract public IEnumerator GetCardsFromBook(
-        int _bookId, 
-        System.Action<GetCardsFromBookResponse> _success);
+    abstract public IEnumerator<GetCardsFromBookResponse> GetCardsFromBook(int _bookId);
 }
 
 public class CardAPI : CardAPIBase
 {
     public const string GET_CARD_API_URL = "";
 
-    override public IEnumerator GetCard(int id, System.Action<GetCardResponse> _success)
+    override public IEnumerator<GetCardResponse> GetCard(int id)
     {
-        _success(new GetCardResponse());
-        yield break;
+        yield return new GetCardResponse();
     }
 
     public const string GET_CARD_ALL_API_URL = "";
 
-    override public IEnumerator GetCardAll(
-        System.Action<GetCardAllResponse> _success)
+    override public IEnumerator<GetCardAllResponse> GetCardAll()
     {
-        _success(new GetCardAllResponse());
-        yield break;
+        yield return new GetCardAllResponse();
     }
 
-    override public IEnumerator GetCardsFromBook(
-        int _bookId, 
-        System.Action<GetCardsFromBookResponse> _success)
+    override public IEnumerator<GetCardsFromBookResponse> GetCardsFromBook(int _bookId)
     {
-        _success(new GetCardsFromBookResponse());
-        yield break;
+        yield return new GetCardsFromBookResponse();
     }
 }

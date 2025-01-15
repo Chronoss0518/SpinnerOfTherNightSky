@@ -10,20 +10,18 @@ public class BookMock : BookAPIBase
         new BookDataDTO(1,"TestDeck1","","","",""),
     };
 
-    override public IEnumerator GetBookData(
-        int id,
-        System.Action<GetBookDatasResponse> _success)
+    override public IEnumerator<GetBookDatasResponse> GetBookData(int id)
     {
         var res = new GetBookDatasResponse();
 
         if (bookDataMock.Length <= id) {
-            _success(res);
+            yield return res;
             yield break;
         }
 
         res.statusCode = 200;
         res.data = bookDataMock[id];
 
-        _success(res);
+        yield return res;
     }
 }

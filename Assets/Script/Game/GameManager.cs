@@ -73,7 +73,6 @@ public class GameManager : MonoBehaviour
             players.Add(playerCom);
         }
 
-        StartCoroutine(WebRequest());
     }
 
     // Update is called once per frame
@@ -129,6 +128,18 @@ public class GameManager : MonoBehaviour
         if (_no <= 0)
         {
             _player.SetPlayerController();
+            //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
+            StartCoroutine(GetCardsFromBookData(manager.useBookNo, (res) => {
+                var cards = new List<CardData>();
+
+                foreach(var card in res.data)
+                {
+                    cards.Add(CardData.CreateCardDataFromDTO(card));
+                }
+
+
+                _player.Init(cards.ToArray(), true);
+            }));
 
         } else {
 
@@ -137,42 +148,23 @@ public class GameManager : MonoBehaviour
             else
                 _player.SetNetController();
 
-        }
-    }
 
-    IEnumerator WebRequest()
-    {
-        for(int i = 0;i<players.Count;i++)
-        {
-            int bookId = manager.useBookNo;
-            
-            if (i > 0)
-                bookId = 1;
+            //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
+            StartCoroutine(GetCardsFromBookData(1, (res) => {
+                var cards = new List<CardData>();
 
-            //yield return GetBookData(manager.useBookNo, (_res) => { });
-
-            yield return GetCardsFromBookData(manager.useBookNo, (_res) =>
-            {
-                var res = _res;
-                var resultList = new List<CardData>();
-
-                for (int i = 0; i < res.data.Length; i++)
+                foreach (var card in res.data)
                 {
-                    resultList.Add(CardData.CreateCardDataFromDTO(res.data[i]));
-                    Debug.Log("SetManager Init Book Pos:[" + res.data[i].init_book_pos.ToString() + "]");
+                    cards.Add(CardData.CreateCardDataFromDTO(card));
                 }
 
-                players[i].Init(resultList.ToArray());
-            },
-            () =>
-            {
-                Debug.Log("Is Failed");
-            });
 
+                _player.Init(cards.ToArray());
+            }));
 
         }
-
     }
+
 
     IEnumerator GetBookData(int _bookId,
         System.Action<BookAPIBase.GetBookDatasResponse> _success,
@@ -180,17 +172,16 @@ public class GameManager : MonoBehaviour
     {
         if (_success == null) yield break;
         
-        yield return BookAPIBase.ins.GetBookData(_bookId, (_res) =>
+        var res =  BookAPIBase.ins.GetBookData(_bookId);
+
+        yield return res;
+
+        if (res.Current.statusCode != 200)
         {
-            if (_res.statusCode != 200)
-            {
-                if (_failed != null) _failed();
-                return;
-            }
-
-            _success(_res);
-        });
-
+            if (_failed != null) _failed();
+            yield break;
+        }
+        _success(res.Current);
 
     }
 
@@ -200,18 +191,17 @@ public class GameManager : MonoBehaviour
     {
         if (_success == null) yield break;
 
-        yield return CardAPIBase.ins.GetCardsFromBook(_bookId, (_res) =>
+        var res = CardAPIBase.ins.GetCardsFromBook(_bookId);
+        yield return res;
+
+
+        if (res.Current.statusCode != 200)
         {
-            if (_res.statusCode != 200)
-            {
-                if (_failed != null) _failed();
-                return;
-            }
+            if (_failed != null) _failed();
+            yield break;
+        }
 
-            _success(_res);
-        });
-
-
+        _success(res.Current);
 
     }
 

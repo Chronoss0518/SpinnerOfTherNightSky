@@ -53,25 +53,22 @@ public class CardMock : CardAPIBase
         new int[] { 1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,31,31,32,32,33,33,34,34},
     };
 
-    override public IEnumerator GetCard(
-        int id,
-        System.Action<GetCardResponse> _success)
+    override public IEnumerator<GetCardResponse> GetCard(int id)
     {
         var card = new GetCardResponse();
 
         if (cardMock.Length <= id)
         {
-            _success(card);
+            yield return card;
             yield break;
         }
 
         card.statusCode = 200;
         card.data = new CardDataDTO(cardMock[id]);
-        _success(card);
+        yield return card;
     }
 
-    override public IEnumerator GetCardAll(
-        System.Action<GetCardAllResponse> _success)
+    override public IEnumerator<GetCardAllResponse> GetCardAll()
     {
         var card = new GetCardAllResponse();
 
@@ -81,19 +78,16 @@ public class CardMock : CardAPIBase
             card.data[i] = new CardDataDTO(cardMock[i]);
         }
 
-        _success(card);
-        yield break;
+        yield return card;
     }
 
-    override public IEnumerator GetCardsFromBook(
-        int _bookId,
-        Action<GetCardsFromBookResponse> _success)
+    override public IEnumerator<GetCardsFromBookResponse> GetCardsFromBook(int _bookId)
     {
         var card = new GetCardsFromBookResponse();
 
         if (bookCardMappintMock.Length <= _bookId)
         {
-            _success(card);
+            yield return card;
             yield break;
         }
 
@@ -108,6 +102,6 @@ public class CardMock : CardAPIBase
 
         card.statusCode = 200;
 
-        _success(card);
+        yield return card;
     }
 }

@@ -41,18 +41,13 @@ abstract public class BookAPIBase
         public BookDataDTO data = null;
     }
 
-    abstract public IEnumerator GetBookData(
-        int id,
-        System.Action<GetBookDatasResponse> _success);
+    abstract public IEnumerator<GetBookDatasResponse> GetBookData(int id);
 }
 
 public class BookAPI : BookAPIBase
 {
-    override public IEnumerator GetBookData(
-        int id,
-        System.Action<GetBookDatasResponse> _success)
+    override public IEnumerator<GetBookDatasResponse> GetBookData(int id)
     {
-        _success(new GetBookDatasResponse());
-        yield break;
+        yield return new GetBookDatasResponse();
     }
 }
