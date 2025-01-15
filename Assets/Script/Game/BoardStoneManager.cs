@@ -29,7 +29,7 @@ public class BoardStoneManager : MonoBehaviour
         if (_x < 0 || _x >= h) return;
         if (_y < 0 || _y >= v) return;
 
-        var stone = Instantiate(_stone, stoneList[_y].stoneList[_x].transform);
+        var stone = Instantiate(_stone.gameObject, stoneList[_y].stoneList[_x].transform);
     }
 
     public void RemoveStone(int _x, int _y)

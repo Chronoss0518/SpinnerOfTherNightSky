@@ -14,8 +14,8 @@ public class ItemZoneManager : MonoBehaviour
     {
         if (_card == null) return;
         if (!IsNumTest(_num)) return;
-
-        items[_num] = Instantiate(_card, transform);
+        var card = Instantiate(_card.gameObject, transform);
+        items[_num] = card.GetComponent<ItemCardScript>();
         items[_num].transform.localPosition = new Vector3((_num - 1) * PUT_POSITION, 0.0f, 0.0f);
     }
 

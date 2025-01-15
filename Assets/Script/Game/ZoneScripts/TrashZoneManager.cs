@@ -12,13 +12,13 @@ public class TrashZoneManager : MonoBehaviour
     {
         if (_card == null) return;
 
-        var card = Instantiate(_card, transform);
+        var card = Instantiate(_card.gameObject, transform);
         card.transform.localPosition = new Vector3(
             Random.Range(-PUT_POSITION, PUT_POSITION),
             trashList.Count * PUT_OVERLAP_POSITION,
             Random.Range(-PUT_POSITION, PUT_POSITION));
 
-        trashList.Add(card);
+        trashList.Add(card.GetComponent<CardScript>());
     }
     public void RemoveCard(int _num)
     {

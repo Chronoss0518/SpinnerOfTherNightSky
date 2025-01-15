@@ -33,9 +33,9 @@ public class MagicZoneManager : MonoBehaviour
     {
         if (_card == null) return;
 
-        var card =  Instantiate(_card, transform);
+        var card =  Instantiate(_card.gameObject, transform);
         card.transform.localPosition = new Vector3(magicList.Count * PUT_POSITION, 0.0f, 0.0f);
-        magicList.Add(card);
+        magicList.Add(card.GetComponent<MagicCardScript>());
     }
 
     public void EvolutionCard(int _baseNum,MagicCardScript _card)
