@@ -4,7 +4,7 @@ using UnityEngine;
 
 public class ItemCardScript : CardScriptBase
 {
-    public enum ItemType
+    public enum ItemType : int
     {
         Normal,
         Trap

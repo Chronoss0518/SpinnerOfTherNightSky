@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class MagicCardScript : CardScriptBase
@@ -12,15 +13,20 @@ public class MagicCardScript : CardScriptBase
         Winter
     }
 
-    public CardAttribute attribute { get; private set; } = CardAttribute.Spring;
+    [SerializeField,ReadOnly]
+    private CardAttribute attribute = CardAttribute.Spring;
 
-    public int attributeNo { get; private set; } = 0;
+    public CardAttribute attributeType { get { return attribute; } }
+
+    [SerializeField, ReadOnly]
+    private int attributeMonth = 0;
+    public int month { get { return attributeMonth; } }
 
     public void SetAttribute(int _attribute) {
         if (_attribute < 0) return;
         if (_attribute >= 12) return;
 
-        attributeNo = _attribute;
+        attributeMonth = _attribute;
 
         attribute = CardAttribute.Winter;
 
