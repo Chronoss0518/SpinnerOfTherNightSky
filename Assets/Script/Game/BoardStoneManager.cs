@@ -1,42 +1,42 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
-#if UNITY_EDITOR_WIN
-using UnityEditor;
-#endif
-
-
-[System.Serializable]
-public class StoneHorizontal
-{
-    public List<GameObject> stoneList = new List<GameObject>();
-}
 
 
 public class BoardStoneManager : MonoBehaviour
 {
     //Horyzontal : êÖïΩ//
-    public const int h = 13;
-    //Vertical : êÇíº//
-    public const int v = 13;
+    [SerializeField]
+    private int HOLYZONTAL = 13;
 
     [SerializeField]
-    List<StoneHorizontal> stoneList = new List<StoneHorizontal>();
+    //Vertical : êÇíº//
+    private int VERTICAL = 13;
+
+    [SerializeField]
+    private Vector2 interval = new Vector2(0.46f, 0.46f);
+
+    [SerializeField]
+    private Vector3 startPos = Vector3.zero;
+
+    [SerializeField,ReadOnly]
+    List<List<GameObject>> stoneList = new List<List<GameObject>>();
 
     public void PutStone(int _x, int _y,GameObject _stone)
     {
-        if (_x < 0 || _x >= h) return;
-        if (_y < 0 || _y >= v) return;
+        if (_x < 0 || _x >= HOLYZONTAL) return;
+        if (_y < 0 || _y >= VERTICAL) return;
 
-        var stone = Instantiate(_stone.gameObject, stoneList[_y].stoneList[_x].transform);
+        var stone = Instantiate(_stone.gameObject, stoneList[_y][_x].transform);
     }
 
     public void RemoveStone(int _x, int _y)
     {
         if (!IsPutStone(_x, _y)) return;
 
-        var child = stoneList[_x].stoneList[_y].transform.GetChild(stoneList[_x].stoneList[_y].transform.childCount - 1);
+        var child = stoneList[_x][_y].transform.GetChild(stoneList[_x][_y].transform.childCount - 1);
         child.parent = null;
         Destroy(child.gameObject);
     }
@@ -44,56 +44,39 @@ public class BoardStoneManager : MonoBehaviour
 
     public bool IsPutStone(int _x, int _y)
     {
-        if (_x < 0 || _x >= h) return false;
-        if (_y < 0 || _y >= v) return false;
+        if (_x < 0 || _x >= HOLYZONTAL) return false;
+        if (_y < 0 || _y >= VERTICAL) return false;
 
-        return stoneList[_x].stoneList[_y].transform.childCount > 0;
+        return stoneList[_x][_y].transform.childCount > 0;
     }
 
-#if UNITY_EDITOR_WIN
-
-    [MenuItem("Create/StoneItem")]
-    public static void CreateStoneList()
+    public void Init()
     {
-        var manager = FindAnyObjectByType<BoardStoneManager>();
+        Vector3 pos = startPos;
 
-        if (manager == null) return;
+        stoneList.Clear();
 
-        float tmpH = -2.78f;
-        float tmpV = -2.78f;
-
-        manager.stoneList.Clear();
-
-        for (int i = 0;i<v;i++)
+        for (int i = 0; i<VERTICAL; i++)
         {
-            
+            pos.x = startPos.x;
+            stoneList.Add(new List<GameObject>());
 
             var verticalPos = new GameObject("VerticalStonePos");
-            verticalPos.transform.position = new Vector3(0.0f, 0.48f, tmpH);
-
-            manager.stoneList.Add(new StoneHorizontal());
-            tmpV = -2.78f;
-            for (int j = 0;j < h;j++)
+            verticalPos.transform.SetParent(transform);
+            verticalPos.transform.localPosition = pos;
+            float tmpVPos = 0.0f;
+            for (int j = 0; j < HOLYZONTAL; j++)
             {
                 var stonePos = new GameObject("StonePos");
-                stonePos.transform.position = new Vector3(tmpV, 0.48f, verticalPos.transform.position.z);
-
-                stonePos.transform.parent = verticalPos.transform;
-                manager.stoneList[i].stoneList.Add(stonePos);
-                tmpV += 0.46f;
-                if (j == 5 || j == 7)
-                    tmpV += 0.02f;
+                stonePos.transform.SetParent(verticalPos.transform);
+                stonePos.transform.localPosition = new Vector3(tmpVPos, 0.0f, 0.0f);
+                stoneList[i].Add(stonePos);
+                tmpVPos += interval.x;
             }
 
-            verticalPos.transform.parent = manager.transform;
 
-            tmpH += 0.46f;
-            if (i == 5 || i == 7)
-                tmpH += 0.02f;
+            pos.z += interval.y;
         }
     }
-
-#endif
-
 
 }
