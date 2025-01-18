@@ -6,7 +6,7 @@ using UnityEngine;
 public class Manager
 {
     public const bool IS_MOCK = true;
-
+    public const int MAX_GMAE_PLAYER = 4;
     private Manager() { }
 
     public static Manager ins { get; private set; } = new Manager();
@@ -19,16 +19,19 @@ public class Manager
 
     public enum MemberType
     {
-        Mach = 2,
-        Survival3,
-        Survival4,
+        CPU,
+        NetWorkPlayer,
+        None
     }
 
     public GameType gameType = GameType.Normal;
 
-    public MemberType memberNum = MemberType.Mach;
-
-    public bool[] cpuFlgs = { true, true, true };
+    public MemberType[] cpuFlgs = 
+    { 
+        MemberType.CPU,
+        MemberType.None,
+        MemberType.None
+    };
 
     public int useBookNo = 0;
 
