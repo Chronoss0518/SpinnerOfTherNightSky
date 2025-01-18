@@ -28,7 +28,7 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
-    [SerializeField,ReadOnly]
+    [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
 
     [SerializeField, ReadOnly]
@@ -41,7 +41,7 @@ public class GameManager : MonoBehaviour
     Player playerPrefab = null;
 
     [SerializeField, ReadOnly]
-    List<CardScript>stack = new List<CardScript>();
+    List<CardScript> stack = new List<CardScript>();
 
     public BoardStoneManager stoneBoardObj { get { return stoneBoard; } }
 
@@ -63,14 +63,15 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        for(int i = 0;i < (int)(manager.memberNum); i++)
+        if (stoneBoard != null) stoneBoard.Init();
+
+        CreatePlayer();
+
+        for (int i = 1; i < Manager.MAX_GMAE_PLAYER; i++)
         {
-            var player = Instantiate(playerPrefab.gameObject);
-            var playerCom = player.GetComponent<Player>();
-
-            InitPlayerScript(playerCom,i);
-
-            players.Add(playerCom);
+            var cpuFlg = manager.cpuFlgs[i - 1];
+            CreateCPUPlayer(cpuFlg);
+            CreateNetworkPlayer(cpuFlg);
         }
 
     }
@@ -121,58 +122,14 @@ public class GameManager : MonoBehaviour
         nowPlayerCount %= players.Count;
     }
 
-    void InitPlayerScript(Player _player,int _no)
-    {
-        _player.SetGameManager(this);
-        
-        if (_no <= 0)
-        {
-            _player.SetPlayerController();
-            //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
-            StartCoroutine(GetCardsFromBookData(manager.useBookNo, (res) => {
-                var cards = new List<CardData>();
-
-                foreach(var card in res.data)
-                {
-                    cards.Add(CardData.CreateCardDataFromDTO(card));
-                }
-
-
-                _player.Init(cards.ToArray(), true);
-            }));
-
-        } else {
-
-            if (manager.cpuFlgs[_no - 1])
-                _player.SetCPUController();
-            else
-                _player.SetNetController();
-
-
-            //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
-            StartCoroutine(GetCardsFromBookData(1, (res) => {
-                var cards = new List<CardData>();
-
-                foreach (var card in res.data)
-                {
-                    cards.Add(CardData.CreateCardDataFromDTO(card));
-                }
-
-
-                _player.Init(cards.ToArray());
-            }));
-
-        }
-    }
-
 
     IEnumerator GetBookData(int _bookId,
         System.Action<BookAPIBase.GetBookDatasResponse> _success,
         System.Action _failed = null)
     {
         if (_success == null) yield break;
-        
-        var res =  BookAPIBase.ins.GetBookData(_bookId);
+
+        var res = BookAPIBase.ins.GetBookData(_bookId);
 
         yield return res;
 
@@ -205,5 +162,68 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void CreatePlayer()
+    {
+        var player = Instantiate(playerPrefab.gameObject);
+        var playerCom = player.GetComponent<Player>();
+
+        players.Add(playerCom);
+
+        playerCom.SetPlayerController();
+        //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
+        StartCoroutine(GetCardsFromBookData(manager.useBookNo, (res) =>
+        {
+            var cards = new List<CardData>();
+
+            foreach (var card in res.data)
+            {
+                cards.Add(CardData.CreateCardDataFromDTO(card));
+            }
+
+            playerCom.Init(cards.ToArray(), true);
+        }));
+    }
+
+    void CreateCPUPlayer(Manager.MemberType _type)
+    {
+        if (_type != Manager.MemberType.CPU) return;
+        var player = Instantiate(playerPrefab.gameObject);
+        var playerCom = player.GetComponent<Player>();
+
+        playerCom.SetCPUController();
+        players.Add(playerCom);
+
+        CreateOtherPlayerBase(playerCom);
+    }
+
+    void CreateNetworkPlayer(Manager.MemberType _type)
+    {
+        if (_type != Manager.MemberType.NetWorkPlayer) return;
+
+        var player = Instantiate(playerPrefab.gameObject);
+        var playerCom = player.GetComponent<Player>();
+
+        playerCom.SetNetController();
+        players.Add(playerCom);
+
+        CreateOtherPlayerBase(playerCom);
+
+    }
+
+    void CreateOtherPlayerBase(Player _player)
+    {
+        //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
+        StartCoroutine(GetCardsFromBookData(1, (res) =>
+        {
+            var cards = new List<CardData>();
+
+            foreach (var card in res.data)
+            {
+                cards.Add(CardData.CreateCardDataFromDTO(card));
+            }
+
+            _player.Init(cards.ToArray());
+        }));
+    }
 
 }
