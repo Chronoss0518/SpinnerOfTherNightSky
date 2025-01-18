@@ -20,7 +20,7 @@ public class BookMock : BookAPIBase
         }
 
         res.statusCode = 200;
-        res.data = bookDataMock[id];
+        res.data = new BookDataDTO(bookDataMock[id]);
 
         yield return res;
     }

@@ -27,6 +27,16 @@ abstract public class BookAPIBase
             play_mat_path = _play_mat_path;
         }
 
+        public BookDataDTO(BookDataDTO _data)
+        {
+            id = _data.id;
+            name = _data.name;
+            cover_path = _data.cover_path;
+            card_case_path = _data.card_case_path;
+            stone_path = _data.stone_path;
+            play_mat_path = _data.play_mat_path;
+        }
+
         public int id = 0;
         public string name = "";
         public string cover_path = "";
