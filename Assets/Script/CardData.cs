@@ -42,7 +42,6 @@ public class CardData
         cardType = _dto.card_type;
         script = _dto.script;
         initBookPos = _dto.init_book_pos;
-        Debug.Log("SetFromDTO Init Book Pos:[" + _dto.init_book_pos.ToString() + "]");
     }
 
     public int id = 0;
