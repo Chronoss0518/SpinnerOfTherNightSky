@@ -143,7 +143,7 @@ public class StoneBoardManager : MonoBehaviour
 
         startPos.x += interval.x;
         startPos.z += interval.y;
-        startPos.y = max.y - 1.0f;
+        startPos.y = max.y;
 
     }
 
