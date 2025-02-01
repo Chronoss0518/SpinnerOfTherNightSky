@@ -35,15 +35,18 @@ public class GameManager : MonoBehaviour
     int nowPlayerCount = 0;
 
     [SerializeField]
-    BoardStoneManager stoneBoard = null;
+    StoneBoardManager stoneBoard = null;
 
     [SerializeField]
     Player playerPrefab = null;
 
+    [SerializeField]
+    Camera cameraObject = null;
+
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
 
-    public BoardStoneManager stoneBoardObj { get { return stoneBoard; } }
+    public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
 
     [SerializeField, ReadOnly]
     Manager manager = Manager.ins;
@@ -67,7 +70,7 @@ public class GameManager : MonoBehaviour
 
         CreatePlayer();
 
-        for (int i = 1; i < Manager.MAX_GMAE_PLAYER; i++)
+        for (int i = 1; i < Manager.MAX_GMAE_PLAYER && i < manager.cpuFlgs.Length; i++)
         {
             var cpuFlg = manager.cpuFlgs[i - 1];
             CreateCPUPlayer(cpuFlg);
@@ -164,10 +167,7 @@ public class GameManager : MonoBehaviour
 
     void CreatePlayer()
     {
-        var player = Instantiate(playerPrefab.gameObject);
-        var playerCom = player.GetComponent<Player>();
-
-        players.Add(playerCom);
+        var playerCom = CreatePlayerComponent();
 
         playerCom.SetPlayerController();
         //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
@@ -182,16 +182,17 @@ public class GameManager : MonoBehaviour
 
             playerCom.Init(cards.ToArray(), true);
         }));
+
+        cameraObject.transform.SetParent(playerCom.transform);
     }
 
     void CreateCPUPlayer(Manager.MemberType _type)
     {
         if (_type != Manager.MemberType.CPU) return;
-        var player = Instantiate(playerPrefab.gameObject);
-        var playerCom = player.GetComponent<Player>();
+
+        var playerCom = CreatePlayerComponent();
 
         playerCom.SetCPUController();
-        players.Add(playerCom);
 
         CreateOtherPlayerBase(playerCom);
     }
@@ -200,14 +201,11 @@ public class GameManager : MonoBehaviour
     {
         if (_type != Manager.MemberType.NetWorkPlayer) return;
 
-        var player = Instantiate(playerPrefab.gameObject);
-        var playerCom = player.GetComponent<Player>();
+        var playerCom = CreatePlayerComponent();
 
         playerCom.SetNetController();
-        players.Add(playerCom);
 
         CreateOtherPlayerBase(playerCom);
-
     }
 
     void CreateOtherPlayerBase(Player _player)
@@ -224,6 +222,16 @@ public class GameManager : MonoBehaviour
 
             _player.Init(cards.ToArray());
         }));
+    }
+
+    Player CreatePlayerComponent()
+    {
+        var player = Instantiate(playerPrefab.gameObject);
+        var playerCom = player.GetComponent<Player>();
+        playerCom.SetGameManager(this);
+
+        players.Add(playerCom);
+        return playerCom;
     }
 
 }
