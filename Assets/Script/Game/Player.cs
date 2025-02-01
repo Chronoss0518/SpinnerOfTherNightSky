@@ -37,7 +37,7 @@ public class Player : MonoBehaviour
     Manager manager = Manager.ins;
 
     [SerializeField, ReadOnly]
-    Manager.DisplayAspectType beforeType = Manager.DisplayAspectType.LandscapeScreen;
+    Manager.DisplayAspectType beforeType = Manager.DisplayAspectType.None;
 
 
     public GameObject stoneModel { get; private set; } = null;
@@ -52,7 +52,9 @@ public class Player : MonoBehaviour
 
     public MagicZoneManager magicZone { get {return myMagicZone; } }
 
-    public void Init(CardData[] _cardData,bool _createBookObject = false)
+    public void Init(
+        CardData[] _cardData,
+        bool _createBookObject = false)
     {
         cardData = _cardData;
 
@@ -106,6 +108,7 @@ public class Player : MonoBehaviour
 
         book.transform.SetParent(pos.transform);
         book.transform.localPosition = Vector3.zero;
+        book.transform.localRotation = Quaternion.identity;
 
     }
 }
