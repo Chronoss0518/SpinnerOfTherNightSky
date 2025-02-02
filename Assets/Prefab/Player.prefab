@@ -106,11 +106,10 @@ MonoBehaviour:
   verticalScreenPos: {fileID: 6305293354742339238}
   manager:
     gameType: 0
-    memberNum: 2
-    cpuFlgs: 010101
+    cpuFlgs: 
     useBookNo: 0
     aspectType: 0
-  beforeType: 2
+  beforeType: 0
 --- !u!1 &2431698666317294714
 GameObject:
   m_ObjectHideFlags: 0
@@ -224,14 +223,14 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6305293354742339238}
-  m_LocalRotation: {x: -0.25881952, y: -0, z: -0, w: 0.96592575}
-  m_LocalPosition: {x: 0, y: 13.39, z: -18.2}
+  m_LocalRotation: {x: -0.36071324, y: 0, z: 0, w: 0.9326768}
+  m_LocalPosition: {x: 0, y: 8.39, z: -13.74}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2431698666257173384}
   m_RootOrder: 4
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -42.288, y: 0, z: 0}
 --- !u!1 &8235653060334088167
 GameObject:
   m_ObjectHideFlags: 0
@@ -255,11 +254,11 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8235653060334088167}
-  m_LocalRotation: {x: -0.25881952, y: -0, z: -0, w: 0.96592575}
-  m_LocalPosition: {x: 0, y: 15.73, z: -23.83}
+  m_LocalRotation: {x: -0.36071324, y: -0, z: -0, w: 0.9326768}
+  m_LocalPosition: {x: 0, y: 9.42, z: -17.52}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 2431698666257173384}
   m_RootOrder: 3
-  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+  m_LocalEulerAnglesHint: {x: -42.288, y: 0, z: 0}

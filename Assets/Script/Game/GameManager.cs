@@ -51,6 +51,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     Manager manager = Manager.ins;
 
+
     bool initFlg { get; set; } = false;
 
     MainStep mainStep = MainStep.TurnStart;
