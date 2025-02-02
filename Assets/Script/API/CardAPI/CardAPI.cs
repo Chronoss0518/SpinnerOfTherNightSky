@@ -20,6 +20,7 @@ abstract public class CardAPIBase
             description = _cm.description;
             image_path = _cm.image_path;
             card_type = _cm.card_type;
+            action = _cm.action;
             script = _cm.script;
             month = _cm.month;
             point = _cm.point;
@@ -31,6 +32,7 @@ abstract public class CardAPIBase
         public string description = "";
         public string image_path = "";
         public int card_type = 0;
+        public int action = 0;
         public int[] script = null;
         public int month = 0;
         public int point = 0;
@@ -52,6 +54,7 @@ abstract public class CardAPIBase
             string _name,
             string _description,
             string _image_path,
+            int _action,
             int[] _script,
             int _month,
             int _point)
@@ -62,6 +65,7 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 0;
+            res.action = _action;
             res.script = _script;
             res.month = _month;
             res.point = _point;
@@ -73,6 +77,7 @@ abstract public class CardAPIBase
             string _name,
             string _description,
             string _image_path,
+            int _action,
             int[] _script,
             int _item_type)
         {
@@ -82,6 +87,7 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 1;
+            res.action = _action;
             res.script = _script;
             res.item_type = _item_type;
             return res;

@@ -13,13 +13,14 @@ public class CardData
         Item,
     }
 
-    public CardData(int _id, string _name, string _description, string _imagePath, int _cardType, int[] _script)
+    public CardData(int _id, string _name, string _description, string _imagePath, int _cardType,int _action, int[] _script)
     {
         id = _id;
         name = _name;
         description = _description;
         imagePath = _imagePath;
         cardType = _cardType;
+        action = _action;
         script = _script;
     }
 
@@ -30,6 +31,7 @@ public class CardData
         description = _dto.description;
         imagePath = _dto.image_path;
         cardType = _dto.card_type;
+        action = _dto.action;
         script = _dto.script;
     }
 
@@ -40,6 +42,7 @@ public class CardData
         description = _dto.description;
         imagePath = _dto.image_path;
         cardType = _dto.card_type;
+        action = _dto.action;
         script = _dto.script;
         initBookPos = _dto.init_book_pos;
     }
@@ -49,6 +52,7 @@ public class CardData
     public string description = "";
     public string imagePath = "";
     public int cardType = 0;
+    public int action = 0;
     public int[] script = null;
     public int initBookPos = 0;
 
@@ -70,8 +74,8 @@ public class CardData
 [System.Serializable]
 public class MagicCardData : CardData
 {
-    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, int[] _script, int _month, int _point) :
-        base(_id, _name, _description, _imagePath, _cardType, _script)
+    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType,int _action, int[] _script, int _month, int _point) :
+        base(_id, _name, _description, _imagePath, _cardType, _action, _script)
     {
         month = _month;
         point = _point;
@@ -98,8 +102,8 @@ public class MagicCardData : CardData
 [System.Serializable]
 public class ItemCardData : CardData
 {
-    public ItemCardData(int _id, string _name, string _description, string _imagePath, int _cardType, int[] _script, int _itemType) :
-        base(_id, _name, _description, _imagePath, _cardType, _script)
+    public ItemCardData(int _id, string _name, string _description, string _imagePath, int _cardType, int _action, int[] _script, int _itemType) :
+        base(_id, _name, _description, _imagePath, _cardType, _action, _script)
     {
         itemType = _itemType;
     }

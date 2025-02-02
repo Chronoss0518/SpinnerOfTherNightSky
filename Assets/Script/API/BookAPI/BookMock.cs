@@ -4,12 +4,6 @@ using UnityEngine;
 
 public class BookMock : BookAPIBase
 {
-    BookDataDTO[] bookDataMock = new BookDataDTO[]
-    {
-        new BookDataDTO(0,"TestDeck","","","",""),
-        new BookDataDTO(1,"TestDeck1","","","",""),
-    };
-
     override public IEnumerator<GetBookDatasResponse> GetBookData(int id)
     {
         var res = new GetBookDatasResponse();
@@ -24,4 +18,11 @@ public class BookMock : BookAPIBase
 
         yield return res;
     }
+
+    BookDataDTO[] bookDataMock = new BookDataDTO[]
+    {
+        new BookDataDTO(0,"TestDeck","","","",""),
+        new BookDataDTO(1,"TestDeck1","","","",""),
+    };
+
 }
