@@ -1,10 +1,13 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
+
 
 [System.Serializable]
 public class Manager
 {
+    public const bool IS_DEBUG = true;
     public const bool IS_MOCK = true;
     public const int MAX_GMAE_PLAYER = 4;
     private Manager() { }
@@ -24,8 +27,10 @@ public class Manager
         None
     }
 
+    [ReadOnly]
     public GameType gameType = GameType.Normal;
 
+    [ReadOnly]
     public MemberType[] cpuFlgs = 
     { 
         MemberType.CPU,
@@ -33,6 +38,7 @@ public class Manager
         MemberType.None
     };
 
+    [ReadOnly]
     public int useBookNo = 0;
 
     public enum DisplayAspectType
@@ -45,6 +51,7 @@ public class Manager
         LandscapeScreen
     }
 
+    [ReadOnly]
     public DisplayAspectType aspectType = DisplayAspectType.None;
 
 }
