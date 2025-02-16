@@ -84,8 +84,6 @@ ItemZoneへ出す事で発動できます。
   - 発動時に1回だけ実施する効果です
 - Stay
   - 発動後、対象のZoneに存在する限り行う効果です
-- Trigger
-  - 相手の行動によって1回だけ実施する効果です
 - Exit
   - 対象のZoneから離れる時に1度だけ実施する効果です
 
@@ -98,7 +96,8 @@ ItemZoneへ出す事で発動できます。
 カードを重ね合わせて強力な状態にすることを指します。
 
 #### ライブラリ
-20～32枚で構成された道具・術カードで同じ名前のカードは2枚まで入れられます。
+別名:魔導書と呼びます
+28～40枚で構成された道具・術カードで同じ名前のカードは3枚まで入れられます。
 
 #### フィールド
 ゲームを行うための場所になります。
@@ -158,66 +157,61 @@ ItemZoneへ出す事で発動できます。
 ``` mermaid
 graph TD;
 
-Player[Player:PlayMagic]
-OtherPlayer[OtherPlayer:PlayMagic]
+Player[Player:PlayMagic
+ターンプレイヤーは手札から術を利用するかの確認をします※]
+OtherPlayer[OtherPlayer:PlayMagic
+アザープレイヤーは手札から術を利用するかの確認をします※
+    - 複数人いる場合は次に自身のターンになる人から順に確認します]
+
+Player:UseItem[Player:UseItem
+ターンプレイヤーは道具を手札から利用することができます]
+
+Player:PutStone[Player:PutStone
+ターンプレイヤーは石を1～3個を盤面に置きます]
+
+Player:SetTrap[Player:SetTrap
+ターンプレイヤーは手札の罠道具をItemZoneへ配置することができます]
+
+End[End
+次のターンへ移行しターンプレイヤーを切り替えます]
 
 Start-->Player:UseItem
 Player:UseItem-->Player:PutStone
-Player:PutStone-->OtherPlayer
-OtherPlayer-->Player
-Player-->Player:SetItem
-Player:SetItem-->End
+Player:PutStone-->Player
+Player-->OtherPlayer
+OtherPlayer-->Player:SetTrap
+Player:SetTrap-->End
 
 ```
-
-1. UseItem
-  ターンプレイヤーは道具を手札から利用します
-2. PutStone
-  ターンプレイヤーは石を1～3個を盤面に置きます
-3. OtherPlayer:PlayMagic
-  アザープレイヤーは手札から術を利用するかの確認をします※
-    - 複数人いる場合は次に自身のターンになる人の順に確認します
-4. Player:PlayMagic
-  ターンプレイヤーは手札から術を利用するかの確認をします※
-5. SetItem
-  ターンプレイヤーは手札の罠道具をItemZoneへ配置することができます
-6. End
-  次のターンへ移行しターンプレイヤーを切り替えます
 
 #### 上記の手順のうち、PlayMagicの部分の詳細手順を記述します
 
 ``` mermaid
 graph TD;
 
-CheckMagic{User:CheckMagic}
-OtherUserCheckCard{OtherUser:CheckCard}
-UserCheckCard{User:CheckTrap}
+Start[Start PlayMagic]
+OtherStart[Start PlayMagic
+※違うプレイヤーでPlayMagicを再開]
 
-Start-->CheckMagic
-CheckMagic-->|カードを発動する場合|User:OpenMagic
-CheckMagic-->|カードを発動しない場合|End
-User:OpenMagic-->OtherUserCheckCard
-OtherUserCheckCard-->|カードを発動する場合|OtherUser:MagicOrTrap
-OtherUserCheckCard-->|カードを発動しない場合|UseCards
-OtherUser:MagicOrTrap-->UserCheckCard
-UserCheckCard-->|罠を発動する場合|User:Trap
-UserCheckCard-->|罠を発動しない場合|UseCards
-User:Trap-->UseCards
-UseCards-->End
+Start-->CheckCard
+CheckCard-->|カードを発動する場合|UseCard
+CheckCard-->|カードを発動しない場合|End
+UseCard-->OtherStart
+OtherStart-->End
 
 ```
 
-1. CheckMagic
-プレイヤーは石の配置に基づき、手札にあるカードを利用するか確認し、利用しない場合はこの時点でこの手順を終了します
-2. OpenMagic
-ユーザーは術を場に出します
-3. OtherUser:CheckCard
-ユーザーではないプレイヤーは術と罠を確認します。
-4. OtherUser:OpenMagicOrTrap
-3でカードを発動する場合ユーザーではないプレイヤーはカードを場に出します。
-5. User:Trap
-4に対してユーザープレイヤーは罠を利用する場合、表にしてカードを発動ます
-6. UseCards
+1. CheckCard
+術の発動が確認されていない場合、ユーザーは手札にある術カードを利用するか確認し、利用しない場合はこの時点でこの手順を終了します
+以降のユーザーは術を発動するか罠を発動するかを確認します。
+2. UseCard
+ユーザーはカードを発動宣言をします
+3. Start PlayMagic
+現在のユーザーではないプレイヤーに同じ手順を行います
+- 複数人いる場合は次に自身のターンになる人から順に行います
+
+
+
 場に出した全てのカードは最後に出されたカードから順に処理を行います。
 以下の図はカードの出た順番と実行する順番を表したものです。
 
@@ -233,5 +227,5 @@ PlayCard3->>PlayCard1 : カードを実行する順番
 
 ```
 
-
+**術の発動を宣言したが石が取り除けない場合、発動失敗となりその術カードはTrashZoneへ置きます**
 
