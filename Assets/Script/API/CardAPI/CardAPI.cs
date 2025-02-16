@@ -3,13 +3,60 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+#if UNITY_EDITOR
+using UnityEditor;
+#endif
 
 abstract public class CardAPIBase
 {
+#if UNITY_EDITOR
     public static CardAPIBase ins { get; private set; } =
         Manager.IS_MOCK ?
         new CardMock() :
         new CardAPI();
+#else
+
+    public static CardAPIBase ins { get; private set; } = new CardAPI();
+
+#endif
+
+    public class ScriptPartsDTO
+    {
+        public ScriptPartsDTO() { }
+        public ScriptPartsDTO(ScriptPartsDTO _cm)
+        {
+            type = _cm.type;
+            argments = _cm.argments;
+        }
+
+        public ScriptPartsDTO(int _no, string _args)
+        {
+            type = _no;
+            argments = _args;
+        }
+
+        public int type = 0;
+        public string argments = "";
+    }
+
+    public class ScriptDataDTO
+    {
+        public ScriptDataDTO() { }
+        public ScriptDataDTO(ScriptDataDTO _cm) 
+        {
+            parts = _cm.parts;
+            actionType = _cm.actionType;
+        }
+
+        public ScriptDataDTO(ScriptPartsDTO[] _parts,int _type)
+        {
+            parts = _parts;
+            actionType = _type;
+        }
+
+        public ScriptPartsDTO[] parts = null;
+        public int actionType = 0;
+    }
 
     public class CardDataDTO
     {
@@ -20,10 +67,10 @@ abstract public class CardAPIBase
             description = _cm.description;
             image_path = _cm.image_path;
             card_type = _cm.card_type;
-            action = _cm.action;
             script = _cm.script;
             month = _cm.month;
             point = _cm.point;
+            starPos = _cm.starPos;
             item_type = _cm.item_type;
         }
 
@@ -32,10 +79,10 @@ abstract public class CardAPIBase
         public string description = "";
         public string image_path = "";
         public int card_type = 0;
-        public int action = 0;
-        public int[] script = null;
+        public ScriptDataDTO[] script = null;
         public int month = 0;
         public int point = 0;
+        public Vector2Int[] starPos = null;
         public int item_type = 0;
     }
 
@@ -54,10 +101,11 @@ abstract public class CardAPIBase
             string _name,
             string _description,
             string _image_path,
-            int _action,
-            int[] _script,
+            ScriptDataDTO[] _script,
             int _month,
-            int _point)
+            int _point,
+            Vector2Int[] _starPos
+            )
         {
             var res = new BookCardDataDTO();
             res.id = _id;
@@ -65,10 +113,10 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 0;
-            res.action = _action;
             res.script = _script;
             res.month = _month;
             res.point = _point;
+            res.starPos = _starPos;
             return res;
         }
 
@@ -77,8 +125,7 @@ abstract public class CardAPIBase
             string _name,
             string _description,
             string _image_path,
-            int _action,
-            int[] _script,
+            ScriptDataDTO[] _script,
             int _item_type)
         {
             var res = new BookCardDataDTO();
@@ -87,7 +134,6 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 1;
-            res.action = _action;
             res.script = _script;
             res.item_type = _item_type;
             return res;

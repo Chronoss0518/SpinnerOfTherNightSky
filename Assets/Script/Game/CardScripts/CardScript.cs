@@ -26,7 +26,7 @@ public class CardScript : MonoBehaviour
 
     public string description { get { return data.description; } }
 
-    public int[] script { get { return data.script; } }
+    public ScriptData[] script { get { return data.script; } }
 
     public int initBookPos { get { return data.initBookPos; } }
 
