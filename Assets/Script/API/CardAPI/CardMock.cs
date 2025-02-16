@@ -6,7 +6,7 @@ using UnityEngine;
 public class CardMock : CardAPIBase
 {
     BookCardDataDTO[] cardMock = new BookCardDataDTO[]{
-        BookCardDataDTO.GenerateMagicCard(0,"南十字-Fastere","","",
+        BookCardDataDTO.GenerateMagicCard(0,"南十字-Complater","","",
             new ScriptDataDTO[]{new ScriptDataDTO() },6,1,
             new Vector2Int[]{
                 new Vector2Int(2,0),
@@ -15,7 +15,7 @@ public class CardMock : CardAPIBase
                 new Vector2Int(2,3)
             }
         ),
-        BookCardDataDTO.GenerateMagicCard(1,"矢-Fastere","","",
+        BookCardDataDTO.GenerateMagicCard(1,"矢-Complater","","",
             new ScriptDataDTO[]{new ScriptDataDTO() },8,1,
             new Vector2Int[]{
                 new Vector2Int(0,1),
@@ -24,7 +24,7 @@ public class CardMock : CardAPIBase
                 new Vector2Int(4,4)
             }
         ),
-        BookCardDataDTO.GenerateMagicCard(2,"盾-Fastere","[Stay]自身以外のプレイヤーは勝利に必要な術ポイントが1増える","",
+        BookCardDataDTO.GenerateMagicCard(2,"盾-Complater","[Stay]自身以外のプレイヤーは勝利に必要なポイントが1増える","",
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
                     new ScriptPartsDTO[] { 

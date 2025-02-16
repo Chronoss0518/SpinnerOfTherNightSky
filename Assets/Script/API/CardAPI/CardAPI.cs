@@ -44,14 +44,28 @@ abstract public class CardAPIBase
         public ScriptDataDTO() { }
         public ScriptDataDTO(ScriptDataDTO _cm) 
         {
-            parts = _cm.parts;
             actionType = _cm.actionType;
+            if (_cm.parts == null) return;
+
+            parts = new ScriptPartsDTO[_cm.parts.Length];
+
+            for(int i = 0;i < _cm.parts.Length;i++)
+            {
+                parts[i] = new ScriptPartsDTO(_cm.parts[i]);
+            }
         }
 
         public ScriptDataDTO(ScriptPartsDTO[] _parts,int _type)
         {
-            parts = _parts;
             actionType = _type;
+            if (_parts == null) return;
+
+            parts = new ScriptPartsDTO[_parts.Length];
+
+            for (int i = 0; i < _parts.Length; i++)
+            {
+                parts[i] = new ScriptPartsDTO(_parts[i]);
+            }
         }
 
         public ScriptPartsDTO[] parts = null;
@@ -67,7 +81,14 @@ abstract public class CardAPIBase
             description = _cm.description;
             image_path = _cm.image_path;
             card_type = _cm.card_type;
-            script = _cm.script;
+            if(_cm.script != null)
+            {
+                script = new ScriptDataDTO[_cm.script.Length];
+                for (int i = 0; i< _cm.script.Length; i++)
+                {
+                    script[i] = new ScriptDataDTO(_cm.script[i]);
+                }
+            }
             month = _cm.month;
             point = _cm.point;
             starPos = _cm.starPos;
@@ -113,7 +134,14 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 0;
-            res.script = _script;
+            if (_script != null)
+            {
+                res.script = new ScriptDataDTO[_script.Length];
+                for (int i = 0; i< _script.Length; i++)
+                {
+                    res.script[i] = new ScriptDataDTO(_script[i]);
+                }
+            }
             res.month = _month;
             res.point = _point;
             res.starPos = _starPos;
@@ -134,7 +162,14 @@ abstract public class CardAPIBase
             res.description = _description;
             res.image_path = _image_path;
             res.card_type = 1;
-            res.script = _script;
+            if (_script != null)
+            {
+                res.script = new ScriptDataDTO[_script.Length];
+                for (int i = 0; i< _script.Length; i++)
+                {
+                    res.script[i] = new ScriptDataDTO(_script[i]);
+                }
+            }
             res.item_type = _item_type;
             return res;
         }

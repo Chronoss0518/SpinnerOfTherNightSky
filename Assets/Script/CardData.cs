@@ -15,15 +15,9 @@ public class ScriptParts
 
     public ScriptParts(CardAPIBase.ScriptPartsDTO _dto)
     {
-        Set(_dto);
-    }
-
-    public void Set(CardAPIBase.ScriptPartsDTO _dto)
-    {
         type = (ScriptManager.ScriptType)_dto.type;
         argments = _dto.argments;
     }
-
 
     public ScriptManager.ScriptType type = 0;
     public string argments = "";
@@ -41,21 +35,16 @@ public class ScriptData
 
     public ScriptData(CardAPIBase.ScriptDataDTO _dto)
     {
-        Set(_dto);
-    }
-
-    public void Set(CardAPIBase.ScriptDataDTO _dto)
-    {
         parts = new ScriptParts[_dto.parts.Length];
         for (int i = 0; i < _dto.parts.Length; i++)
         {
-            parts[i].Set(_dto.parts[i]);
+            parts[i] = new ScriptParts(_dto.parts[i]);
         }
         type = (ScriptManager.ActionType)_dto.actionType;
     }
 
-    ScriptParts[] parts = null;
-    ScriptManager.ActionType type = ScriptManager.ActionType.Stay;
+    public ScriptParts[] parts = null;
+    public ScriptManager.ActionType type = ScriptManager.ActionType.Stay;
 }
 
 
@@ -70,41 +59,17 @@ public class CardData
 
     public CardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script)
     {
-        id = _id;
-        name = _name;
-        description = _description;
-        imagePath = _imagePath;
-        cardType = _cardType;
-        script = _script;
+        Set(_id,_name,_description,_imagePath,_cardType,_script);
     }
 
     public CardData(CardAPIBase.CardDataDTO _dto)
     {
-        id = _dto.id;
-        name = _dto.name;
-        description = _dto.description;
-        imagePath = _dto.image_path;
-        cardType = _dto.card_type;
-        script = new ScriptData[_dto.script.Length];
-        for (int i = 0; i < _dto.script.Length;i++)
-        {
-            script[i].Set(_dto.script[i]);
-        }
+        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script);
     }
 
     public CardData(CardAPIBase.BookCardDataDTO _dto)
     {
-        id = _dto.id;
-        name = _dto.name;
-        description = _dto.description;
-        imagePath = _dto.image_path;
-        cardType = _dto.card_type;
-        script = new ScriptData[_dto.script.Length];
-        for (int i = 0; i < _dto.script.Length; i++)
-        {
-            script[i].Set(_dto.script[i]);
-        }
-        initBookPos = _dto.init_book_pos;
+        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script);
     }
 
     public int id = 0;
@@ -128,6 +93,40 @@ public class CardData
             ? new MagicCardData(data)
             : new ItemCardData(data);
     }
+
+
+    public void Set(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script)
+    {
+        id = _id;
+        name = _name;
+        description = _description;
+        imagePath = _imagePath;
+        cardType = _cardType;
+
+        if (_script == null) return;
+        script = new ScriptData[_script.Length];
+        for (int i = 0; i < _script.Length; i++)
+        {
+            script[i] = new ScriptData(_script[i].parts, _script[i].type);
+        }
+    }
+
+    public void Set(int _id, string _name, string _description, string _imagePath, int _cardType, CardAPIBase.ScriptDataDTO[] _script)
+    {
+        id = _id;
+        name = _name;
+        description = _description;
+        imagePath = _imagePath;
+        cardType = _cardType;
+
+        if (_script == null) return;
+        script = new ScriptData[_script.Length];
+        for (int i = 0; i < _script.Length; i++)
+        {
+            script[i] = new ScriptData(_script[i]);
+        }
+    }
+
 }
 
 [System.Serializable]
