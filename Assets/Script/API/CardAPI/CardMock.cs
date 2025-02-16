@@ -6,9 +6,40 @@ using UnityEngine;
 public class CardMock : CardAPIBase
 {
     BookCardDataDTO[] cardMock = new BookCardDataDTO[]{
-        BookCardDataDTO.GenerateMagicCard(0,"南十字-Fastere","","",new ScriptDataDTO[]{new ScriptDataDTO() },6,1,new Vector2Int[]{new Vector2Int(2,0),new Vector2Int(1,1),new Vector2Int(3,1),new Vector2Int(2,3) }),
-        BookCardDataDTO.GenerateMagicCard(1,"矢-Fastere","","",new ScriptDataDTO[]{new ScriptDataDTO() },8,1,new Vector2Int[]{new Vector2Int(0,1),new Vector2Int(2,2),new Vector2Int(4,3),new Vector2Int(4,4) }),
-        BookCardDataDTO.GenerateMagicCard(2,"盾-Fastere","[Stay]自身以外のプレイヤーは勝利に必要な術ポイントが1増える","",new ScriptDataDTO[]{new ScriptDataDTO(new ScriptPartsDTO[] { new ScriptPartsDTO(14, "-t other -pt 1") },1) },1,1,new Vector2Int[] { new Vector2Int(1, 0), new Vector2Int(1, 2), new Vector2Int(1, 3), new Vector2Int(3, 2), new Vector2Int(3, 4) }),
+        BookCardDataDTO.GenerateMagicCard(0,"南十字-Fastere","","",
+            new ScriptDataDTO[]{new ScriptDataDTO() },6,1,
+            new Vector2Int[]{
+                new Vector2Int(2,0),
+                new Vector2Int(1,1),
+                new Vector2Int(3,1),
+                new Vector2Int(2,3)
+            }
+        ),
+        BookCardDataDTO.GenerateMagicCard(1,"矢-Fastere","","",
+            new ScriptDataDTO[]{new ScriptDataDTO() },8,1,
+            new Vector2Int[]{
+                new Vector2Int(0,1),
+                new Vector2Int(2,2),
+                new Vector2Int(4,3),
+                new Vector2Int(4,4)
+            }
+        ),
+        BookCardDataDTO.GenerateMagicCard(2,"盾-Fastere","[Stay]自身以外のプレイヤーは勝利に必要な術ポイントが1増える","",
+            new ScriptDataDTO[]{
+                new ScriptDataDTO(
+                    new ScriptPartsDTO[] { 
+                        new ScriptPartsDTO(14, "-t other -pt 1")
+                    },1
+                )
+            },1,1,
+            new Vector2Int[] {
+                new Vector2Int(1, 0),
+                new Vector2Int(1, 2),
+                new Vector2Int(1, 3),
+                new Vector2Int(3, 2),
+                new Vector2Int(3, 4)
+            }
+        ),
         BookCardDataDTO.GenerateMagicCard(3,"Test3","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new Vector2Int[] {new Vector2Int(4,4) }),
         BookCardDataDTO.GenerateMagicCard(4,"Test4","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new Vector2Int[] {new Vector2Int(4,4) }),
         BookCardDataDTO.GenerateMagicCard(5,"Test5","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new Vector2Int[] {new Vector2Int(4,4) }),
