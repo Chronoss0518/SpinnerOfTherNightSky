@@ -22,7 +22,7 @@ public class Player : MonoBehaviour
     MagicZoneManager myMagicZone = null;
 
     [SerializeField]
-    ControllerBase controller = null;
+    ControllerBase controllerCom = null;
 
     [SerializeField, ReadOnly]
     CardData[] cardData = null;
@@ -44,7 +44,7 @@ public class Player : MonoBehaviour
 
     public void SetGameManager(GameManager _gameManager) {  gameManager = _gameManager; }
 
-    public ControllerBase playerController { get { return controller; } }
+    public ControllerBase controller { get { return controllerCom; } }
 
     public ItemZoneManager itemZone {  get { return myItemZone; } }
 
@@ -74,22 +74,26 @@ public class Player : MonoBehaviour
 
     public void SetCPUController()
     {
-
+        controllerCom = gameObject.AddComponent<CPUController>();
     }
 
     public void SetNetController()
     {
-        controller = gameObject.AddComponent<NetWorkController>();
+        controllerCom = gameObject.AddComponent<NetWorkController>();
     }
 
     public void SetPlayerController()
     {
-
+        var tmp = gameObject.AddComponent<PlayerController>();
+        tmp.SetVerticalUIs(gameManager.verticalPlayerControllerUIs);
+        tmp.SetLandscapeUIs(gameManager.landscapePlayerControllerUIs);
+        controllerCom = tmp;
     }
 
     void Update()
     {
         UpdateBookParent();
+        UpdateMoveBookIntoCamera();
     }
 
     void UpdateBookParent()
@@ -111,4 +115,12 @@ public class Player : MonoBehaviour
         book.transform.localRotation = Quaternion.identity;
 
     }
+
+    void UpdateMoveBookIntoCamera()
+    {
+
+        if (book == null) return;
+        
+    }
+
 }
