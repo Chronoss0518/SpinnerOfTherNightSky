@@ -2,6 +2,21 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
+using UnityEngine.UI;
+
+[System.Serializable]
+public class PlayerControllerUI
+{
+    [SerializeField]
+    public Text selectButtonText = null;
+
+    [SerializeField]
+    public Canvas buttonVisibleCanvas = null;
+
+    [SerializeField]
+    public Canvas buttonVisibleCanvasController = null;
+
+}
 
 public class GameManager : MonoBehaviour
 {
@@ -28,6 +43,57 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
+    public class ScriptAction
+    {
+        public ScriptManager.ScriptType type;
+    }
+
+    public class PutStoneAction : ScriptAction
+    {
+        public int putMinCount = 0;
+        public int putMaxCount = 0;
+    }
+
+    public class RemoveStoneAction : ScriptAction
+    {
+        public int removeMinCount = 0;
+        public int removeMaxCount = 0;
+    }
+
+    public class SelectPlayerAction : ScriptAction
+    {
+        //1で自身//
+        //2で自身以外//
+        public int playerType = -1;
+        public int selectMinCount = 1;
+        public int selectMaxCount = 1;
+    }
+
+    public class SelectCardAction : ScriptAction
+    {
+        public int selectMinCount = 1;
+        public int selectMaxCount = 1;
+        //1で自身//
+        //2で自身以外//
+        public int playerType = -1;
+        //0でBook//
+        //1で
+        public int zoneType = -1;
+        public CardData.CardType cardType = CardData.CardType.Magic;
+        public List<ItemCardScript.ItemType> itemType = new List<ItemCardScript.ItemType>();
+        public List<int> magicAttributeNum = new List<int>();
+        public List<MagicCardScript.CardAttribute> magicAttributeType = new List<MagicCardScript.CardAttribute>();
+    }
+
+
+    [SerializeField]
+    PlayerControllerUI verticalPlayerUIs = null;
+    [SerializeField]
+    PlayerControllerUI landscapePlayerUIs = null;
+
+    public PlayerControllerUI verticalPlayerControllerUIs { get { return verticalPlayerUIs; } }
+    public PlayerControllerUI landscapePlayerControllerUIs { get { return landscapePlayerUIs; } }
+
     [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
 
@@ -50,7 +116,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     Manager manager = Manager.ins;
-
 
     bool initFlg { get; set; } = false;
 
@@ -126,7 +191,6 @@ public class GameManager : MonoBehaviour
         nowPlayerCount %= players.Count;
     }
 
-
     IEnumerator GetBookData(int _bookId,
         System.Action<BookAPIBase.GetBookDatasResponse> _success,
         System.Action _failed = null)
@@ -171,7 +235,7 @@ public class GameManager : MonoBehaviour
         var playerCom = CreatePlayerComponent();
 
         playerCom.SetPlayerController();
-        //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
+        StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
         StartCoroutine(GetCardsFromBookData(manager.useBookNo, (res) =>
         {
             var cards = new List<CardData>();
