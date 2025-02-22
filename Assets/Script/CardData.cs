@@ -35,6 +35,7 @@ public class ScriptData
 
     public ScriptData(CardAPIBase.ScriptDataDTO _dto)
     {
+        if (_dto.parts == null) return;
         parts = new ScriptParts[_dto.parts.Length];
         for (int i = 0; i < _dto.parts.Length; i++)
         {
@@ -69,7 +70,7 @@ public class CardData
 
     public CardData(CardAPIBase.BookCardDataDTO _dto)
     {
-        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script);
+        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script, _dto.init_book_pos);
     }
 
     public int id = 0;
@@ -111,7 +112,7 @@ public class CardData
         }
     }
 
-    public void Set(int _id, string _name, string _description, string _imagePath, int _cardType, CardAPIBase.ScriptDataDTO[] _script)
+    public void Set(int _id, string _name, string _description, string _imagePath, int _cardType, CardAPIBase.ScriptDataDTO[] _script,int _initBookPos = 0)
     {
         id = _id;
         name = _name;
@@ -119,6 +120,7 @@ public class CardData
         imagePath = _imagePath;
         cardType = _cardType;
 
+        initBookPos = _initBookPos;
         if (_script == null) return;
         script = new ScriptData[_script.Length];
         for (int i = 0; i < _script.Length; i++)
