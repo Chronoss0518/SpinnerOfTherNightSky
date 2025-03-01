@@ -1,13 +1,15 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ItemCardScript : CardScriptBase
 {
+    [System.Flags]
     public enum ItemType : int
     {
-        Normal,
-        Trap
+        Normal = 1,
+        Trap = 2
     }
 
     public ItemType type { get; private set; } = ItemType.Normal;

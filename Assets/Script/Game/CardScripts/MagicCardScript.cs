@@ -13,20 +13,36 @@ public class MagicCardScript : CardScriptBase
         Winter
     }
 
+    public enum CardAttributeMonth : int
+    {
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December,
+    }
+
     [SerializeField,ReadOnly]
     private CardAttribute attribute = CardAttribute.Spring;
 
     public CardAttribute attributeType { get { return attribute; } }
 
     [SerializeField, ReadOnly]
-    private int attributeMonth = 0;
-    public int month { get { return attributeMonth; } }
+    private CardAttributeMonth attributeMonth = 0;
+    public CardAttributeMonth month { get { return attributeMonth; } }
 
     public void SetAttribute(int _attribute) {
         if (_attribute < 0) return;
         if (_attribute >= 12) return;
 
-        attributeMonth = _attribute;
+        attributeMonth = (CardAttributeMonth)_attribute;
 
         attribute = CardAttribute.Winter;
 

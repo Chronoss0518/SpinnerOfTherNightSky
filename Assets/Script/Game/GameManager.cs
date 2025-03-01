@@ -43,53 +43,11 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
-    public class ScriptAction
-    {
-        public ScriptManager.ScriptType type;
-    }
-
-    public class PutStoneAction : ScriptAction
-    {
-        public int putMinCount = 0;
-        public int putMaxCount = 0;
-    }
-
-    public class RemoveStoneAction : ScriptAction
-    {
-        public int removeMinCount = 0;
-        public int removeMaxCount = 0;
-    }
-
-    public class SelectPlayerAction : ScriptAction
-    {
-        //1で自身//
-        //2で自身以外//
-        public int playerType = -1;
-        public int selectMinCount = 1;
-        public int selectMaxCount = 1;
-    }
-
-    public class SelectCardAction : ScriptAction
-    {
-        public int selectMinCount = 1;
-        public int selectMaxCount = 1;
-        //1で自身//
-        //2で自身以外//
-        public int playerType = -1;
-        //0でBook//
-        //1で
-        public int zoneType = -1;
-        public CardData.CardType cardType = CardData.CardType.Magic;
-        public List<ItemCardScript.ItemType> itemType = new List<ItemCardScript.ItemType>();
-        public List<int> magicAttributeNum = new List<int>();
-        public List<MagicCardScript.CardAttribute> magicAttributeType = new List<MagicCardScript.CardAttribute>();
-    }
-
+    [SerializeField]
+    Text message = null;
 
     [SerializeField]
-    PlayerControllerUI verticalPlayerUIs = null;
-    [SerializeField]
-    PlayerControllerUI landscapePlayerUIs = null;
+    PlayerControllerUI verticalPlayerUIs = null, landscapePlayerUIs = null;
 
     public PlayerControllerUI verticalPlayerControllerUIs { get { return verticalPlayerUIs; } }
     public PlayerControllerUI landscapePlayerControllerUIs { get { return landscapePlayerUIs; } }
@@ -97,17 +55,20 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
 
-    [SerializeField, ReadOnly]
-    int nowPlayerCount = 0;
+    [SerializeField]
+    Player playerPrefab = null;
 
     [SerializeField]
     StoneBoardManager stoneBoard = null;
 
     [SerializeField]
-    Player playerPrefab = null;
-
-    [SerializeField]
     Camera cameraObject = null;
+
+    [SerializeField, ReadOnly]
+    int nowPlayerCount = 0;
+
+    [SerializeField, ReadOnly]
+    ScriptManager scriptManager = ScriptManager.ins;
 
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
@@ -148,6 +109,16 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        /*
+        var scriptAction = scriptManager.CreateScript(new ScriptData(
+            [new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3")],
+            ScriptManager.ActionType.Entry));
+
+        scriptManager.RunScript(players[nowPlayerCount], this, scriptAction);
+        */
+
+        return;
+
         StartDice();
 
         if (!initFlg) return;
