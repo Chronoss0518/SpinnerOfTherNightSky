@@ -26,7 +26,7 @@ public class Book : MonoBehaviour
     [SerializeField]
     GameObject cardPrefab = null;
 
-    bool initFlg = false;
+    public bool initFlg { get; private set; } = false;
 
     public void Init()
     {
@@ -91,6 +91,18 @@ public class Book : MonoBehaviour
         ActiveTest(nextButton, true);
         if (nowPage > 0) return;
         ActiveTest(backButton, false);
+    }
+
+    public void SetPage(int _page)
+    {
+        if (_page >= PAGE_MAX_SIZE) return;
+        if (0 > _page) return;
+        nowPage = _page;
+        UpdateSelectedCard();
+        animator.SetInteger("PageCount", nowPage);
+
+        ActiveTest(nextButton, nowPage < PAGE_MAX_SIZE - 1);
+        ActiveTest(backButton, nowPage > 0 );
     }
 
     public void PutCard(CardData _card)

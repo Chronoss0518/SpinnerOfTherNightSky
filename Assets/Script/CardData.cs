@@ -1,6 +1,5 @@
 using System.Collections;
 using System.Collections.Generic;
-using System.Security.Cryptography;
 using UnityEngine;
 
 [System.Serializable]
@@ -52,10 +51,11 @@ public class ScriptData
 [System.Serializable]
 public class CardData
 {
+    [System.Flags]
     public enum CardType
     {
-        Magic,
-        Item,
+        Magic = 1,
+        Item = 2,
     }
 
     public CardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script)
@@ -65,12 +65,12 @@ public class CardData
 
     public CardData(CardAPIBase.CardDataDTO _dto)
     {
-        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script);
+        Set(_dto.id, _dto.name, _dto.description, _dto.imagePath, _dto.cardType, _dto.script);
     }
 
     public CardData(CardAPIBase.BookCardDataDTO _dto)
     {
-        Set(_dto.id, _dto.name, _dto.description, _dto.image_path, _dto.card_type, _dto.script, _dto.init_book_pos);
+        Set(_dto.id, _dto.name, _dto.description, _dto.imagePath, _dto.cardType, _dto.script, _dto.init_book_pos);
     }
 
     public int id = 0;
@@ -83,14 +83,14 @@ public class CardData
 
     static public CardData CreateCardDataFromDTO(CardAPIBase.CardDataDTO data)
     {
-        return data.card_type == 0
+        return data.cardType == 0
             ? new MagicCardData(data)
             : new ItemCardData(data);
     }
 
     static public CardData CreateCardDataFromDTO(CardAPIBase.BookCardDataDTO data)
     {
-        return data.card_type == 0
+        return data.cardType == 0
             ? new MagicCardData(data)
             : new ItemCardData(data);
     }
@@ -134,28 +134,38 @@ public class CardData
 [System.Serializable]
 public class MagicCardData : CardData
 {
-    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _month, int _point, Vector2Int[] _starPos) :
+    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _month, int _point, CardAPIBase.MagicStonePosition[] _starPos) :
         base(_id, _name, _description, _imagePath, _cardType, _script)
     {
-        month = _month;
-        point = _point;
-        starPos = _starPos;
+        Set(_month, _point, _starPos);
     }
 
     public MagicCardData(CardAPIBase.CardDataDTO _dto) :
         base(_dto)
     {
-        month = _dto.month;
-        point = _dto.point;
-        starPos = _dto.starPos;
+        Set(_dto.month, _dto.point, _dto.starPos);
     }
 
     public MagicCardData(CardAPIBase.BookCardDataDTO _dto) :
         base(_dto)
     {
-        month = _dto.month;
-        point = _dto.point;
-        starPos = _dto.starPos;
+        Set(_dto.month, _dto.point, _dto.starPos);
+    }
+
+    public void Set(int _month, int _point, CardAPIBase.MagicStonePosition[] _starPos = null)
+    {
+        month = _month;
+        point = _point;
+
+        if (_starPos != null)
+        {
+            starPos = new Vector2Int[_starPos.Length];
+            for (int i = 0; i < _starPos.Length; i++)
+            {
+                starPos[i].x = _starPos[i].x;
+                starPos[i].y = _starPos[i].y;
+            }
+        }
     }
 
     public int month = 0;
@@ -169,19 +179,24 @@ public class ItemCardData : CardData
     public ItemCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _itemType) :
         base(_id, _name, _description, _imagePath, _cardType, _script)
     {
-        itemType = _itemType;
+        Set(_itemType);
     }
 
     public ItemCardData(CardAPIBase.CardDataDTO _dto) :
         base(_dto)
     {
-        itemType = _dto.item_type;
+        Set(_dto.itemType);
     }
 
     public ItemCardData(CardAPIBase.BookCardDataDTO _dto) :
         base(_dto)
     {
-        itemType = _dto.item_type;
+        Set(_dto.itemType);
+    }
+
+    public void Set(int _itemType)
+    {
+        itemType = _itemType;
     }
 
     public int itemType = 0;
