@@ -9,9 +9,6 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameManager gameManager = null;
 
-    [SerializeField, ReadOnly]
-    Book book = null;
-
     [SerializeField]
     ItemZoneManager myItemZone = null;
 
@@ -28,10 +25,16 @@ public class Player : MonoBehaviour
     CardData[] cardData = null;
 
     [SerializeField]
-    Book bookPrefab = null;
+    Book book = null;
 
     [SerializeField]
     GameObject landscapeScreenPos = null, verticalScreenPos = null;
+
+    [SerializeField]
+    GameObject bookObjectPos = null;
+
+    [SerializeField]
+    GameObject visibleButtonCanvas = null;
 
     [SerializeField, ReadOnly]
     Manager manager = Manager.ins;
@@ -59,12 +62,8 @@ public class Player : MonoBehaviour
         cardData = _cardData;
 
         if (!_createBookObject) return;
-        if (book != null) return;
-        if (bookPrefab == null) return;
-
-        var obj = Instantiate(bookPrefab,transform);
-
-        book = obj.GetComponent<Book>();
+        if (book == null) return;
+        if (book.initFlg) return;
 
         book.Init();
         book.InitCard(cardData);
@@ -75,11 +74,23 @@ public class Player : MonoBehaviour
     public void SetCPUController()
     {
         controllerCom = gameObject.AddComponent<CPUController>();
+        if (book != null)
+           Destroy(book.gameObject);
+        if (bookObjectPos != null)
+            Destroy(bookObjectPos);
+        if (visibleButtonCanvas != null)
+            Destroy(visibleButtonCanvas);
     }
 
     public void SetNetController()
     {
         controllerCom = gameObject.AddComponent<NetWorkController>();
+        if (book != null)
+            Destroy(book.gameObject);
+        if (bookObjectPos != null)
+            Destroy(bookObjectPos);
+        if (visibleButtonCanvas != null)
+            Destroy(visibleButtonCanvas);
     }
 
     public void SetPlayerController()
@@ -118,7 +129,6 @@ public class Player : MonoBehaviour
 
     void UpdateMoveBookIntoCamera()
     {
-
         if (book == null) return;
         
     }
