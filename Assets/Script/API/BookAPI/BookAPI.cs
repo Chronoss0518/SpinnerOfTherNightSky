@@ -1,5 +1,7 @@
+using Newtonsoft.Json;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using UnityEngine;
 
 abstract public class BookAPIBase
@@ -37,17 +39,32 @@ abstract public class BookAPIBase
             play_mat_path = _data.play_mat_path;
         }
 
+
+        [JsonProperty("id"), DefaultValue(0)]
         public int id = 0;
+
+        [JsonProperty("name"), DefaultValue("")]
         public string name = "";
+
+        [JsonProperty("cover_path"), DefaultValue("")]
         public string cover_path = "";
+
+        [JsonProperty("card_case_path"), DefaultValue("")]
         public string card_case_path = "";
+
+        [JsonProperty("stone_path"), DefaultValue("")]
         public string stone_path = "";
+
+        [JsonProperty("play_mat_path"), DefaultValue("")]
         public string play_mat_path = "";
     }
 
     public class GetBookDatasResponse
     {
+        [JsonProperty("status_code"), DefaultValue(500)]
         public int statusCode = 500;
+
+        [JsonProperty("data"), DefaultValue(null)]
         public BookDataDTO data = null;
     }
 

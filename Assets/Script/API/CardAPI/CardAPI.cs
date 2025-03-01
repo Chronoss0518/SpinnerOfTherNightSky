@@ -3,6 +3,10 @@ using System.Collections.Generic;
 using System.Security.Cryptography;
 using Unity.VisualScripting;
 using UnityEngine;
+using Newtonsoft.Json;
+using System.ComponentModel;
+
+
 #if UNITY_EDITOR
 using UnityEditor;
 #endif
@@ -20,6 +24,23 @@ abstract public class CardAPIBase
 
 #endif
 
+    public class MagicStonePosition
+    {
+        public MagicStonePosition() { }
+
+        public MagicStonePosition(int _x, int _y)
+        {
+            x=_x;
+            y=_y;
+        }
+
+        [JsonProperty("position_x"), DefaultValue(0)]
+        public int x { get; set; } = 0;
+
+        [JsonProperty("position_y"), DefaultValue(0)]
+        public int y { get; set; } = 0;
+    }
+
     public class ScriptPartsDTO
     {
         public ScriptPartsDTO() { }
@@ -35,8 +56,11 @@ abstract public class CardAPIBase
             argments = _args;
         }
 
-        public int type = 0;
-        public string argments = "";
+        [JsonProperty("action_type"), DefaultValue(0)]
+        public int type { get; set; } = 0;
+
+        [JsonProperty("script_argment"), DefaultValue("")]
+        public string argments { get; set; } = "";
     }
 
     public class ScriptDataDTO
@@ -68,8 +92,11 @@ abstract public class CardAPIBase
             }
         }
 
-        public ScriptPartsDTO[] parts = null;
-        public int actionType = 0;
+        [JsonProperty("card_scripts"), DefaultValue(null)]
+        public ScriptPartsDTO[] parts { get; set; } = null;
+
+        [JsonProperty("type_name"), DefaultValue(0)]
+        public int actionType { get; set; } = 0;
     }
 
     public class CardDataDTO
@@ -79,8 +106,8 @@ abstract public class CardAPIBase
             id = _cm.id;
             name = _cm.name;
             description = _cm.description;
-            image_path = _cm.image_path;
-            card_type = _cm.card_type;
+            imagePath = _cm.imagePath;
+            cardType = _cm.cardType;
             if(_cm.script != null)
             {
                 script = new ScriptDataDTO[_cm.script.Length];
@@ -92,19 +119,38 @@ abstract public class CardAPIBase
             month = _cm.month;
             point = _cm.point;
             starPos = _cm.starPos;
-            item_type = _cm.item_type;
+            itemType = _cm.itemType;
         }
 
-        public int id = 0;
-        public string name = "";
-        public string description = "";
-        public string image_path = "";
-        public int card_type = 0;
-        public ScriptDataDTO[] script = null;
-        public int month = 0;
-        public int point = 0;
-        public Vector2Int[] starPos = null;
-        public int item_type = 0;
+        [JsonProperty("id"),DefaultValue(0)]
+        public int id { get; set; } = 0;
+
+        [JsonProperty("name"), DefaultValue("")]
+        public string name { get; set; } = "";
+
+        [JsonProperty("description"), DefaultValue("")]
+        public string description { get; set; } = "";
+
+        [JsonProperty("image_path"), DefaultValue("")]
+        public string imagePath { get; set; } = "";
+
+        [JsonProperty("card_type"), DefaultValue(0)]
+        public int cardType { get; set; } = 0;
+
+        [JsonProperty("scripts"), DefaultValue(null)]
+        public ScriptDataDTO[] script { get; set; } = null;
+
+        [JsonProperty("month_num"), DefaultValue(0)]
+        public int month { get; set; } = 0;
+
+        [JsonProperty("point"), DefaultValue(0)]
+        public int point { get; set; } = 0;
+
+        [JsonProperty("month_num"), DefaultValue(0)]
+        public MagicStonePosition[] starPos { get; set; } = null;
+
+        [JsonProperty("item_type"), DefaultValue(0)]
+        public int itemType { get; set; } = 0;
     }
 
     public class BookCardDataDTO : CardDataDTO
@@ -125,15 +171,15 @@ abstract public class CardAPIBase
             ScriptDataDTO[] _script,
             int _month,
             int _point,
-            Vector2Int[] _starPos
+            MagicStonePosition[] _starPos
             )
         {
             var res = new BookCardDataDTO();
             res.id = _id;
             res.name = _name;
             res.description = _description;
-            res.image_path = _image_path;
-            res.card_type = 0;
+            res.imagePath = _image_path;
+            res.cardType = 0;
             if (_script != null)
             {
                 res.script = new ScriptDataDTO[_script.Length];
@@ -144,7 +190,18 @@ abstract public class CardAPIBase
             }
             res.month = _month;
             res.point = _point;
-            res.starPos = _starPos;
+
+            if(_starPos != null)
+            {
+                res.starPos = new MagicStonePosition[_starPos.Length];
+
+                for (int i = 0; i< _starPos.Length; i++)
+                {
+                    res.starPos[i].x = _starPos[i].x;
+                    res.starPos[i].y = _starPos[i].y;
+                }
+            }
+
             return res;
         }
 
@@ -160,8 +217,8 @@ abstract public class CardAPIBase
             res.id = _id;
             res.name = _name;
             res.description = _description;
-            res.image_path = _image_path;
-            res.card_type = 1;
+            res.imagePath = _image_path;
+            res.cardType = 1;
             if (_script != null)
             {
                 res.script = new ScriptDataDTO[_script.Length];
@@ -170,7 +227,7 @@ abstract public class CardAPIBase
                     res.script[i] = new ScriptDataDTO(_script[i]);
                 }
             }
-            res.item_type = _item_type;
+            res.itemType = _item_type;
             return res;
         }
 
@@ -178,19 +235,28 @@ abstract public class CardAPIBase
 
     public class GetCardResponse
     {
+        [JsonProperty("status_code"), DefaultValue(500)]
         public int statusCode = 500;
+
+        [JsonProperty("data"), DefaultValue(null)]
         public CardDataDTO data = null;
     }
 
     public class GetCardAllResponse
     {
+        [JsonProperty("status_code"), DefaultValue(500)]
         public int statusCode = 500;
+
+        [JsonProperty("data"), DefaultValue(null)]
         public CardDataDTO[] data = null;
     }
 
     public class GetCardsFromBookResponse
     {
+        [JsonProperty("status_code"), DefaultValue(500)]
         public int statusCode = 500;
+
+        [JsonProperty("data"), DefaultValue(null)]
         public BookCardDataDTO[] data = null;
     }
 
