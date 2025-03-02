@@ -70,7 +70,7 @@ public class CardData
 
     public CardData(CardAPIBase.BookCardDataDTO _dto)
     {
-        Set(_dto.id, _dto.name, _dto.description, _dto.imagePath, _dto.cardType, _dto.script, _dto.init_book_pos);
+        Set(_dto.id, _dto.name, _dto.description, _dto.imagePath, _dto.cardType, _dto.script, _dto.initBookPos);
     }
 
     public int id = 0;
@@ -83,14 +83,14 @@ public class CardData
 
     static public CardData CreateCardDataFromDTO(CardAPIBase.CardDataDTO data)
     {
-        return data.cardType == 0
+        return data.cardType == (int)CardType.Magic
             ? new MagicCardData(data)
             : new ItemCardData(data);
     }
 
     static public CardData CreateCardDataFromDTO(CardAPIBase.BookCardDataDTO data)
     {
-        return data.cardType == 0
+        return data.cardType == (int)CardType.Magic
             ? new MagicCardData(data)
             : new ItemCardData(data);
     }
@@ -134,7 +134,7 @@ public class CardData
 [System.Serializable]
 public class MagicCardData : CardData
 {
-    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _month, int _point, CardAPIBase.MagicStonePosition[] _starPos) :
+    public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _month, int _point, CardAPIBase.CardMagicPosition[] _starPos) :
         base(_id, _name, _description, _imagePath, _cardType, _script)
     {
         Set(_month, _point, _starPos);
@@ -152,7 +152,7 @@ public class MagicCardData : CardData
         Set(_dto.month, _dto.point, _dto.starPos);
     }
 
-    public void Set(int _month, int _point, CardAPIBase.MagicStonePosition[] _starPos = null)
+    public void Set(int _month, int _point, CardAPIBase.CardMagicPosition[] _starPos = null)
     {
         month = _month;
         point = _point;
@@ -162,8 +162,7 @@ public class MagicCardData : CardData
             starPos = new Vector2Int[_starPos.Length];
             for (int i = 0; i < _starPos.Length; i++)
             {
-                starPos[i].x = _starPos[i].x;
-                starPos[i].y = _starPos[i].y;
+                starPos[i] =new Vector2Int( _starPos[i].x, _starPos[i].y);
             }
         }
     }

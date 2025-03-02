@@ -24,11 +24,11 @@ abstract public class CardAPIBase
 
 #endif
 
-    public class MagicStonePosition
+    public class CardMagicPosition
     {
-        public MagicStonePosition() { }
+        public CardMagicPosition() { }
 
-        public MagicStonePosition(int _x, int _y)
+        public CardMagicPosition(int _x, int _y)
         {
             x=_x;
             y=_y;
@@ -146,8 +146,8 @@ abstract public class CardAPIBase
         [JsonProperty("point"), DefaultValue(0)]
         public int point { get; set; } = 0;
 
-        [JsonProperty("month_num"), DefaultValue(0)]
-        public MagicStonePosition[] starPos { get; set; } = null;
+        [JsonProperty("card_magic_position"), DefaultValue(null)]
+        public CardMagicPosition[] starPos { get; set; } = null;
 
         [JsonProperty("item_type"), DefaultValue(0)]
         public int itemType { get; set; } = 0;
@@ -158,10 +158,11 @@ abstract public class CardAPIBase
         public BookCardDataDTO() { }
         public BookCardDataDTO(BookCardDataDTO _cm):base(_cm)
         {
-            init_book_pos = _cm.init_book_pos;
+            initBookPos = _cm.initBookPos;
         }
 
-        public int init_book_pos = 0;
+        [JsonProperty("init_book_pos"), DefaultValue(0)]
+        public int initBookPos { get; set; } = 0;
 
         static public BookCardDataDTO GenerateMagicCard(
             int _id,
@@ -171,7 +172,7 @@ abstract public class CardAPIBase
             ScriptDataDTO[] _script,
             int _month,
             int _point,
-            MagicStonePosition[] _starPos
+            CardMagicPosition[] _starPos
             )
         {
             var res = new BookCardDataDTO();
@@ -179,7 +180,7 @@ abstract public class CardAPIBase
             res.name = _name;
             res.description = _description;
             res.imagePath = _image_path;
-            res.cardType = 0;
+            res.cardType = (int)CardData.CardType.Magic;
             if (_script != null)
             {
                 res.script = new ScriptDataDTO[_script.Length];
@@ -193,12 +194,11 @@ abstract public class CardAPIBase
 
             if(_starPos != null)
             {
-                res.starPos = new MagicStonePosition[_starPos.Length];
+                res.starPos = new CardMagicPosition[_starPos.Length];
 
                 for (int i = 0; i< _starPos.Length; i++)
                 {
-                    res.starPos[i].x = _starPos[i].x;
-                    res.starPos[i].y = _starPos[i].y;
+                    res.starPos[i] = new CardMagicPosition(_starPos[i].x, _starPos[i].y);
                 }
             }
 
@@ -218,7 +218,7 @@ abstract public class CardAPIBase
             res.name = _name;
             res.description = _description;
             res.imagePath = _image_path;
-            res.cardType = 1;
+            res.cardType = (int)CardData.CardType.Item;
             if (_script != null)
             {
                 res.script = new ScriptDataDTO[_script.Length];
@@ -236,28 +236,28 @@ abstract public class CardAPIBase
     public class GetCardResponse
     {
         [JsonProperty("status_code"), DefaultValue(500)]
-        public int statusCode = 500;
+        public int statusCode { get; set; } = 500;
 
         [JsonProperty("data"), DefaultValue(null)]
-        public CardDataDTO data = null;
+        public CardDataDTO data { get; set; } = null;
     }
 
     public class GetCardAllResponse
     {
         [JsonProperty("status_code"), DefaultValue(500)]
-        public int statusCode = 500;
+        public int statusCode { get; set; } = 500;
 
         [JsonProperty("data"), DefaultValue(null)]
-        public CardDataDTO[] data = null;
+        public CardDataDTO[] data { get; set; } = null;
     }
 
     public class GetCardsFromBookResponse
     {
         [JsonProperty("status_code"), DefaultValue(500)]
-        public int statusCode = 500;
+        public int statusCode { get; set; } = 500;
 
         [JsonProperty("data"), DefaultValue(null)]
-        public BookCardDataDTO[] data = null;
+        public BookCardDataDTO[] data { get; set; } = null;
     }
 
     abstract public IEnumerator<GetCardResponse> GetCard(int id);

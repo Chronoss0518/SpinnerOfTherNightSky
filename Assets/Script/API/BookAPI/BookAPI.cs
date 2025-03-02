@@ -16,56 +16,56 @@ abstract public class BookAPIBase
         public BookDataDTO(
             int _id,
             string _name,
-            string _cover_path,
-            string _card_case_path,
-            string _stone_path,
-            string _play_mat_path)
+            string _coverPath,
+            string _cardCasePath,
+            string _stonePath,
+            string _playMatPath)
         {
             id = _id;
             name = _name;
-            cover_path = _cover_path;
-            card_case_path = _card_case_path;
-            stone_path = _stone_path;
-            play_mat_path = _play_mat_path;
+            coverPath = _coverPath;
+            cardCasePath = _cardCasePath;
+            stonePath = _stonePath;
+            playMatPath = _playMatPath;
         }
 
         public BookDataDTO(BookDataDTO _data)
         {
             id = _data.id;
             name = _data.name;
-            cover_path = _data.cover_path;
-            card_case_path = _data.card_case_path;
-            stone_path = _data.stone_path;
-            play_mat_path = _data.play_mat_path;
+            coverPath = _data.coverPath;
+            cardCasePath = _data.cardCasePath;
+            stonePath = _data.stonePath;
+            playMatPath = _data.playMatPath;
         }
 
 
         [JsonProperty("id"), DefaultValue(0)]
-        public int id = 0;
+        public int id { get; set; } = 0;
 
         [JsonProperty("name"), DefaultValue("")]
-        public string name = "";
+        public string name { get; set; } = "";
 
         [JsonProperty("cover_path"), DefaultValue("")]
-        public string cover_path = "";
+        public string coverPath { get; set; } = "";
 
         [JsonProperty("card_case_path"), DefaultValue("")]
-        public string card_case_path = "";
+        public string cardCasePath { get; set; } = "";
 
         [JsonProperty("stone_path"), DefaultValue("")]
-        public string stone_path = "";
+        public string stonePath { get; set; } = "";
 
         [JsonProperty("play_mat_path"), DefaultValue("")]
-        public string play_mat_path = "";
+        public string playMatPath { get; set; } = "";
     }
 
     public class GetBookDatasResponse
     {
         [JsonProperty("status_code"), DefaultValue(500)]
-        public int statusCode = 500;
+        public int statusCode { get; set; } = 500;
 
         [JsonProperty("data"), DefaultValue(null)]
-        public BookDataDTO data = null;
+        public BookDataDTO data { get; set; } = null;
     }
 
     abstract public IEnumerator<GetBookDatasResponse> GetBookData(int id);

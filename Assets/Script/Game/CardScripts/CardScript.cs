@@ -61,9 +61,8 @@ public class CardScript : MonoBehaviour
 
     public void Init(CardData _data)
     {
-        data = _data;
-        InitMagicCardScript(data);
-        InitItemCardScript(data);
+        InitMagicCardScript(_data);
+        InitItemCardScript(_data);
     }
 
     public void SelectAction()
@@ -73,21 +72,23 @@ public class CardScript : MonoBehaviour
 
     void InitMagicCardScript(CardData _data)
     {
-        if (data.cardType != (int)CardData.CardType.Magic) return;
+        if (_data.cardType != (int)CardData.CardType.Magic) return;
         var script = gameObject.AddComponent<MagicCardScript>();
         var magicData = (MagicCardData)_data;
         script.SetAttribute(magicData.month);
         script.SetPoint(magicData.point);
         script.SetBaseCard(this);
+        data = _data;
     }
 
     void InitItemCardScript(CardData _data)
     {
-        if (data.cardType != (int)CardData.CardType.Item) return;
+        if (_data.cardType != (int)CardData.CardType.Item) return;
         var script = gameObject.AddComponent<ItemCardScript>();
         var itemData = (ItemCardData)_data;
         script.SetType((ItemCardScript.ItemType)itemData.itemType);
         script.SetBaseCard(this);
+        data = _data;
     }
 
     void SetAnimation(CardObject _obj, bool _flg)
