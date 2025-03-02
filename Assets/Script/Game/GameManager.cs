@@ -15,7 +15,6 @@ public class PlayerControllerUI
 
     [SerializeField]
     public Canvas buttonVisibleCanvasController = null;
-
 }
 
 public class GameManager : MonoBehaviour
@@ -73,6 +72,10 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
 
+
+    [SerializeField, ReadOnly]
+    ScriptManager.ScriptActionData selectStone = null;
+
     public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
 
     [SerializeField, ReadOnly]
@@ -109,32 +112,46 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-        /*
-        var scriptAction = scriptManager.CreateScript(new ScriptData(
-            [new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3")],
-            ScriptManager.ActionType.Entry));
-
-        scriptManager.RunScript(players[nowPlayerCount], this, scriptAction);
-        */
-
-        return;
-
         StartDice();
 
         if (!initFlg) return;
+
+        RunTurnStep();
+
+        if (!scriptManager.isRunScript) return;
+
+        scriptManager.RunScript(players[nowPlayerCount],this);
+    }
+
+
+    void RunTurnStep()
+    {
+        if (scriptManager.isRunScript) return;
 
         TurnStart();
 
         P_UseItem();
 
-
         TurnEnd();
-    }
 
+    }
 
     void StartDice()
     {
         if (initFlg) return;
+
+        selectStone = scriptManager.CreateScript(new ScriptData(
+            new ScriptParts[] { new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3") },
+            ScriptManager.ActionType.Entry));
+
+        var tmp = (ScriptManager.SelectStoneBoardAction)selectStone.actions[0];
+
+
+        Debug.Log("SelectStoneBoardAction Log: min[" + tmp.minCount.ToString() + "] max[" + tmp.maxCount.ToString() + "]" );
+
+        scriptManager.SetRunScript(selectStone);
+
+        initFlg = true;
     }
 
     void TurnStart()

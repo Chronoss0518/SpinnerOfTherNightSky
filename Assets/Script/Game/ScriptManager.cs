@@ -157,21 +157,16 @@ public class ScriptManager
         public List<ScriptAction> actions = new List<ScriptAction>();
     }
 
-    public bool isRunScript { get; private set; } = false;
+    public bool isRunScript { get { return runScript != null; } }
 
-    ScriptActionData entryScript = null;
-    ScriptActionData exitScript = null;
+    ScriptActionData runScript = null;
     List<ScriptActionData> stayScript = new List<ScriptActionData>();
-
-
 
     Player targetPlayer { get; set; } = null;
 
     CardScript targetCard { get; set; } = null;
 
     int useScriptCount = 0;
-
-    Dictionary<ScriptType,CardScript> stayActionCardScripts = new Dictionary<ScriptType, CardScript>();
 
 #if UNITY_EDITOR
 
@@ -189,7 +184,7 @@ public class ScriptManager
 
 #endif
 
-    public void RegistScript(ScriptData _script)
+    public ScriptActionData CreateScript(ScriptData _script, bool _regist = false)
     {
         var res = new ScriptActionData();
         res.type = _script.type;
@@ -205,14 +200,22 @@ public class ScriptManager
             if (CreateScriptAction(res, CreateWinnerPointAction, _script.parts[useScriptCount])) continue;
         }
 
-        if(res.type == ActionType.Entry)
-            entryScript =  res;
-
-        if (res.type == ActionType.Entry)
+        if (res.type == ActionType.Stay)
+        {
             stayScript.Add(res);
+            return null;
+        }
 
-        if (res.type == ActionType.Entry)
-            exitScript =  res;
+        if (_regist)
+            runScript = res;
+
+        return res;
+    }
+
+    public void SetRunScript(ScriptActionData _data)
+    {
+        if (_data == null) return;
+        runScript = _data;
     }
 
     public void IsStayScriptTest()
@@ -222,56 +225,80 @@ public class ScriptManager
 
     public void RunScript(Player _player, GameManager _gameManager)
     {
+        if (runScript == null) return;
 
+        if (BlockStone(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (BlockCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (SelectStoneBoard(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (SelectCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (MoveStone(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (MoveCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (Stack(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (WinnerPoint(_player, _gameManager, runScript.actions[useScriptCount])) return;
 
-
-    }
-
-    void BlockStone(Player _player, GameManager _gameManager, ScriptAction _script)
-    {
-        if (_script.type != ScriptType.BlockStone) return;
-
-
-    }
-
-
-    void BlockCard(Player _player, GameManager _gameManager, ScriptAction _script)
-    {
-        if (_script.type != ScriptType.BlockCard) return;
+        if (runScript.actions.Count > useScriptCount) return;
+        runScript = null;
+        useScriptCount = 0;
 
     }
 
-
-    void SelectStoneBoard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool BlockStone(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return;
+        if (_script.type != ScriptType.BlockStone) return false;
 
+        return true;
     }
 
 
-    void SelectCard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool BlockCard(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.SelectCard) return;
+        if (_script.type != ScriptType.BlockCard) return false;
+
+        return true;
     }
 
-    void MoveStone(Player _player, GameManager _gameManager, ScriptAction _script)
+
+    bool SelectStoneBoard(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.MoveStone) return;
+        if (_script.type != ScriptType.SelectStoneBoard) return false;
+
+        return true;
     }
 
-    void MoveCard(Player _player, GameManager _gameManager, ScriptAction _script)
+
+    bool SelectCard(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.MoveCard) return;
+        if (_script.type != ScriptType.SelectCard) return false;
+
+        return true;
     }
 
-    void Stack(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool MoveStone(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.Stack) return;
+        if (_script.type != ScriptType.MoveStone) return false;
+
+        return true;
     }
 
-    void WinnerPoint(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool MoveCard(Player _player, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.WinnerPoint) return;
+        if (_script.type != ScriptType.MoveCard) return false;
+
+        return true;
+    }
+
+    bool Stack(Player _player, GameManager _gameManager, ScriptAction _script)
+    {
+        if (_script.type != ScriptType.Stack) return false;
+
+        return true;
+    }
+
+    bool WinnerPoint(Player _player, GameManager _gameManager, ScriptAction _script)
+    {
+        if (_script.type != ScriptType.WinnerPoint) return false;
+
+        return true;
     }
 
 
@@ -493,9 +520,11 @@ public class ScriptManager
 
     List<string> GenerateArgment(string _args)
     {
-        var args = _args.Split(" ");
+        var args = _args.Split(' ');
 
         if (args.Length <= 0) return null;
+
+        Debug.Log("Start Generate");
 
         var res = new List<string>();
 
@@ -504,13 +533,13 @@ public class ScriptManager
 
         foreach(var arg in args)
         {
-            if(arg.IndexOf("\"") <= 0)
+            if(arg.IndexOf("\"") >= 0)
                 strFlg = true;
 
             if (strFlg)
                 tmp += arg + (tmp.Length > 0 ? " " : "");
 
-            if (arg.IndexOf("\"") >= arg.Length - 1)
+            if (arg.IndexOf("\"", arg.Length - 1) >= 0)
                 strFlg = false;
 
             if (strFlg) continue;
@@ -524,6 +553,7 @@ public class ScriptManager
             tmp.Replace("\"","");
 
             res.Add(tmp);
+
         }
 
         return res;
