@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.UI;
 
-public class PlayerController : ControllerBase
+public class LocalPlayerController : ControllerBase
 {
     PlayerControllerUI verticalUIs = null;
     PlayerControllerUI landscapeUIs = null;

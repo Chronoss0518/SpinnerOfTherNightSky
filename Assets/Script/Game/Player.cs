@@ -93,9 +93,9 @@ public class Player : MonoBehaviour
             Destroy(visibleButtonCanvas);
     }
 
-    public void SetPlayerController()
+    public void SetLocalPlayerController()
     {
-        var tmp = gameObject.AddComponent<PlayerController>();
+        var tmp = gameObject.AddComponent<LocalPlayerController>();
         tmp.SetVerticalUIs(gameManager.verticalPlayerControllerUIs);
         tmp.SetLandscapeUIs(gameManager.landscapePlayerControllerUIs);
         controllerCom = tmp;
