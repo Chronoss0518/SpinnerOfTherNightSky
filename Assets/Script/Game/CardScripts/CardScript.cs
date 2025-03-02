@@ -86,7 +86,7 @@ public class CardScript : MonoBehaviour
         if (_data.cardType != (int)CardData.CardType.Item) return;
         var script = gameObject.AddComponent<ItemCardScript>();
         var itemData = (ItemCardData)_data;
-        script.SetType((ItemCardScript.ItemType)itemData.itemType);
+        script.SetType((ItemCardData.ItemType)itemData.itemType);
         script.SetBaseCard(this);
         data = _data;
     }

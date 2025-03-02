@@ -5,55 +5,32 @@ using UnityEngine;
 
 public class MagicCardScript : CardScriptBase
 {
-    public enum CardAttribute : int
-    {
-        Spring,
-        Summer,
-        Autumn,
-        Winter
-    }
-
-    public enum CardAttributeMonth : int
-    {
-        January,
-        February,
-        March,
-        April,
-        May,
-        June,
-        July,
-        August,
-        September,
-        October,
-        November,
-        December,
-    }
 
     [SerializeField,ReadOnly]
-    private CardAttribute attribute = CardAttribute.Spring;
+    private MagicCardData.CardAttribute attribute = MagicCardData.CardAttribute.Spring;
 
-    public CardAttribute attributeType { get { return attribute; } }
+    public MagicCardData.CardAttribute attributeType { get { return attribute; } }
 
     [SerializeField, ReadOnly]
-    private CardAttributeMonth attributeMonth = 0;
-    public CardAttributeMonth month { get { return attributeMonth; } }
+    private MagicCardData.CardAttributeMonth attributeMonth = 0;
+    public MagicCardData.CardAttributeMonth month { get { return attributeMonth; } }
 
     public void SetAttribute(int _attribute) {
         if (_attribute < 0) return;
         if (_attribute >= 12) return;
 
-        attributeMonth = (CardAttributeMonth)_attribute;
+        attributeMonth = (MagicCardData.CardAttributeMonth)_attribute;
 
-        attribute = CardAttribute.Winter;
-
-        if (_attribute >= (int)(attribute) * 3) return;
-        attribute = CardAttribute.Autumn;
+        attribute = MagicCardData.CardAttribute.Winter;
 
         if (_attribute >= (int)(attribute) * 3) return;
-        attribute = CardAttribute.Summer;
+        attribute = MagicCardData.CardAttribute.Autumn;
 
         if (_attribute >= (int)(attribute) * 3) return;
-        attribute = CardAttribute.Spring;
+        attribute = MagicCardData.CardAttribute.Summer;
+
+        if (_attribute >= (int)(attribute) * 3) return;
+        attribute = MagicCardData.CardAttribute.Spring;
     }
 
     public int point { get; private set; } = 0;

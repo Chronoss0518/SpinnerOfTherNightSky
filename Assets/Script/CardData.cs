@@ -51,11 +51,10 @@ public class ScriptData
 [System.Serializable]
 public class CardData
 {
-    [System.Flags]
     public enum CardType
     {
-        Magic = 1,
-        Item = 2,
+        Magic,
+        Item,
     }
 
     public CardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script)
@@ -134,6 +133,29 @@ public class CardData
 [System.Serializable]
 public class MagicCardData : CardData
 {
+    public enum CardAttribute : int
+    {
+        Spring,
+        Summer,
+        Autumn,
+        Winter
+    }
+
+    public enum CardAttributeMonth : int
+    {
+        January,
+        February,
+        March,
+        April,
+        May,
+        June,
+        July,
+        August,
+        September,
+        October,
+        November,
+        December,
+    }
     public MagicCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _month, int _point, CardAPIBase.CardMagicPosition[] _starPos) :
         base(_id, _name, _description, _imagePath, _cardType, _script)
     {
@@ -175,6 +197,11 @@ public class MagicCardData : CardData
 [System.Serializable]
 public class ItemCardData : CardData
 {
+    public enum ItemType : int
+    {
+        Normal,
+        Trap
+    }
     public ItemCardData(int _id, string _name, string _description, string _imagePath, int _cardType, ScriptData[] _script, int _itemType) :
         base(_id, _name, _description, _imagePath, _cardType, _script)
     {
