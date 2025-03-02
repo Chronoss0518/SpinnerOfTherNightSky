@@ -15,6 +15,7 @@ public class PlayerControllerUI
 
     [SerializeField]
     public Canvas buttonVisibleCanvasController = null;
+
 }
 
 public class GameManager : MonoBehaviour
@@ -67,7 +68,7 @@ public class GameManager : MonoBehaviour
     int nowPlayerCount = 0;
 
     [SerializeField, ReadOnly]
-    ScriptManager scriptManager = ScriptManager.ins;
+    ScriptManager scriptManager = new ScriptManager();
 
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
@@ -85,6 +86,17 @@ public class GameManager : MonoBehaviour
 
     MainStep mainStep = MainStep.TurnStart;
     PlayMagicStep playMagicStep = PlayMagicStep.StartStep;
+
+    public void SelectStonePos(int _x,int _y)
+    {
+        scriptManager.SelectTargetPos(_x + (_y * stoneBoardObj.HOLYZONTAL_SIZE));
+    }
+
+    public void SetMessate(string _message)
+    {
+        if (message == null) return;
+        message.text = _message;
+    }
 
     public Player GetPlayer(int _num)
     {
@@ -112,6 +124,7 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
         StartDice();
 
         if (!initFlg) return;
@@ -120,7 +133,9 @@ public class GameManager : MonoBehaviour
 
         if (!scriptManager.isRunScript) return;
 
-        scriptManager.RunScript(players[nowPlayerCount],this);
+        var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
+
+        scriptManager.RunScript(controller, this);
     }
 
 
@@ -143,11 +158,6 @@ public class GameManager : MonoBehaviour
         selectStone = scriptManager.CreateScript(new ScriptData(
             new ScriptParts[] { new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3") },
             ScriptManager.ActionType.Entry));
-
-        var tmp = (ScriptManager.SelectStoneBoardAction)selectStone.actions[0];
-
-
-        Debug.Log("SelectStoneBoardAction Log: min[" + tmp.minCount.ToString() + "] max[" + tmp.maxCount.ToString() + "]" );
 
         scriptManager.SetRunScript(selectStone);
 
@@ -222,7 +232,7 @@ public class GameManager : MonoBehaviour
     {
         var playerCom = CreatePlayerComponent();
 
-        playerCom.SetPlayerController();
+        playerCom.SetLocalPlayerController();
         StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
         StartCoroutine(GetCardsFromBookData(manager.useBookNo, (res) =>
         {

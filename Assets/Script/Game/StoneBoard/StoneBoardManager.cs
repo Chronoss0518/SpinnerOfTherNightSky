@@ -11,9 +11,13 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField]
     private int HOLYZONTAL = 13;
 
+    public int HOLYZONTAL_SIZE { get { return HOLYZONTAL; } }
+
     [SerializeField]
     //Vertical : êÇíº//
     private int VERTICAL = 13;
+
+    public int VERTICAL_SIZE { get { return VERTICAL; } }
 
     [SerializeField]
     MeshFilter boardObject = null;
@@ -35,6 +39,16 @@ public class StoneBoardManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     List<GameObject> createVerticalStonePos = new List<GameObject>();
+
+    [SerializeField, ReadOnly]
+    private bool isBlockFlg = false;
+
+    public bool isBlock { get { return isBlockFlg; } }
+
+    public void SetBlockFlg(bool _flg)
+    {
+        isBlockFlg = _flg;
+    }
 
     public void SetActive(bool _flg)
     {

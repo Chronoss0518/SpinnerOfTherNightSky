@@ -1,15 +1,13 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Runtime.InteropServices.WindowsRuntime;
+using Unity.Collections;
 using UnityEngine;
 
 [System.Serializable]
 public class ScriptManager
 {
-    ScriptManager() { }
-
-    static public ScriptManager ins { get; private set; } = new ScriptManager();
-
     delegate ScriptAction CreateMethod(ScriptParts _parts);
 
     public enum ScriptType : int
@@ -38,6 +36,14 @@ public class ScriptManager
         MagicZone = 2,
         ItemZone = 4,
         TrashZone = 8,
+    }
+
+    [Flags]
+    public enum SelectCardType :int
+    {
+        Magic,
+        Item,
+        Trap
     }
 
     public class ScriptAction
@@ -79,39 +85,38 @@ public class ScriptManager
             type = ScriptType.SelectCard;
         }
 
-        public int selectMinCount = 1;
+        public int selectMinCount = 0;
         public int selectMaxCount = 1;
         //1で自身//
         //2で自身以外//
         public int playerType = -1;
         public ZoneType zoneType = 0;
-        public CardData.CardType cardType = 0;
-        public ItemCardScript.ItemType itemType = 0;
+        public SelectCardType cardType = 0;
         public List<int> magicAttributeMonth = new List<int>();
         public List<string> particialName = new List<string>();
         public List<string> particialDescription = new List<string>();
 
         public void AddAttributeType(int _type){
 
-            if (_type == (int)MagicCardScript.CardAttribute.Spring){
+            if (_type == (int)MagicCardData.CardAttribute.Spring){
                 magicAttributeMonth.Add(2);
                 magicAttributeMonth.Add(3);
                 magicAttributeMonth.Add(4);
             }
 
-            if (_type == (int)MagicCardScript.CardAttribute.Summer){
+            if (_type == (int)MagicCardData.CardAttribute.Summer){
                 magicAttributeMonth.Add(5);
                 magicAttributeMonth.Add(6);
                 magicAttributeMonth.Add(7);
             }
 
-            if (_type == (int)MagicCardScript.CardAttribute.Autumn){
+            if (_type == (int)MagicCardData.CardAttribute.Autumn){
                 magicAttributeMonth.Add(8);
                 magicAttributeMonth.Add(9);
                 magicAttributeMonth.Add(10);
             }
 
-            if (_type == (int)MagicCardScript.CardAttribute.Winter){
+            if (_type == (int)MagicCardData.CardAttribute.Winter){
                 magicAttributeMonth.Add(11);
                 magicAttributeMonth.Add(0);
                 magicAttributeMonth.Add(1);
@@ -162,27 +167,53 @@ public class ScriptManager
     ScriptActionData runScript = null;
     List<ScriptActionData> stayScript = new List<ScriptActionData>();
 
-    Player targetPlayer { get; set; } = null;
+    [SerializeField, ReadOnly]
+    List<Player> targetPlayer = new List<Player>();
 
-    CardScript targetCard { get; set; } = null;
+    [SerializeField, ReadOnly]
+    List<CardScript> targetCard = new List<CardScript>();
+
+    [SerializeField,ReadOnly]
+    List<int> targetStonePos = new List<int>();
 
     int useScriptCount = 0;
 
-#if UNITY_EDITOR
 
     [SerializeField]
-    Player testTargetPlayer = null;
+    int errorMessageDrawMaxCount = 0;
 
-    [SerializeField]
-    CardScript testTargetCard = null;
+    [SerializeField, ReadOnly]
+    int errorMessageDrawCount = -1;
 
-    void Update()
+
+    public void SelectTargetPos(int _pos)
     {
-        testTargetPlayer = targetPlayer;
-        testTargetCard = targetCard;
+        Debug.Log($"targetStonePos Count [{targetStonePos.Count}]");
+
+        if (runScript == null) return;
+        if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
+
+
+        for (int i = 0;i < targetStonePos.Count;i++)
+        {
+            if (_pos == targetStonePos[i])
+            {
+                targetStonePos.RemoveAt(i);
+                return;
+            }
+        }
+
+
+        var script = (SelectStoneBoardAction)runScript.actions[useScriptCount];
+
+        if (script.maxCount <= targetStonePos.Count)
+        {
+            errorMessageDrawCount = errorMessageDrawMaxCount;
+        }
+
+        targetStonePos.Add(_pos);
     }
 
-#endif
 
     public ScriptActionData CreateScript(ScriptData _script, bool _regist = false)
     {
@@ -223,26 +254,28 @@ public class ScriptManager
 
     }
 
-    public void RunScript(Player _player, GameManager _gameManager)
+    public void RunScript(ControllerBase _controller, GameManager _gameManager)
     {
         if (runScript == null) return;
 
-        if (BlockStone(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (BlockCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (SelectStoneBoard(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (SelectCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (MoveStone(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (MoveCard(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (Stack(_player, _gameManager, runScript.actions[useScriptCount])) return;
-        if (WinnerPoint(_player, _gameManager, runScript.actions[useScriptCount])) return;
+        if (BlockStone(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (BlockCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (SelectStoneBoard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (SelectCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (MoveStone(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (MoveCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (Stack(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        if (WinnerPoint(_controller, _gameManager, runScript.actions[useScriptCount])) return;
 
         if (runScript.actions.Count > useScriptCount) return;
         runScript = null;
         useScriptCount = 0;
-
+        targetPlayer.Clear();
+        targetCard.Clear();
+        targetStonePos.Clear();
     }
 
-    bool BlockStone(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool BlockStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.BlockStone) return false;
 
@@ -250,7 +283,7 @@ public class ScriptManager
     }
 
 
-    bool BlockCard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool BlockCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.BlockCard) return false;
 
@@ -258,43 +291,76 @@ public class ScriptManager
     }
 
 
-    bool SelectStoneBoard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool SelectStoneBoard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.SelectStoneBoard) return false;
 
+        var script = (SelectStoneBoardAction)_script;
+
+        string message = "";
+
+        if (errorMessageDrawCount < 0)
+        {
+            string tmp = script.minCount > targetStonePos.Count ?
+                $"残り:{script.minCount - targetStonePos.Count}" :
+                "選択済み";
+
+            message = script.minCount != script.maxCount ?
+                $"石を置く場所を{script.minCount}から{script.maxCount}選択してください。\n{tmp}" :
+                 $"石を置く場所を{script.minCount}選択してください。\n{tmp}";
+
+        }
+        else{
+
+            errorMessageDrawCount--;
+            message = "これ以上選択できません";
+        }
+
+            _gameManager.SetMessate(message);
+
+        if (!_controller.isAction) return true;
+
+        useScriptCount++;
+
         return true;
     }
 
 
-    bool SelectCard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool SelectCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.SelectCard) return false;
 
+
+
+        if (!_controller.isAction) return true;
+
+        useScriptCount++;
+
         return true;
     }
 
-    bool MoveStone(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool MoveStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.MoveStone) return false;
 
         return true;
     }
 
-    bool MoveCard(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool MoveCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.MoveCard) return false;
 
         return true;
     }
 
-    bool Stack(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool Stack(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.Stack) return false;
 
         return true;
     }
 
-    bool WinnerPoint(Player _player, GameManager _gameManager, ScriptAction _script)
+    bool WinnerPoint(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.WinnerPoint) return false;
 
@@ -394,17 +460,7 @@ public class ScriptManager
                 var type = 0;
                 if (int.TryParse(args[i + 1], out type))
                 {
-                    res.cardType = (CardData.CardType)(type);
-                    i += 1;
-                }
-            }
-
-            if (args[i] == "--item-type" && args.Count > i + 1)
-            {
-                var type = 0;
-                if (int.TryParse(args[i + 1], out type))
-                {
-                    res.itemType = (ItemCardScript.ItemType)(type);
+                    res.cardType = (SelectCardType)(type);
                     i += 1;
                 }
             }
@@ -523,8 +579,6 @@ public class ScriptManager
         var args = _args.Split(' ');
 
         if (args.Length <= 0) return null;
-
-        Debug.Log("Start Generate");
 
         var res = new List<string>();
 

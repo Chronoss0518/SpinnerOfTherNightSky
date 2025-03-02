@@ -19,6 +19,7 @@ public class StonePosScript : MonoBehaviour
     public void PushEvent()
     { 
         Debug.Log("Push Pos Is [" + position.x +  "," + position.y + "]");
+        manager.SelectStonePos(position.x, position.y);
     }
 
 }
