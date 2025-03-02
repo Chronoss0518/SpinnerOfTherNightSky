@@ -6,11 +6,11 @@ abstract public class ControllerBase : MonoBehaviour
 {
     public bool isAction { get; private set; } = false;
 
-    public void Action() { isAction = true; }
+    public void Action() { ActionStart(); }
 
     public void ActionStart() 
     {
-        isAction = false;
+        isAction = true;
         RunActionStart();
     }
 
