@@ -7,7 +7,7 @@ using UnityEngine;
 abstract public class BookAPIBase
 {
     public static BookAPIBase ins { get; private set; } =
-        Manager.IS_MOCK ?
+        Manager.ins.IS_MOCK ?
         new BookMock() :
         new BookAPI();
 

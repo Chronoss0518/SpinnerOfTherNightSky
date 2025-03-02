@@ -15,7 +15,7 @@ abstract public class CardAPIBase
 {
 #if UNITY_EDITOR
     public static CardAPIBase ins { get; private set; } =
-        Manager.IS_MOCK ?
+        Manager.ins.IS_MOCK ?
         new CardMock() :
         new CardAPI();
 #else

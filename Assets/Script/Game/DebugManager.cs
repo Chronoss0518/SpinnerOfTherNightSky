@@ -26,7 +26,7 @@ public class DebugManager : MonoBehaviour
 
     void Awake()
     {
-        if (!Manager.IS_DEBUG) return;
+        if (!Manager.ins.IS_DEBUG) return;
         manager.gameType = gameType;
         manager.cpuFlgs = cpuFlgs;
         manager.useBookNo = useBookNo;

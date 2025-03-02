@@ -7,8 +7,16 @@ using Unity.Collections;
 [System.Serializable]
 public class Manager
 {
-    public const bool IS_DEBUG = true;
-    public const bool IS_MOCK = true;
+    [SerializeField]
+    bool IS_DEBUG_FLG = true;
+    public bool IS_DEBUG { get { return IS_DEBUG_FLG; } }
+    
+    [SerializeField]
+
+    bool IS_MOCK_FLG = true;
+    public bool IS_MOCK { get { return IS_MOCK_FLG; } }
+
+
     public const int MAX_GMAE_PLAYER = 4;
     private Manager() { }
 
