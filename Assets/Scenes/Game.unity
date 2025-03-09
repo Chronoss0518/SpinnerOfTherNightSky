@@ -656,9 +656,10 @@ MonoBehaviour:
   scriptManager:
     targetPlayer: []
     targetCard: []
-    targetStonePos: 
     errorMessageDrawMaxCount: 180
     errorMessageDrawCount: -1
+    errorType: 0
+    selectStonePrefab: {fileID: 0}
   stack: []
   manager:
     IS_DEBUG_FLG: 1
@@ -1472,6 +1473,10 @@ PrefabInstance:
       propertyPath: gameManager
       value: 
       objectReference: {fileID: 1028437352}
+    - target: {fileID: 202314172878765867, guid: 52d8d271b71f7e849a7c8489b9a95b24, type: 3}
+      propertyPath: selectStonePosPrefab
+      value: 
+      objectReference: {fileID: 2053032744129234234, guid: 4c2692f347e99f944974891d09ec7ada, type: 3}
     - target: {fileID: 3489423301777299593, guid: 52d8d271b71f7e849a7c8489b9a95b24, type: 3}
       propertyPath: m_Name
       value: StonePanel
