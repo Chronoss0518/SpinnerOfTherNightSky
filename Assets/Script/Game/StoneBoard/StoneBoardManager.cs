@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.UIElements;
 
 
 
@@ -35,15 +36,26 @@ public class StoneBoardManager : MonoBehaviour
     private Vector3 startPos = Vector3.zero;
 
     [SerializeField,ReadOnly]
-    List<List<GameObject>> stoneList = new List<List<GameObject>>();
+    List<List<StonePosScript>> stoneList = new List<List<StonePosScript>>();
 
     [SerializeField, ReadOnly]
     List<GameObject> createVerticalStonePos = new List<GameObject>();
+
+    [SerializeField]
+    GameObject selectStonePosPrefab = null;
 
     [SerializeField, ReadOnly]
     private bool isBlockFlg = false;
 
     public bool isBlock { get { return isBlockFlg; } }
+
+    public bool IsRange(int _x,int _y)
+    {
+        return 
+            _x >= 0 && _x < HOLYZONTAL &&
+            _y >= 0 && _y < VERTICAL;
+
+    }
 
     public void SetBlockFlg(bool _flg)
     {
@@ -78,28 +90,53 @@ public class StoneBoardManager : MonoBehaviour
 
     public void PutStone(int _x, int _y,GameObject _stone)
     {
-        if (_x < 0 || _x >= HOLYZONTAL) return;
-        if (_y < 0 || _y >= VERTICAL) return;
+        if (!IsRange(_x, _y)) return;
 
-        var stone = Instantiate(_stone.gameObject, stoneList[_y][_x].transform);
+        stoneList[_x][_y].PutStone(_stone);
     }
 
     public void RemoveStone(int _x, int _y)
     {
-        if (!IsPutStone(_x, _y)) return;
+        if (IsPutStone(_x,_y)) return;
 
-        var child = stoneList[_x][_y].transform.GetChild(stoneList[_x][_y].transform.childCount - 1);
-        child.parent = null;
-        Destroy(child.gameObject);
+        stoneList[_x][_y].RemovePutStone();
     }
 
 
     public bool IsPutStone(int _x, int _y)
     {
-        if (_x < 0 || _x >= HOLYZONTAL) return false;
-        if (_y < 0 || _y >= VERTICAL) return false;
+        if (!IsRange(_x, _y)) return false;
 
-        return stoneList[_x][_y].transform.childCount > 0;
+        return stoneList[_x][_y].IsPutStone();
+    }
+
+
+    public void SelectStonePos(int _x, int _y)
+    {
+        if (!IsRange(_x, _y)) return;
+
+        stoneList[_x][_y].SelectStonePos(selectStonePosPrefab);
+    }
+
+    public void UnSelectStonePos(int _x, int _y)
+    {
+        if (IsSelectStonePos(_x, _y)) return;
+
+        stoneList[_x][_y].UnSelectStonePos();
+    }
+
+
+    public bool IsSelectStonePos(int _x, int _y)
+    {
+        if (IsRange(_x, _y)) return false;
+
+        return stoneList[_x][_y].IsPutStone();
+    }
+
+    public StonePosScript GetStonePosScript(int _x,int _y)
+    {
+        if (!IsRange(_x, _y)) return null;
+        return stoneList[_x][_y];
     }
 
     public void Init()
@@ -115,7 +152,7 @@ public class StoneBoardManager : MonoBehaviour
         for (int i = 0; i<VERTICAL - 1; i++)
         {
             pos.x = startPos.x;
-            stoneList.Add(new List<GameObject>());
+            stoneList.Add(new List<StonePosScript>());
 
             var verticalPos = new GameObject("VerticalStonePos");
             verticalPos.transform.SetParent(transform);
@@ -125,9 +162,9 @@ public class StoneBoardManager : MonoBehaviour
             {
                 var stonePos = Instantiate(stonePosPrefab, verticalPos.transform);
 
-                InitStonePos(stonePos, tmpVPos, new Vector2Int(j, i));
+                InitStonePos(stonePos, tmpVPos, new Vector2Int(i, j));
 
-                stoneList[i].Add(stonePos);
+                stoneList[i].Add(stonePos.GetComponent<StonePosScript>());
                 tmpVPos += interval.x;
             }
 

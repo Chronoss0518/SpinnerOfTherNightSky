@@ -10,6 +10,15 @@ public class ScriptManager
 {
     delegate ScriptAction CreateMethod(ScriptParts _parts);
 
+    public enum ErrorType : int
+    {
+        IsPutStonePosSelect,
+        IsRemoveStonePosSelect,
+        IsRangeMaxOverCount,
+        isRangeMinOverCount,
+        None,
+    }
+
     public enum ScriptType : int
     {
         BlockStone,//石を取り除かせない・カードを無効にする//
@@ -76,6 +85,7 @@ public class ScriptManager
 
         public int minCount = 0;
         public int maxCount = 0;
+        public bool isPutPos = true;
     }
 
     public class SelectCardAction : ScriptAction
@@ -170,14 +180,19 @@ public class ScriptManager
     [SerializeField, ReadOnly]
     List<Player> targetPlayer = new List<Player>();
 
+    public int GetTargetplayerCount { get { return targetPlayer.Count; } }
+
     [SerializeField, ReadOnly]
     List<CardScript> targetCard = new List<CardScript>();
 
-    [SerializeField,ReadOnly]
-    List<int> targetStonePos = new List<int>();
+    public int GetTargetCardCount { get { return targetCard.Count; } }
+
+    [SerializeField, ReadOnly]
+    Dictionary<int,StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
+
+    public int GetTargetStonePosCount { get { return targetStonePos.Count; } }
 
     int useScriptCount = 0;
-
 
     [SerializeField]
     int errorMessageDrawMaxCount = 0;
@@ -185,33 +200,55 @@ public class ScriptManager
     [SerializeField, ReadOnly]
     int errorMessageDrawCount = -1;
 
+    [SerializeField, ReadOnly]
+    ErrorType errorType = ErrorType.None;
 
-    public void SelectTargetPos(int _pos)
+    public ErrorType GetErrorType { get { return errorType; } }
+
+    [SerializeField]
+    GameObject selectStonePrefab = null;
+
+    public void SelectTargetPos(int _x,int _y,GameManager _manager)
     {
         Debug.Log($"targetStonePos Count [{targetStonePos.Count}]");
 
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
 
+        var action = (SelectStoneBoardAction)runScript.actions[useScriptCount];
 
-        for (int i = 0;i < targetStonePos.Count;i++)
-        {
-            if (_pos == targetStonePos[i])
-            {
-                targetStonePos.RemoveAt(i);
-                return;
-            }
-        }
-
-
-        var script = (SelectStoneBoardAction)runScript.actions[useScriptCount];
-
-        if (script.maxCount <= targetStonePos.Count)
+        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == action.isPutPos)
         {
             errorMessageDrawCount = errorMessageDrawMaxCount;
+
+            errorType = action.isPutPos ?
+                ErrorType.IsPutStonePosSelect :
+                ErrorType.IsRemoveStonePosSelect;
+
+            return;
         }
 
-        targetStonePos.Add(_pos);
+        int pos = _x + (_y * _manager.stoneBoardObj.HOLYZONTAL_SIZE);
+
+        if(targetStonePos.ContainsKey(pos))
+        {
+            targetStonePos[pos].UnSelectStonePos();
+            targetStonePos.Remove(pos);
+            return;
+        }
+
+        if (action.maxCount <= targetStonePos.Count)
+        {
+            errorMessageDrawCount = errorMessageDrawMaxCount;
+            errorType = ErrorType.IsRangeMaxOverCount;
+
+            return;
+        }
+
+        var script = _manager.stoneBoardObj.GetStonePosScript(_x, _y);
+        targetStonePos.Add(pos, script);
+        _manager.stoneBoardObj.SelectStonePos(_x, _y);
+
     }
 
 
@@ -295,31 +332,42 @@ public class ScriptManager
     {
         if (_script.type != ScriptType.SelectStoneBoard) return false;
 
-        var script = (SelectStoneBoardAction)_script;
+        _controller.ActionStart();
+
+        var act = (SelectStoneBoardAction)_script;
 
         string message = "";
 
         if (errorMessageDrawCount < 0)
         {
-            string tmp = script.minCount > targetStonePos.Count ?
-                $"残り:{script.minCount - targetStonePos.Count}" :
+            string tmp = act.minCount > targetStonePos.Count ?
+                $"残り:{act.minCount - targetStonePos.Count}" :
                 "選択済み";
 
-            message = script.minCount != script.maxCount ?
-                $"石を置く場所を{script.minCount}から{script.maxCount}選択してください。\n{tmp}" :
-                 $"石を置く場所を{script.minCount}選択してください。\n{tmp}";
+            message = act.minCount != act.maxCount ?
+                $"石を置く場所を{act.minCount}から{act.maxCount}選択してください。\n{tmp}" :
+                 $"石を置く場所を{act.minCount}選択してください。\n{tmp}";
 
         }
         else{
 
             errorMessageDrawCount--;
-            message = "これ以上選択できません";
+            if(errorType == ErrorType.IsRangeMaxOverCount)message = "これ以上選択できません";
+            if(errorType == ErrorType.isRangeMinOverCount) message = $"{act.minCount}以上選択してください";
+            if(errorType == ErrorType.IsPutStonePosSelect) message = $"既に石が置かれています";
+            if(errorType == ErrorType.IsRemoveStonePosSelect) message = $"その場所には石がありません";
         }
 
-            _gameManager.SetMessate(message);
+        _gameManager.SetMessate(message);
 
         if (!_controller.isAction) return true;
-
+        if(act.minCount > targetStonePos.Count)
+        {
+            errorType = ErrorType.isRangeMinOverCount;
+            _controller.DownActionFlg();
+            return true;
+        }
+        _controller.ActionEnd();
         useScriptCount++;
 
         return true;
@@ -406,6 +454,8 @@ public class ScriptManager
 
         for(int i = 0; i < args.Count;i++)
         {
+            if (args[i].IndexOf("--") != 0) continue;
+
             if (args[i] == "--max" && args.Count > i + 1)
                 if (int.TryParse(args[i + 1], out res.maxCount))
                     i += 1;
@@ -413,6 +463,12 @@ public class ScriptManager
             if (args[i] == "--min" && args.Count > i + 1)
                 if (int.TryParse(args[i + 1], out res.minCount))
                     i += 1;
+
+            if (args[i] == "--is-put")
+                res.isPutPos = true;
+
+            if (args[i] == "--is-remove")
+                res.isPutPos = false;
         }
 
         return res;
@@ -429,6 +485,8 @@ public class ScriptManager
 
         for (int i = 0; i < args.Count; i++)
         {
+            if (args[i].IndexOf("--") != 0) continue;
+
             if (args[i] == "--max" && args.Count > i + 1)
                 if (int.TryParse(args[i + 1], out res.selectMaxCount))
                     i += 1;
@@ -513,6 +571,8 @@ public class ScriptManager
 
         for (int i = 0; i < args.Count; i++)
         {
+            if (args[i].IndexOf("--") != 0) continue;
+
             if (args[i] == "--remove")
                 res.removeFlg = true;
 
@@ -534,6 +594,8 @@ public class ScriptManager
 
         for (int i = 0; i < args.Count; i++)
         {
+            if (args[i].IndexOf("--") != 0) continue;
+
             if (args[i] == "--book")
                 res.moveZone = ZoneType.Book;
 
@@ -560,6 +622,8 @@ public class ScriptManager
 
         for (int i = 0; i < args.Count; i++)
         {
+            if (args[i].IndexOf("--") != 0) continue;
+
             if (args[i] == "--up")
                 res.downFlg = false;
 
@@ -591,7 +655,7 @@ public class ScriptManager
                 strFlg = true;
 
             if (strFlg)
-                tmp += arg + (tmp.Length > 0 ? " " : "");
+                tmp += (tmp.Length > 0 ? " " : "") + arg;
 
             if (arg.IndexOf("\"", arg.Length - 1) >= 0)
                 strFlg = false;
@@ -601,6 +665,7 @@ public class ScriptManager
             if (tmp.Length <= 0)
             {
                 res.Add(arg);
+
                 continue;
             }
 
@@ -609,6 +674,7 @@ public class ScriptManager
             res.Add(tmp);
 
         }
+
 
         return res;
     }
