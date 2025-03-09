@@ -101,6 +101,12 @@ public class Player : MonoBehaviour
         controllerCom = tmp;
     }
 
+    public void Action()
+    {
+        if (controllerCom == null) return;
+        controllerCom.UpActionFlg();
+    }
+
     void Update()
     {
         UpdateBookParent();

@@ -6,21 +6,29 @@ abstract public class ControllerBase : MonoBehaviour
 {
     public bool isAction { get; private set; } = false;
 
-    public void Action() { ActionStart(); }
+    public bool isControll { get; private set; } = false;
+
+    public void UpActionFlg() { isAction = true; }
+
+    public void DownActionFlg() { isAction = false; }
 
     public void ActionStart() 
     {
-        isAction = true;
+        if (isControll) return;
+        isAction = false;
         RunActionStart();
+        isControll = true;
     }
 
     public void ActionEnd()
     {
-        isAction = false;
+        if (!isControll) return;
         RunActionEnd();
+        isControll = false;
     }
 
     virtual protected void RunActionStart() { }
     virtual protected void RunActionEnd() { }
+
 
 }
