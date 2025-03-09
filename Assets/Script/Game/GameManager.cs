@@ -22,13 +22,13 @@ public class GameManager : MonoBehaviour
 {
     public enum MainStep
     {
-        TurnStart,
+        StartTurn,
         P_UseItem,
         P_PutStone,
         P_PlayMagic,
         OP_PlayMagic,
         P_SetTrap,
-        TurnEnd
+        EndTurn
     }
 
     public enum PlayMagicStep
@@ -43,6 +43,8 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
+
+    //Player ŠÖŒW//
     [SerializeField]
     Text message = null;
 
@@ -67,29 +69,31 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     int nowPlayerCount = 0;
 
+    //ScriptŠÖŒW//
+
     [SerializeField, ReadOnly]
     ScriptManager scriptManager = new ScriptManager();
 
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
 
-
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectStone = null;
 
     public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
+
 
     [SerializeField, ReadOnly]
     Manager manager = Manager.ins;
 
     bool initFlg { get; set; } = false;
 
-    MainStep mainStep = MainStep.TurnStart;
+    MainStep mainStep = MainStep.StartTurn;
     PlayMagicStep playMagicStep = PlayMagicStep.StartStep;
 
     public void SelectStonePos(int _x,int _y)
     {
-        scriptManager.SelectTargetPos(_x + (_y * stoneBoardObj.HOLYZONTAL_SIZE));
+        scriptManager.SelectTargetPos(_x, _y, this);
     }
 
     public void SetMessate(string _message)
@@ -156,7 +160,7 @@ public class GameManager : MonoBehaviour
         if (initFlg) return;
 
         selectStone = scriptManager.CreateScript(new ScriptData(
-            new ScriptParts[] { new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3") },
+            new ScriptParts[] { new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put \"test test\"") },
             ScriptManager.ActionType.Entry));
 
         scriptManager.SetRunScript(selectStone);
@@ -166,7 +170,7 @@ public class GameManager : MonoBehaviour
 
     void TurnStart()
     {
-        if (mainStep != MainStep.TurnStart) return;
+        if (mainStep != MainStep.StartTurn) return;
 
         mainStep = MainStep.P_UseItem;
     }
@@ -181,9 +185,9 @@ public class GameManager : MonoBehaviour
 
     void TurnEnd()
     {
-        if (mainStep != MainStep.TurnEnd) return;
+        if (mainStep != MainStep.EndTurn) return;
 
-        mainStep = MainStep.TurnStart;
+        mainStep = MainStep.StartTurn;
 
         nowPlayerCount++;
         nowPlayerCount %= players.Count;
