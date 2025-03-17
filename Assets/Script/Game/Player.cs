@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
@@ -21,6 +22,9 @@ public class Player : MonoBehaviour
     [SerializeField]
     ControllerBase controllerCom = null;
 
+    [SerializeField]
+    GameObject stone = null;
+
     [SerializeField, ReadOnly]
     CardData[] cardData = null;
 
@@ -29,6 +33,9 @@ public class Player : MonoBehaviour
 
     [SerializeField]
     GameObject landscapeScreenPos = null, verticalScreenPos = null;
+
+    [SerializeField]
+    PlayerControllerUI verticalPlayerUIs = null, landscapePlayerUIs = null;
 
     [SerializeField]
     GameObject bookObjectPos = null;
@@ -43,7 +50,7 @@ public class Player : MonoBehaviour
     Manager.DisplayAspectType beforeType = Manager.DisplayAspectType.None;
 
 
-    public GameObject stoneModel { get; private set; } = null;
+    public GameObject stoneModel { get { return stone; } }
 
     public void SetGameManager(GameManager _gameManager) {  gameManager = _gameManager; }
 
@@ -74,30 +81,22 @@ public class Player : MonoBehaviour
     public void SetCPUController()
     {
         controllerCom = gameObject.AddComponent<CPUController>();
-        if (book != null)
-           Destroy(book.gameObject);
-        if (bookObjectPos != null)
-            Destroy(bookObjectPos);
-        if (visibleButtonCanvas != null)
-            Destroy(visibleButtonCanvas);
+        RemoveUnLocalPlayerObject();
     }
 
     public void SetNetController()
     {
         controllerCom = gameObject.AddComponent<NetWorkController>();
-        if (book != null)
-            Destroy(book.gameObject);
-        if (bookObjectPos != null)
-            Destroy(bookObjectPos);
-        if (visibleButtonCanvas != null)
-            Destroy(visibleButtonCanvas);
+        RemoveUnLocalPlayerObject();
     }
 
     public void SetLocalPlayerController()
     {
         var tmp = gameObject.AddComponent<LocalPlayerController>();
-        tmp.SetVerticalUIs(gameManager.verticalPlayerControllerUIs);
-        tmp.SetLandscapeUIs(gameManager.landscapePlayerControllerUIs);
+        tmp.SetVerticalUIs(verticalPlayerUIs);
+        tmp.SetLandscapeUIs(landscapePlayerUIs);
+
+        gameManager.SetTextObject(verticalPlayerUIs.descriptionText, landscapePlayerUIs.descriptionText);
         controllerCom = tmp;
     }
 
@@ -111,6 +110,20 @@ public class Player : MonoBehaviour
     {
         UpdateBookParent();
         UpdateMoveBookIntoCamera();
+    }
+
+    void RemoveUnLocalPlayerObject()
+    {
+        if (book != null)
+            Destroy(book.gameObject);
+        if (bookObjectPos != null)
+            Destroy(bookObjectPos);
+        if (visibleButtonCanvas != null)
+            Destroy(visibleButtonCanvas);
+        if (verticalPlayerUIs != null)
+            Destroy(verticalPlayerUIs.gameObject);
+        if (landscapePlayerUIs != null)
+            Destroy(landscapePlayerUIs.gameObject);
     }
 
     void UpdateBookParent()
