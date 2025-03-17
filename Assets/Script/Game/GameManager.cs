@@ -4,20 +4,6 @@ using UnityEngine;
 using Unity.Collections;
 using UnityEngine.UI;
 
-[System.Serializable]
-public class PlayerControllerUI
-{
-    [SerializeField]
-    public Text selectButtonText = null;
-
-    [SerializeField]
-    public Canvas buttonVisibleCanvas = null;
-
-    [SerializeField]
-    public Canvas buttonVisibleCanvasController = null;
-
-}
-
 public class GameManager : MonoBehaviour
 {
     public enum MainStep
@@ -26,7 +12,9 @@ public class GameManager : MonoBehaviour
         P_UseItem,
         P_PutStone,
         P_PlayMagic,
+        P_PlayMagicCheck,
         OP_PlayMagic,
+        OP_PlayMagicCheck,
         P_SetTrap,
         EndTurn
     }
@@ -43,16 +31,17 @@ public class GameManager : MonoBehaviour
         EndStep
     }
 
+    //Initialize//
+
+    [SerializeField]
+    int RANDOM_COUNT = 100;
+
+    [SerializeField]
+    GameObject initRandomPutStone = null;
 
     //Player ŠÖŒW//
-    [SerializeField]
-    Text message = null;
-
-    [SerializeField]
-    PlayerControllerUI verticalPlayerUIs = null, landscapePlayerUIs = null;
-
-    public PlayerControllerUI verticalPlayerControllerUIs { get { return verticalPlayerUIs; } }
-    public PlayerControllerUI landscapePlayerControllerUIs { get { return landscapePlayerUIs; } }
+    [SerializeField,ReadOnly]
+    Text vMessage = null, lMessage = null;
 
     [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
@@ -78,7 +67,16 @@ public class GameManager : MonoBehaviour
     List<CardScript> stack = new List<CardScript>();
 
     [SerializeField, ReadOnly]
+    ScriptManager.ScriptActionData selectItem = null;
+
+    [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectStone = null;
+
+    [SerializeField, ReadOnly]
+    ScriptManager.ScriptActionData selectMagic = null;
+
+    [SerializeField, ReadOnly]
+    ScriptManager.ScriptActionData selectSetTrap = null;
 
     public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
 
@@ -89,17 +87,25 @@ public class GameManager : MonoBehaviour
     bool initFlg { get; set; } = false;
 
     MainStep mainStep = MainStep.StartTurn;
-    PlayMagicStep playMagicStep = PlayMagicStep.StartStep;
+    PlayMagicStep playMagicStep = PlayMagicStep.EndStep;
 
     public void SelectStonePos(int _x,int _y)
     {
         scriptManager.SelectTargetPos(_x, _y, this);
     }
 
+    public void SetTextObject(Text _vText,Text _lText)
+    {
+        vMessage = _vText;
+        lMessage = _lText;
+    }
+
     public void SetMessate(string _message)
     {
-        if (message == null) return;
-        message.text = _message;
+        if (vMessage == null) return;
+        if (lMessage == null) return;
+        vMessage.text = _message;
+        lMessage.text = _message;
     }
 
     public Player GetPlayer(int _num)
@@ -107,6 +113,11 @@ public class GameManager : MonoBehaviour
         if (_num < 0) return null;
         if (players.Count >= _num) return null;
         return players[_num];
+    }
+
+    public Player GetNowPlayer()
+    {
+        return players[nowPlayerCount];
     }
 
     // Start is called before the first frame update
@@ -150,6 +161,10 @@ public class GameManager : MonoBehaviour
         TurnStart();
 
         P_UseItem();
+        
+        P_PutStone();
+        
+        P_PlayMagic();
 
         TurnEnd();
 
@@ -160,10 +175,12 @@ public class GameManager : MonoBehaviour
         if (initFlg) return;
 
         selectStone = scriptManager.CreateScript(new ScriptData(
-            new ScriptParts[] { new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put \"test test\"") },
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
+               new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
             ScriptManager.ActionType.Entry));
 
-        scriptManager.SetRunScript(selectStone);
+        InitRandomPutStone();
 
         initFlg = true;
     }
@@ -180,7 +197,33 @@ public class GameManager : MonoBehaviour
         if (mainStep != MainStep.P_UseItem) return;
 
 
-        mainStep = MainStep.P_UseItem;
+        mainStep = MainStep.P_PutStone;
+    }
+
+    void P_PutStone()
+    {
+        if (mainStep != MainStep.P_PutStone) return;
+
+        scriptManager.SetRunScript(selectStone);
+
+        mainStep = MainStep.P_PlayMagic;
+    }
+
+    void P_PlayMagic()
+    {
+        if (mainStep != MainStep.P_PlayMagic) return;
+
+        scriptManager.SetRunScript(selectStone);
+
+        mainStep = MainStep.P_PlayMagic;
+    }
+
+    void P_PlayMagicCheck()
+    {
+        if (mainStep != MainStep.P_PlayMagic) return;
+
+
+        mainStep = MainStep.P_PlayMagic;
     }
 
     void TurnEnd()
@@ -191,6 +234,49 @@ public class GameManager : MonoBehaviour
 
         nowPlayerCount++;
         nowPlayerCount %= players.Count;
+    }
+
+    void InitRandomPutStone()
+    {
+        if (initRandomPutStone == null) return;
+        if (manager.randomPutStone <= 0) return;
+
+        int fieldSize = (stoneBoard.VERTICAL_SIZE -1) * (stoneBoard.HOLYZONTAL_SIZE - 1);
+        Vector2Int[] positions = new Vector2Int[fieldSize];
+        int[] numList = new int[fieldSize];
+
+        int tmpLoopCount = 0;
+
+        for (tmpLoopCount = 0; tmpLoopCount < fieldSize; tmpLoopCount++)
+        {
+            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (stoneBoard.HOLYZONTAL_SIZE - 1), tmpLoopCount / (stoneBoard.HOLYZONTAL_SIZE - 1));
+            numList[tmpLoopCount] = tmpLoopCount;
+        }
+
+
+        int changeNum = 0;
+        int baseNum = 0;
+
+        for (tmpLoopCount = 0; tmpLoopCount < RANDOM_COUNT; tmpLoopCount++)
+        {
+            for(baseNum = 0; baseNum<numList.Length; baseNum++)
+            {
+                changeNum = Random.Range(0, fieldSize);
+
+                if (baseNum == changeNum) continue;
+                numList[baseNum] += numList[changeNum];
+                numList[changeNum] = numList[baseNum] - numList[changeNum];
+                numList[baseNum] = numList[baseNum] - numList[changeNum];
+            }
+
+        }
+        Vector2Int pos = Vector2Int.zero;
+        for (tmpLoopCount = 0; tmpLoopCount < manager.randomPutStone; tmpLoopCount++)
+        {
+            pos = positions[numList[tmpLoopCount]];
+            stoneBoard.PutStone(pos.x, pos.y, initRandomPutStone);
+        }
+
     }
 
     IEnumerator GetBookData(int _bookId,

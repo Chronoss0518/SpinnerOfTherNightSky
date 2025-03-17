@@ -23,6 +23,8 @@ public class DebugManager : MonoBehaviour
     [SerializeField]
     int useBookNo = 0;
 
+    [SerializeField]
+    int randomPutStone = 0;
 
     void Awake()
     {
@@ -30,5 +32,6 @@ public class DebugManager : MonoBehaviour
         manager.gameType = gameType;
         manager.cpuFlgs = cpuFlgs;
         manager.useBookNo = useBookNo;
+        manager.randomPutStone = randomPutStone;
     }
 }

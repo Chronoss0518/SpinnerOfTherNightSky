@@ -7,6 +7,7 @@ using Unity.Collections;
 [System.Serializable]
 public class Manager
 {
+
     [SerializeField]
     bool IS_DEBUG_FLG = true;
     public bool IS_DEBUG { get { return IS_DEBUG_FLG; } }
@@ -61,5 +62,8 @@ public class Manager
 
     [ReadOnly]
     public DisplayAspectType aspectType = DisplayAspectType.None;
+
+    [ReadOnly]
+    public int randomPutStone = 0;
 
 }
