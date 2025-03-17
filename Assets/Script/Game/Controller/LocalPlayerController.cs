@@ -38,7 +38,7 @@ public class LocalPlayerController : ControllerBase
         if (uis.buttonVisibleCanvas == null) return;
         if (uis.selectButtonText == null) return;
         if (uis.buttonVisibleCanvasController == null) return;
-        uis.selectButtonText.text = buttonText;
+        //uis.selectButtonText.text = buttonText;
         uis.buttonVisibleCanvas.gameObject.SetActive(true);
         uis.buttonVisibleCanvasController.gameObject.SetActive(true);
     }
