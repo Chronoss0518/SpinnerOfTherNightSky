@@ -18,9 +18,10 @@ public class StonePosScript : MonoBehaviour
 
     public void Init(GameManager _manager, Vector2Int _pos)
     {
-        system.Stop();
         manager = _manager;
         position = _pos;
+        if (system == null) return;
+        system.Stop();
     }
 
     public bool IsPutStone() { return putStoneObject != null; }
@@ -29,7 +30,6 @@ public class StonePosScript : MonoBehaviour
 
     public void PushEvent()
     { 
-        Debug.Log("Push Pos Is [" + position.x +  "," + position.y + "]");
         manager.SelectStonePos(position.x, position.y);
     }
 
