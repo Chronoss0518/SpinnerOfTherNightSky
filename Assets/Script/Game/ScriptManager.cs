@@ -210,8 +210,6 @@ public class ScriptManager
 
     public void SelectTargetPos(int _x,int _y,GameManager _manager)
     {
-        Debug.Log($"targetStonePos Count [{targetStonePos.Count}]");
-
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
 
@@ -259,13 +257,13 @@ public class ScriptManager
 
         foreach(var scr in _script.parts)
         {
-            if (CreateScriptAction(res, CreateBlockStoneAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateBlockCardAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateSelectStoneBoardAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateSelectCardAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateMoveStoneAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateMoveCardAction, _script.parts[useScriptCount])) continue;
-            if (CreateScriptAction(res, CreateWinnerPointAction, _script.parts[useScriptCount])) continue;
+            if (CreateScriptAction(res, CreateBlockStoneAction, scr)) continue;
+            if (CreateScriptAction(res, CreateBlockCardAction, scr)) continue;
+            if (CreateScriptAction(res, CreateSelectStoneBoardAction, scr)) continue;
+            if (CreateScriptAction(res, CreateSelectCardAction, scr)) continue;
+            if (CreateScriptAction(res, CreateMoveStoneAction, scr)) continue;
+            if (CreateScriptAction(res, CreateMoveCardAction, scr)) continue;
+            if (CreateScriptAction(res, CreateWinnerPointAction, scr)) continue;
         }
 
         if (res.type == ActionType.Stay)
@@ -294,6 +292,15 @@ public class ScriptManager
     public void RunScript(ControllerBase _controller, GameManager _gameManager)
     {
         if (runScript == null) return;
+        if (runScript.actions.Count <= useScriptCount)
+        {
+            runScript = null;
+            useScriptCount = 0;
+            targetPlayer.Clear();
+            targetCard.Clear();
+            targetStonePos.Clear();
+            return;
+        }
 
         if (BlockStone(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (BlockCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
@@ -304,12 +311,6 @@ public class ScriptManager
         if (Stack(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (WinnerPoint(_controller, _gameManager, runScript.actions[useScriptCount])) return;
 
-        if (runScript.actions.Count > useScriptCount) return;
-        runScript = null;
-        useScriptCount = 0;
-        targetPlayer.Clear();
-        targetCard.Clear();
-        targetStonePos.Clear();
     }
 
     bool BlockStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
@@ -367,6 +368,7 @@ public class ScriptManager
             _controller.DownActionFlg();
             return true;
         }
+
         _controller.ActionEnd();
         useScriptCount++;
 
@@ -378,8 +380,6 @@ public class ScriptManager
     {
         if (_script.type != ScriptType.SelectCard) return false;
 
-
-
         if (!_controller.isAction) return true;
 
         useScriptCount++;
@@ -390,6 +390,20 @@ public class ScriptManager
     bool MoveStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.MoveStone) return false;
+
+        var act = (MoveStoneAction)_script;
+
+        foreach (var pos in targetStonePos)
+        {
+            var sec = pos.Value;
+
+            sec.UnSelectStonePos();
+            if (!act.removeFlg) sec.PutStone(_gameManager.GetNowPlayer().stoneModel);
+            else sec.RemovePutStone();
+        }
+
+        targetStonePos.Clear();
+        Debug.Log("Run Put Stone");
 
         return true;
     }
@@ -434,14 +448,22 @@ public class ScriptManager
     {
         if (_script.type != ScriptType.BlockStone) return null;
 
-        return new BlockStoneAction();
+        var res = new BlockStoneAction();
+
+        res.type = ScriptType.BlockStone;
+
+        return res;
     }
 
     ScriptAction CreateBlockCardAction(ScriptParts _script)
     {
         if (_script.type != ScriptType.BlockCard) return null;
 
-        return new BlockCardAction();
+        var res = new BlockCardAction();
+
+        res.type = ScriptType.BlockCard;
+
+        return res;
     }
 
     ScriptAction CreateSelectStoneBoardAction(ScriptParts _script)
@@ -449,6 +471,8 @@ public class ScriptManager
         if (_script.type != ScriptType.SelectStoneBoard) return null;
 
         var res = new SelectStoneBoardAction();
+
+        res.type = ScriptType.SelectStoneBoard;
 
         var args = GenerateArgment(_script.argments);
 
@@ -480,6 +504,8 @@ public class ScriptManager
         if (_script.type != ScriptType.SelectCard) return null;
 
         var res = new SelectCardAction();
+
+        res.type = ScriptType.SelectCard;
 
         var args = GenerateArgment(_script.argments);
 
@@ -563,9 +589,11 @@ public class ScriptManager
 
     ScriptAction CreateMoveStoneAction(ScriptParts _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return null;
+        if (_script.type != ScriptType.MoveStone) return null;
 
         var res = new MoveStoneAction();
+
+        res.type = ScriptType.MoveStone;
 
         var args = GenerateArgment(_script.argments);
 
@@ -586,9 +614,11 @@ public class ScriptManager
 
     ScriptAction CreateMoveCardAction(ScriptParts _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return null;
+        if (_script.type != ScriptType.MoveCard) return null;
 
         var res = new MoveCardAction();
+
+        res.type = ScriptType.MoveCard;
 
         var args = GenerateArgment(_script.argments);
 
@@ -614,9 +644,11 @@ public class ScriptManager
 
     ScriptAction CreateWinnerPointAction(ScriptParts _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return null;
+        if (_script.type != ScriptType.WinnerPoint) return null;
 
         var res = new WinnerPointAction();
+
+        res.type = ScriptType.WinnerPoint;
 
         var args = GenerateArgment(_script.argments);
 

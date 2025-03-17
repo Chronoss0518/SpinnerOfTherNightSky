@@ -41,9 +41,6 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<GameObject> createVerticalStonePos = new List<GameObject>();
 
-    [SerializeField]
-    GameObject selectStonePosPrefab = null;
-
     [SerializeField, ReadOnly]
     private bool isBlockFlg = false;
 
@@ -54,7 +51,6 @@ public class StoneBoardManager : MonoBehaviour
         return 
             _x >= 0 && _x < HOLYZONTAL &&
             _y >= 0 && _y < VERTICAL;
-
     }
 
     public void SetBlockFlg(bool _flg)
@@ -115,12 +111,12 @@ public class StoneBoardManager : MonoBehaviour
     {
         if (!IsRange(_x, _y)) return;
 
-        stoneList[_x][_y].SelectStonePos(selectStonePosPrefab);
+        stoneList[_x][_y].SelectStonePos();
     }
 
     public void UnSelectStonePos(int _x, int _y)
     {
-        if (IsSelectStonePos(_x, _y)) return;
+        if (!IsSelectStonePos(_x, _y)) return;
 
         stoneList[_x][_y].UnSelectStonePos();
     }
@@ -128,7 +124,7 @@ public class StoneBoardManager : MonoBehaviour
 
     public bool IsSelectStonePos(int _x, int _y)
     {
-        if (IsRange(_x, _y)) return false;
+        if (!IsRange(_x, _y)) return false;
 
         return stoneList[_x][_y].IsPutStone();
     }
