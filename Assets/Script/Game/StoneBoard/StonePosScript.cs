@@ -11,20 +11,21 @@ public class StonePosScript : MonoBehaviour
     [SerializeField, ReadOnly]
     GameObject putStoneObject = null;
 
-    [SerializeField, ReadOnly]
-    GameObject selectPosObject = null;
-
     GameManager manager = null;
+
+    [SerializeField]
+    ParticleSystem system = null;
 
     public void Init(GameManager _manager, Vector2Int _pos)
     {
+        system.Stop();
         manager = _manager;
         position = _pos;
     }
 
     public bool IsPutStone() { return putStoneObject != null; }
 
-    public bool IsSelectPos() { return selectPosObject != null; }
+    public bool IsSelectPos() { return system.isPlaying; }
 
     public void PushEvent()
     { 
@@ -46,18 +47,17 @@ public class StonePosScript : MonoBehaviour
         Destroy(putStoneObject);
     }
 
-    public void SelectStonePos(GameObject _prefab)
+    public void SelectStonePos()
     {
-        if (_prefab == null) return;
-        selectPosObject = Instantiate(_prefab, transform);
+        if (system == null) return;
 
-        InitializeObject(selectPosObject);
+        system.Play();
     }
 
     public void UnSelectStonePos()
     {
-        if (selectPosObject == null) return;
-        Destroy(selectPosObject);
+        if (system == null) return;
+        system.Stop();
     }
 
     void InitializeObject(GameObject _obj)
