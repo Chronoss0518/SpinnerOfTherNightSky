@@ -9,25 +9,18 @@ public class GameManager : MonoBehaviour
     public enum MainStep
     {
         StartTurn,
-        P_UseItem,
-        P_PutStone,
-        P_PlayMagic,
-        P_PlayMagicCheck,
-        OP_PlayMagic,
-        OP_PlayMagicCheck,
-        P_SetTrap,
+        UseItem,
+        PutStone,
+        PlayMagic,
+        SetTrap,
         EndTurn
     }
 
     public enum PlayMagicStep
     {
         StartStep,
-        U_SelectCard,
-        U_OpenCard,
-        OU_CardCheck,
-        OU_OpenCard,
-        U_TrapCheck,
-        U_OpenTrap,
+        SelectCard,
+        OpenCard,
         EndStep
     }
 
@@ -50,13 +43,13 @@ public class GameManager : MonoBehaviour
     Player playerPrefab = null;
 
     [SerializeField]
-    StoneBoardManager stoneBoard = null;
-
-    [SerializeField]
     Camera cameraObject = null;
 
     [SerializeField, ReadOnly]
     int nowPlayerCount = 0;
+
+    [SerializeField, ReadOnly]
+    int otherPlayerCount = 0;
 
     //ScriptŠÖŒW//
 
@@ -77,6 +70,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectSetTrap = null;
+
+    [SerializeField]
+    StoneBoardManager stoneBoard = null;
 
     public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
 
@@ -158,15 +154,11 @@ public class GameManager : MonoBehaviour
     {
         if (scriptManager.isRunScript) return;
 
-        TurnStart();
-
-        P_UseItem();
-        
-        P_PutStone();
-        
-        P_PlayMagic();
-
         TurnEnd();
+        PlayMagic();
+        PutStone();
+        UseItem();
+        TurnStart();
 
     }
 
@@ -180,6 +172,12 @@ public class GameManager : MonoBehaviour
                new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
             ScriptManager.ActionType.Entry));
 
+        selectMagic = scriptManager.CreateScript(new ScriptData(
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 1 --max 3 --is-put"),
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, "--put"),},
+            ScriptManager.ActionType.Entry));
+
         InitRandomPutStone();
 
         initFlg = true;
@@ -189,41 +187,34 @@ public class GameManager : MonoBehaviour
     {
         if (mainStep != MainStep.StartTurn) return;
 
-        mainStep = MainStep.P_UseItem;
+        mainStep = MainStep.UseItem;
     }
 
-    void P_UseItem()
+    void UseItem()
     {
-        if (mainStep != MainStep.P_UseItem) return;
+        if (mainStep != MainStep.UseItem) return;
 
 
-        mainStep = MainStep.P_PutStone;
+        mainStep = MainStep.PutStone;
     }
 
-    void P_PutStone()
+    void PutStone()
     {
-        if (mainStep != MainStep.P_PutStone) return;
+        if (mainStep != MainStep.PutStone) return;
 
         scriptManager.SetRunScript(selectStone);
 
-        mainStep = MainStep.P_PlayMagic;
+        mainStep = MainStep.PlayMagic;
     }
 
-    void P_PlayMagic()
+    void PlayMagic()
     {
-        if (mainStep != MainStep.P_PlayMagic) return;
+        if (mainStep != MainStep.PlayMagic) return;
 
-        scriptManager.SetRunScript(selectStone);
-
-        mainStep = MainStep.P_PlayMagic;
-    }
-
-    void P_PlayMagicCheck()
-    {
-        if (mainStep != MainStep.P_PlayMagic) return;
+        StartStep();
 
 
-        mainStep = MainStep.P_PlayMagic;
+        mainStep = MainStep.EndTurn;
     }
 
     void TurnEnd()
@@ -234,6 +225,21 @@ public class GameManager : MonoBehaviour
 
         nowPlayerCount++;
         nowPlayerCount %= players.Count;
+    }
+
+    void StartStep()
+    {
+        if (playMagicStep != PlayMagicStep.StartStep) return;
+
+        mainStep = MainStep.PlayMagic;
+
+        scriptManager.SetRunScript(selectMagic);
+
+        otherPlayerCount++;
+
+        if (otherPlayerCount <= players.Count) return;
+
+        otherPlayerCount = 0;
     }
 
     void InitRandomPutStone()
@@ -252,7 +258,6 @@ public class GameManager : MonoBehaviour
             positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (stoneBoard.HOLYZONTAL_SIZE - 1), tmpLoopCount / (stoneBoard.HOLYZONTAL_SIZE - 1));
             numList[tmpLoopCount] = tmpLoopCount;
         }
-
 
         int changeNum = 0;
         int baseNum = 0;
