@@ -14,6 +14,7 @@ public class TurnManager
         StartTurn,
         UseItem,
         PutStone,
+        PlayMagicInit,
         PlayMagic,
         SetTrap,
         EndTurn
@@ -23,7 +24,7 @@ public class TurnManager
     {
         StartStep,
         SelectCard,
-        OpenCard,
+        UseCard,
         EndStep
     }
 
@@ -39,47 +40,45 @@ public class TurnManager
     ScriptManager.ScriptActionData selectMagic = null;
 
     [SerializeField, ReadOnly]
+    ScriptManager.ScriptActionData selectCard = null;
+
+    [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectSetTrap = null;
 
     MainStep mainStep = MainStep.StartTurn;
     PlayMagicStep playMagicStep = PlayMagicStep.EndStep;
 
+    bool useMagicFlg = false;
+
+    [SerializeField, ReadOnly]
+    int otherPlayerCount = 0;
+
     public void Init(GameManager _gm)
     {
         gameManager = _gm;
+        mainStep = MainStep.StartTurn;
+        playMagicStep = PlayMagicStep.EndStep;
 
-        selectStone = gameManager.scriptMgr.CreateScript(new ScriptData(
+        selectStone = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
                new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
             ScriptManager.ActionType.Entry));
 
-        selectMagic = gameManager.scriptMgr.CreateScript(new ScriptData(
+        selectMagic = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 1 --max 3 --is-put"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, "--put"),},
             ScriptManager.ActionType.Entry));
-
     }
 
 
     public void Update()
     {
-    }
-
-    void UpdateMainTurn()
-    {
         TurnEnd();
+        SetTrap();
         PlayMagic();
-        PutStone();
-        UseItem();
-        TurnStart();
-    }
-
-    void UpdateMagicStep()
-    {
-        TurnEnd();
-        PlayMagic();
+        PlayMagicInit();
         PutStone();
         UseItem();
         TurnStart();
@@ -104,8 +103,16 @@ public class TurnManager
     {
         if (mainStep != MainStep.PutStone) return;
 
-        gameManager.scriptMgr.SetRunScript(selectStone);
+        gameManager.RegistScript(selectStone);
 
+        mainStep = MainStep.PlayMagicInit;
+    }
+
+    void PlayMagicInit()
+    {
+        if (mainStep != MainStep.PlayMagicInit) return;
+
+        playMagicStep = PlayMagicStep.StartStep;
         mainStep = MainStep.PlayMagic;
     }
 
@@ -113,8 +120,21 @@ public class TurnManager
     {
         if (mainStep != MainStep.PlayMagic) return;
 
+        EndStep();
+        UseCard();
+        SelectCard();
         StartStep();
 
+
+    }
+
+    void SetTrap()
+    {
+        if (mainStep != MainStep.SetTrap) return;
+
+
+
+        
 
         mainStep = MainStep.EndTurn;
     }
@@ -124,23 +144,38 @@ public class TurnManager
         if (mainStep != MainStep.EndTurn) return;
 
         mainStep = MainStep.StartTurn;
-
-        nowPlayerCount++;
-        nowPlayerCount %= players.Count;
+        gameManager.AddPlayerCount();
     }
 
     void StartStep()
     {
         if (playMagicStep != PlayMagicStep.StartStep) return;
 
-        mainStep = MainStep.PlayMagic;
-
-        gameManager.scriptMgr.SetRunScript(selectMagic);
-
-        otherPlayerCount++;
-
-        if (otherPlayerCount <= players.Count) return;
-
-        otherPlayerCount = 0;
+        playMagicStep = PlayMagicStep.SelectCard;
     }
+
+    void SelectCard()
+    {
+        if (playMagicStep != PlayMagicStep.StartStep) return;
+
+        playMagicStep = PlayMagicStep.UseCard;
+        gameManager.RegistScript(selectMagic);
+    }
+
+    void UseCard()
+    {
+        if (playMagicStep != PlayMagicStep.StartStep) return;
+
+        playMagicStep = PlayMagicStep.UseCard;
+        gameManager.RegistScript(selectMagic);
+    }
+
+    void EndStep()
+    {
+        if (playMagicStep != PlayMagicStep.EndStep) return;
+
+        mainStep = MainStep.SetTrap;
+    }
+
+
 }
