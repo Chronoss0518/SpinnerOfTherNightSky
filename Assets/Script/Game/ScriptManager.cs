@@ -403,7 +403,6 @@ public class ScriptManager
         }
 
         targetStonePos.Clear();
-        Debug.Log("Run Put Stone");
 
         return true;
     }
