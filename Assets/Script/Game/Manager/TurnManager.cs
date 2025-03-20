@@ -48,16 +48,33 @@ public class TurnManager
     MainStep mainStep = MainStep.StartTurn;
     PlayMagicStep playMagicStep = PlayMagicStep.EndStep;
 
-    bool useMagicFlg = false;
+    [SerializeField, ReadOnly]
+    int tmpNowPlayerCount = 0;
+
+    [SerializeField, ReadOnly]
+    int playCardUserCount = 0;
 
     [SerializeField, ReadOnly]
     int otherPlayerCount = 0;
+
+    [SerializeField, ReadOnly]
+    int testPlayMagicCount = 0;
+
+    [SerializeField, ReadOnly]
+    int testPlayCardCount = 0;
 
     public void Init(GameManager _gm)
     {
         gameManager = _gm;
         mainStep = MainStep.StartTurn;
         playMagicStep = PlayMagicStep.EndStep;
+
+        selectItem = gameManager.CreateScript(new ScriptData(
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --is-put"),
+               new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
+            ScriptManager.ActionType.Entry));
 
         selectStone = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
@@ -67,11 +84,22 @@ public class TurnManager
 
         selectMagic = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 1 --max 3 --is-put"),
-               new ScriptParts((int)ScriptManager.ScriptType.Stack, "--put"),},
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 1"),
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
+            ScriptManager.ActionType.Entry));
+
+        selectCard = gameManager.CreateScript(new ScriptData(
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5"),
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
+            ScriptManager.ActionType.Entry));
+
+        selectSetTrap = gameManager.CreateScript(new ScriptData(
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 4"),
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
     }
-
 
     public void Update()
     {
@@ -112,6 +140,7 @@ public class TurnManager
     {
         if (mainStep != MainStep.PlayMagicInit) return;
 
+        tmpNowPlayerCount = gameManager.nowPlayerCount;
         playMagicStep = PlayMagicStep.StartStep;
         mainStep = MainStep.PlayMagic;
     }
@@ -125,7 +154,10 @@ public class TurnManager
         SelectCard();
         StartStep();
 
+        if (testPlayMagicCount < gameManager.PlayersCount) return;
 
+        gameManager.SetNowPlayerCount(tmpNowPlayerCount);
+        mainStep = MainStep.SetTrap;
     }
 
     void SetTrap()
@@ -144,7 +176,7 @@ public class TurnManager
         if (mainStep != MainStep.EndTurn) return;
 
         mainStep = MainStep.StartTurn;
-        gameManager.AddPlayerCount();
+        gameManager.AddNowPlayerCount();
     }
 
     void StartStep()
@@ -156,25 +188,36 @@ public class TurnManager
 
     void SelectCard()
     {
-        if (playMagicStep != PlayMagicStep.StartStep) return;
+        if (playMagicStep != PlayMagicStep.SelectCard) return;
 
         playMagicStep = PlayMagicStep.UseCard;
         gameManager.RegistScript(selectMagic);
+
     }
 
     void UseCard()
     {
-        if (playMagicStep != PlayMagicStep.StartStep) return;
+        if (playMagicStep != PlayMagicStep.UseCard) return;
 
-        playMagicStep = PlayMagicStep.UseCard;
-        gameManager.RegistScript(selectMagic);
+        playMagicStep = PlayMagicStep.EndStep;
+
+        if (gameManager.StackCount <= 0) return;
+
+        playCardUserCount = tmpNowPlayerCount + otherPlayerCount;
+        playCardUserCount %= gameManager.PlayersCount;
+
+        playMagicStep = PlayMagicStep.StartStep;
+        gameManager.RegistScript(selectCard);
+
+        otherPlayerCount++;
+        gameManager.SetNowPlayerCount(playCardUserCount + otherPlayerCount);
+
     }
 
     void EndStep()
     {
         if (playMagicStep != PlayMagicStep.EndStep) return;
 
-        mainStep = MainStep.SetTrap;
     }
 
 

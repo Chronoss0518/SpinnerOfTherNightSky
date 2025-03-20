@@ -28,7 +28,6 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     public int nowPlayerCount { get; private set; } = 0;
 
-
     //ScriptŠÖŒW//
 
     [SerializeField, ReadOnly]
@@ -84,9 +83,16 @@ public class GameManager : MonoBehaviour
         return players[nowPlayerCount];
     }
 
-    public void AddPlayerCount()
+    public void AddNowPlayerCount()
     {
         nowPlayerCount++;
+        nowPlayerCount %= players.Count;
+    }
+
+    public void SetNowPlayerCount(int _count)
+    {
+        if (_count <= 0) return;
+        nowPlayerCount = _count;
         nowPlayerCount %= players.Count;
     }
 

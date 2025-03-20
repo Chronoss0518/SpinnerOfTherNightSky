@@ -50,9 +50,9 @@ public class ScriptManager
     [Flags]
     public enum SelectCardType :int
     {
-        Magic,
-        Item,
-        Trap
+        Magic = 1,
+        Item = 2,
+        Trap = 4
     }
 
     public class ScriptAction
@@ -151,6 +151,7 @@ public class ScriptManager
             type = ScriptType.MoveCard;
         }
 
+        public bool openFlg = false;
         public ZoneType moveZone = 0;
     }
 
@@ -263,6 +264,7 @@ public class ScriptManager
             if (CreateScriptAction(res, CreateSelectCardAction, scr)) continue;
             if (CreateScriptAction(res, CreateMoveStoneAction, scr)) continue;
             if (CreateScriptAction(res, CreateMoveCardAction, scr)) continue;
+            if (CreateScriptAction(res, CreateStackAction, scr)) continue;
             if (CreateScriptAction(res, CreateWinnerPointAction, scr)) continue;
         }
 
@@ -634,9 +636,32 @@ public class ScriptManager
             if (args[i] == "--item-zone")
                 res.moveZone = ZoneType.ItemZone;
 
+            if (args[i] == "--open-item-zone")
+            {
+                res.openFlg = true;
+                res.moveZone = ZoneType.ItemZone;
+            }
+
+            if (args[i] == "--close-item-zone")
+            {
+                res.openFlg = false;
+                res.moveZone = ZoneType.ItemZone;
+            }
+
             if (args[i] == "--trash-zone")
                 res.moveZone = ZoneType.TrashZone;
         }
+
+        return res;
+    }
+
+    ScriptAction CreateStackAction(ScriptParts _script)
+    {
+        if (_script.type != ScriptType.WinnerPoint) return null;
+
+        var res = new ScriptAction();
+
+        res.type = ScriptType.Stack;
 
         return res;
     }
