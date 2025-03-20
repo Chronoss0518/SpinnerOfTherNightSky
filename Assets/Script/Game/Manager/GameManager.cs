@@ -17,30 +17,30 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
 
+    public int PlayersCount { get { return players.Count; } }
+
     [SerializeField]
     Player playerPrefab = null;
 
     [SerializeField]
     Camera cameraObject = null;
 
-    [SerializeField, ReadOnly]
-    int nowPlayerCount = 0;
+    [SerializeField]
+    public int nowPlayerCount { get; private set; } = 0;
 
-    [SerializeField, ReadOnly]
-    int otherPlayerCount = 0;
 
     //ScriptŠÖŒW//
 
     [SerializeField, ReadOnly]
     ScriptManager scriptManager = new ScriptManager();
 
-    public ScriptManager scriptMgr { get { return scriptManager; } }
-
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
 
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
+
+    public int StackCount { get { return stack.Count; } }
 
     [SerializeField]
     StoneBoardManager stoneBoard = null;
@@ -82,6 +82,22 @@ public class GameManager : MonoBehaviour
     public Player GetNowPlayer()
     {
         return players[nowPlayerCount];
+    }
+
+    public void AddPlayerCount()
+    {
+        nowPlayerCount++;
+        nowPlayerCount %= players.Count;
+    }
+
+    public ScriptManager.ScriptActionData CreateScript(ScriptData _data)
+    {
+        return scriptManager.CreateScript(_data);
+    }
+
+    public void RegistScript(ScriptManager.ScriptActionData _script)
+    {
+        scriptManager.SetRunScript(_script);
     }
 
     // Start is called before the first frame update
