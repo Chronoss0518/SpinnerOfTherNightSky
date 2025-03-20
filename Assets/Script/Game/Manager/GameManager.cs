@@ -6,29 +6,7 @@ using UnityEngine.UI;
 
 public class GameManager : MonoBehaviour
 {
-    public enum MainStep
-    {
-        StartTurn,
-        UseItem,
-        PutStone,
-        PlayMagic,
-        SetTrap,
-        EndTurn
-    }
-
-    public enum PlayMagicStep
-    {
-        StartStep,
-        SelectCard,
-        OpenCard,
-        EndStep
-    }
-
     //Initialize//
-
-    [SerializeField]
-    int RANDOM_COUNT = 100;
-
     [SerializeField]
     GameObject initRandomPutStone = null;
 
@@ -56,20 +34,13 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     ScriptManager scriptManager = new ScriptManager();
 
+    public ScriptManager scriptMgr { get { return scriptManager; } }
+
+    [SerializeField, ReadOnly]
+    TurnManager turnManager = new TurnManager();
+
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
-
-    [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectItem = null;
-
-    [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectStone = null;
-
-    [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectMagic = null;
-
-    [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectSetTrap = null;
 
     [SerializeField]
     StoneBoardManager stoneBoard = null;
@@ -81,9 +52,6 @@ public class GameManager : MonoBehaviour
     Manager manager = Manager.ins;
 
     bool initFlg { get; set; } = false;
-
-    MainStep mainStep = MainStep.StartTurn;
-    PlayMagicStep playMagicStep = PlayMagicStep.EndStep;
 
     public void SelectStonePos(int _x,int _y)
     {
@@ -135,14 +103,15 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
-
         StartDice();
 
         if (!initFlg) return;
 
-        RunTurnStep();
-
-        if (!scriptManager.isRunScript) return;
+        if (!scriptManager.isRunScript)
+        {
+            turnManager.Update();
+            return;
+        }
 
         var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
 
@@ -150,139 +119,17 @@ public class GameManager : MonoBehaviour
     }
 
 
-    void RunTurnStep()
-    {
-        if (scriptManager.isRunScript) return;
-
-        TurnEnd();
-        PlayMagic();
-        PutStone();
-        UseItem();
-        TurnStart();
-
-    }
-
     void StartDice()
     {
         if (initFlg) return;
 
-        selectStone = scriptManager.CreateScript(new ScriptData(
-            new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
-               new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
-            ScriptManager.ActionType.Entry));
+        turnManager.Init(this);
 
-        selectMagic = scriptManager.CreateScript(new ScriptData(
-            new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 1 --max 3 --is-put"),
-               new ScriptParts((int)ScriptManager.ScriptType.Stack, "--put"),},
-            ScriptManager.ActionType.Entry));
-
-        InitRandomPutStone();
+        stoneBoard.PutRandomStone(manager.randomPutStone, initRandomPutStone);
 
         initFlg = true;
     }
 
-    void TurnStart()
-    {
-        if (mainStep != MainStep.StartTurn) return;
-
-        mainStep = MainStep.UseItem;
-    }
-
-    void UseItem()
-    {
-        if (mainStep != MainStep.UseItem) return;
-
-
-        mainStep = MainStep.PutStone;
-    }
-
-    void PutStone()
-    {
-        if (mainStep != MainStep.PutStone) return;
-
-        scriptManager.SetRunScript(selectStone);
-
-        mainStep = MainStep.PlayMagic;
-    }
-
-    void PlayMagic()
-    {
-        if (mainStep != MainStep.PlayMagic) return;
-
-        StartStep();
-
-
-        mainStep = MainStep.EndTurn;
-    }
-
-    void TurnEnd()
-    {
-        if (mainStep != MainStep.EndTurn) return;
-
-        mainStep = MainStep.StartTurn;
-
-        nowPlayerCount++;
-        nowPlayerCount %= players.Count;
-    }
-
-    void StartStep()
-    {
-        if (playMagicStep != PlayMagicStep.StartStep) return;
-
-        mainStep = MainStep.PlayMagic;
-
-        scriptManager.SetRunScript(selectMagic);
-
-        otherPlayerCount++;
-
-        if (otherPlayerCount <= players.Count) return;
-
-        otherPlayerCount = 0;
-    }
-
-    void InitRandomPutStone()
-    {
-        if (initRandomPutStone == null) return;
-        if (manager.randomPutStone <= 0) return;
-
-        int fieldSize = (stoneBoard.VERTICAL_SIZE -1) * (stoneBoard.HOLYZONTAL_SIZE - 1);
-        Vector2Int[] positions = new Vector2Int[fieldSize];
-        int[] numList = new int[fieldSize];
-
-        int tmpLoopCount = 0;
-
-        for (tmpLoopCount = 0; tmpLoopCount < fieldSize; tmpLoopCount++)
-        {
-            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (stoneBoard.HOLYZONTAL_SIZE - 1), tmpLoopCount / (stoneBoard.HOLYZONTAL_SIZE - 1));
-            numList[tmpLoopCount] = tmpLoopCount;
-        }
-
-        int changeNum = 0;
-        int baseNum = 0;
-
-        for (tmpLoopCount = 0; tmpLoopCount < RANDOM_COUNT; tmpLoopCount++)
-        {
-            for(baseNum = 0; baseNum<numList.Length; baseNum++)
-            {
-                changeNum = Random.Range(0, fieldSize);
-
-                if (baseNum == changeNum) continue;
-                numList[baseNum] += numList[changeNum];
-                numList[changeNum] = numList[baseNum] - numList[changeNum];
-                numList[baseNum] = numList[baseNum] - numList[changeNum];
-            }
-
-        }
-        Vector2Int pos = Vector2Int.zero;
-        for (tmpLoopCount = 0; tmpLoopCount < manager.randomPutStone; tmpLoopCount++)
-        {
-            pos = positions[numList[tmpLoopCount]];
-            stoneBoard.PutStone(pos.x, pos.y, initRandomPutStone);
-        }
-
-    }
 
     IEnumerator GetBookData(int _bookId,
         System.Action<BookAPIBase.GetBookDatasResponse> _success,

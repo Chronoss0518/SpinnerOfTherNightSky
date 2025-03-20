@@ -8,6 +8,10 @@ using UnityEngine.UIElements;
 
 public class StoneBoardManager : MonoBehaviour
 {
+
+    [SerializeField]
+    int RANDOM_COUNT = 100;
+
     //Horyzontal : êÖïΩ//
     [SerializeField]
     private int HOLYZONTAL = 13;
@@ -84,11 +88,53 @@ public class StoneBoardManager : MonoBehaviour
         }
     }
 
-    public void PutStone(int _x, int _y,GameObject _stone)
+    public void PutStone(int _x, int _y, GameObject _stone)
     {
         if (!IsRange(_x, _y)) return;
 
         stoneList[_x][_y].PutStone(_stone);
+    }
+
+    public void PutRandomStone(int putCount, GameObject _stone)
+    {
+        if (_stone == null) return;
+        if (putCount <= 0) return;
+
+        int fieldSize = (VERTICAL -1) * (HOLYZONTAL - 1);
+        Vector2Int[] positions = new Vector2Int[fieldSize];
+        int[] numList = new int[fieldSize];
+
+        int tmpLoopCount = 0;
+
+        for (tmpLoopCount = 0; tmpLoopCount < fieldSize; tmpLoopCount++)
+        {
+            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (HOLYZONTAL - 1), tmpLoopCount / (HOLYZONTAL - 1));
+            numList[tmpLoopCount] = tmpLoopCount;
+        }
+
+        int changeNum = 0;
+        int baseNum = 0;
+
+        for (tmpLoopCount = 0; tmpLoopCount < RANDOM_COUNT; tmpLoopCount++)
+        {
+            for (baseNum = 0; baseNum<numList.Length; baseNum++)
+            {
+                changeNum = Random.Range(0, fieldSize);
+
+                if (baseNum == changeNum) continue;
+                numList[baseNum] += numList[changeNum];
+                numList[changeNum] = numList[baseNum] - numList[changeNum];
+                numList[baseNum] = numList[baseNum] - numList[changeNum];
+            }
+
+        }
+        Vector2Int pos = Vector2Int.zero;
+        for (tmpLoopCount = 0; tmpLoopCount < putCount; tmpLoopCount++)
+        {
+            pos = positions[numList[tmpLoopCount]];
+            stoneList[pos.x][pos.y].PutStone(_stone);
+        }
+
     }
 
     public void RemoveStone(int _x, int _y)
