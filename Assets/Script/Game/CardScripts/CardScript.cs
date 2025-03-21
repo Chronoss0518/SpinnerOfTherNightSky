@@ -28,6 +28,11 @@ public class CardScript : MonoBehaviour
     [SerializeField, ReadOnly]
     GameManager manager = null;
 
+    [SerializeField,ReadOnly]
+    ScriptManager.ZoneType zType = 0;
+
+
+    public ScriptManager.ZoneType zoneType { get { return zType; } }
 
     public string cardName { get { return data.name; } }
 
@@ -41,13 +46,20 @@ public class CardScript : MonoBehaviour
 
     public CardData.CardType type { get; private set; } = CardData.CardType.Magic;
 
-    public void Init(Player _player, GameManager _gameManager, CardData _data)
+
+    public void Init(Player _player, GameManager _gameManager, CardData _data,ScriptManager.ZoneType _type)
     {
         InitMagicCardScript(_data);
         InitItemCardScript(_data);
 
         manager = _gameManager;
         player = _player;
+        zType = _type;
+    }
+
+    public void SelectAction()
+    {
+        manager.SelectCard(player,this, zType);
     }
 
     void Start()

@@ -57,6 +57,11 @@ public class GameManager : MonoBehaviour
         scriptManager.SelectTargetPos(_x, _y, this);
     }
 
+    public void SelectCard(Player _player, CardScript _card,ScriptManager.ZoneType _type)
+    {
+        
+    }
+
     public void SetTextObject(Text _vText,Text _lText)
     {
         vMessage = _vText;
