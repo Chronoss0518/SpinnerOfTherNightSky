@@ -348,23 +348,27 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 6f897c852a5b68d41a10ac55fd3cdecc, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  RANDOM_COUNT: 100
   initRandomPutStone: {fileID: 986349050056078361, guid: ae35624adfd21fa40a202946e14c8b72, type: 3}
   vMessage: {fileID: 0}
   lMessage: {fileID: 0}
   players: []
   playerPrefab: {fileID: 2431698666257173391, guid: 2449ad3d1ab7e13489b79cd49a1faae1, type: 3}
-  stoneBoard: {fileID: 340119966476239371}
   cameraObject: {fileID: 849056416}
-  nowPlayerCount: 0
   scriptManager:
     targetPlayer: []
     targetCard: []
     errorMessageDrawMaxCount: 180
     errorMessageDrawCount: -1
     errorType: 0
-    selectStonePrefab: {fileID: 0}
+    selectStonePrefab: {fileID: 986349050056078361, guid: ae35624adfd21fa40a202946e14c8b72, type: 3}
+  turnManager:
+    tmpNowPlayerCount: 0
+    playCardUserCount: 0
+    otherPlayerCount: 0
+    testPlayMagicCount: 0
+    testPlayCardCount: 0
   stack: []
+  stoneBoard: {fileID: 340119966476239371}
   manager:
     IS_DEBUG_FLG: 1
     IS_MOCK_FLG: 1
