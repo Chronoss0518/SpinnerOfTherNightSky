@@ -250,7 +250,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &6388715432443447953
 RectTransform:
   m_ObjectHideFlags: 0
@@ -478,22 +478,25 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 64593ed494897c944946ec265745c29f, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  selectFlg: 0
+  selectTargetFlg: 0
   front:
     image: {fileID: 4827323136961505902}
     animator: {fileID: 5038388935850887756}
-    selectFlg: 1
   back:
     image: {fileID: 6187545976939666275}
     animator: {fileID: 7962016438842992738}
-    selectFlg: 1
   data:
     id: 0
     name: 
     description: 
     imagePath: 
     cardType: 0
-    script: 
+    script: []
     initBookPos: 0
+  player: {fileID: 0}
+  manager: {fileID: 0}
+  zType: 0
 --- !u!1 &7142549517448821539
 GameObject:
   m_ObjectHideFlags: 0
@@ -642,7 +645,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &8607894625846125406
 RectTransform:
   m_ObjectHideFlags: 0
