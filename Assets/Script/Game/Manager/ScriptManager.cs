@@ -109,12 +109,13 @@ public class ScriptManager
 
         public int selectMinCount = 0;
         public int selectMaxCount = 1;
-        //1で自身//
-        //2で自身以外//
+        //0で自身//
+        //1で自身以外//
         public int playerType = -1;
         public ZoneType zoneType = 0;
         public SelectCardType cardType = 0;
         public List<int> magicAttributeMonth = new List<int>();
+        public bool removeStone = false;
         public List<string> particialName = new List<string>();
         public List<string> particialDescription = new List<string>();
 
@@ -534,6 +535,11 @@ public class ScriptManager
                     res.AddAttributeType(type);
                     i += 1;
                 }
+            }
+
+            if (args[i] == "--remove-stone")
+            {
+                res.removeStone = true;
             }
 
             if (args[i] == "--particial-name" && args.Count > i + 1)
