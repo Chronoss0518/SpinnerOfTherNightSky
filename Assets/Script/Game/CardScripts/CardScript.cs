@@ -22,6 +22,13 @@ public class CardScript : MonoBehaviour
     [SerializeField,ReadOnly]
     CardData data = null;
 
+    [SerializeField, ReadOnly]
+    Player player = null;
+
+    [SerializeField, ReadOnly]
+    GameManager manager = null;
+
+
     public string cardName { get { return data.name; } }
 
     public string description { get { return data.description; } }
@@ -34,13 +41,15 @@ public class CardScript : MonoBehaviour
 
     public CardData.CardType type { get; private set; } = CardData.CardType.Magic;
 
-    System.Action selectAction = ()=>{};
-
-    public void SetAction(System.Action _selectAction)
+    public void Init(Player _player, GameManager _gameManager, CardData _data)
     {
-        if (_selectAction == null) return;
-        selectAction = _selectAction;
+        InitMagicCardScript(_data);
+        InitItemCardScript(_data);
+
+        manager = _gameManager;
+        player = _player;
     }
+
     void Start()
     {
         SetSelectFlg(false);
@@ -57,17 +66,6 @@ public class CardScript : MonoBehaviour
         SetAnimation(back, _flg);
 
         selectFlg = _flg;
-    }
-
-    public void Init(CardData _data)
-    {
-        InitMagicCardScript(_data);
-        InitItemCardScript(_data);
-    }
-
-    public void SelectAction()
-    {
-        if (selectAction != null) selectAction();
     }
 
     void InitMagicCardScript(CardData _data)
