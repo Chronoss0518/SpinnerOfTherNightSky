@@ -110,7 +110,7 @@ public class Book : MonoBehaviour
         if (_card == null) return;
         var obj = Instantiate(cardPrefab, cardSocketList[_card.initBookPos].transform);
         var script = obj.GetComponent<CardScript>();
-        script.Init(_player, _manager, _card);
+        script.Init(_player, _manager, _card,ScriptManager.ZoneType.Book);
     }
 
     public void PutCard(CardScript _card)
