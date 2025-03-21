@@ -111,13 +111,15 @@ public class GameManager : MonoBehaviour
     {
         if (stoneBoard != null) stoneBoard.Init();
 
-        CreatePlayer();
 
-        for (int i = 1; i < Manager.MAX_GMAE_PLAYER && i < manager.cpuFlgs.Length; i++)
+        for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
         {
-            var cpuFlg = manager.cpuFlgs[i - 1];
-            CreateCPUPlayer(cpuFlg);
-            CreateNetworkPlayer(cpuFlg);
+
+
+            var memberFlgs = manager.memberFlgs[i - 1];
+            CreateLocalPlayer(memberFlgs);
+            CreateCPUPlayer(memberFlgs);
+            CreateNetworkPlayer(memberFlgs);
         }
 
     }
@@ -192,8 +194,10 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void CreatePlayer()
+    void CreateLocalPlayer(Manager.MemberType _type)
     {
+        if (_type != Manager.MemberType.LocalPlayer) return;
+
         var playerCom = CreatePlayerComponent();
 
         playerCom.SetLocalPlayerController();

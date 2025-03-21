@@ -31,6 +31,7 @@ public class Manager
 
     public enum MemberType
     {
+        LocalPlayer,
         CPU,
         NetWorkPlayer,
         None
@@ -40,8 +41,9 @@ public class Manager
     public GameType gameType = GameType.Normal;
 
     [ReadOnly]
-    public MemberType[] cpuFlgs = 
-    { 
+    public MemberType[] memberFlgs = 
+    {
+        MemberType.LocalPlayer,
         MemberType.CPU,
         MemberType.None,
         MemberType.None

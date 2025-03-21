@@ -13,8 +13,9 @@ public class DebugManager : MonoBehaviour
 
 
     [SerializeField]
-    Manager.MemberType[] cpuFlgs =
+    Manager.MemberType[] memberFlgs =
     {
+        Manager.MemberType.LocalPlayer,
         Manager.MemberType.CPU,
         Manager.MemberType.None,
         Manager.MemberType.None
@@ -30,7 +31,7 @@ public class DebugManager : MonoBehaviour
     {
         if (!Manager.ins.IS_DEBUG) return;
         manager.gameType = gameType;
-        manager.cpuFlgs = cpuFlgs;
+        manager.memberFlgs = memberFlgs;
         manager.useBookNo = useBookNo;
         manager.randomPutStone = randomPutStone;
     }
