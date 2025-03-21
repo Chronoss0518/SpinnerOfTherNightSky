@@ -73,7 +73,7 @@ public class Player : MonoBehaviour
         if (book.initFlg) return;
 
         book.Init();
-        book.InitCard(cardData);
+        book.InitCard(this, gameManager, cardData);
 
         UpdateBookParent();
     }

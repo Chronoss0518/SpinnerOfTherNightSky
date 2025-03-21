@@ -48,11 +48,11 @@ public class Book : MonoBehaviour
         ActiveTest(backButton, false);
     }
 
-    public void InitCard(CardData[] _cardList)
+    public void InitCard(Player _player,GameManager _manager,CardData[] _cardList)
     {
         foreach(var card in _cardList)
         {
-            PutCard(card);
+            PutCard(_player,_manager, card);
         }
     }
 
@@ -105,12 +105,12 @@ public class Book : MonoBehaviour
         ActiveTest(backButton, nowPage > 0 );
     }
 
-    public void PutCard(CardData _card)
+    public void PutCard(Player _player, GameManager _manager,CardData _card)
     {
         if (_card == null) return;
         var obj = Instantiate(cardPrefab, cardSocketList[_card.initBookPos].transform);
         var script = obj.GetComponent<CardScript>();
-        script.Init(_card);
+        script.Init(_player, _manager, _card);
     }
 
     public void PutCard(CardScript _card)
