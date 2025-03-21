@@ -1,13 +1,25 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Runtime.InteropServices.WindowsRuntime;
 using Unity.Collections;
 using UnityEngine;
 
 [System.Serializable]
 public class ScriptManager
 {
+    public ScriptManager()
+    {
+        selectStoneBoardActionController.Init(this);
+    }
+
+    abstract public class SelectScriptActionBase
+    {
+        abstract public bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptAction _script);
+
+        abstract public void ClearTarget();
+    }
+
+
     delegate ScriptAction CreateMethod(ScriptParts _parts);
 
     public enum ErrorType : int
@@ -173,27 +185,30 @@ public class ScriptManager
         public List<ScriptAction> actions = new List<ScriptAction>();
     }
 
+    ScriptActionData runScript = null;
     public bool isRunScript { get { return runScript != null; } }
 
-    ScriptActionData runScript = null;
+    public ScriptType RunScriptType { get { return runScript.actions[useScriptCount].type; } }
+
+
     List<ScriptActionData> stayScript = new List<ScriptActionData>();
 
     [SerializeField, ReadOnly]
     List<Player> targetPlayer = new List<Player>();
 
-    public int GetTargetplayerCount { get { return targetPlayer.Count; } }
+    public int GetTargetPlayerCount { get { return targetPlayer.Count; } }
 
     [SerializeField, ReadOnly]
     List<CardScript> targetCard = new List<CardScript>();
 
     public int GetTargetCardCount { get { return targetCard.Count; } }
 
-    [SerializeField, ReadOnly]
-    Dictionary<int,StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
+    SelectStoneBoardActionController selectStoneBoardActionController = new SelectStoneBoardActionController();
 
-    public int GetTargetStonePosCount { get { return targetStonePos.Count; } }
-
+    [SerializeField,ReadOnly]
     int useScriptCount = 0;
+
+    public void AddUseScriptCount() { useScriptCount++; }
 
     [SerializeField]
     int errorMessageDrawMaxCount = 0;
@@ -201,10 +216,30 @@ public class ScriptManager
     [SerializeField, ReadOnly]
     int errorMessageDrawCount = -1;
 
+    public int GetErrorMessageDrawCount() { return errorMessageDrawCount; }
+
+    public void DownErrorMessageDrawCount()
+    {
+        if (errorMessageDrawCount < 0)
+        {
+            errorType = ErrorType.None;
+            return;
+        }
+
+        errorMessageDrawCount--;
+    }
+
     [SerializeField, ReadOnly]
     ErrorType errorType = ErrorType.None;
 
-    public ErrorType GetErrorType { get { return errorType; } }
+    public ErrorType GetErrorType() { return errorType; }
+
+    public void SetError(ErrorType _type)
+    {
+        if (_type == ErrorType.None) return;
+        errorType = _type;
+        errorMessageDrawCount = errorMessageDrawMaxCount;
+    }
 
     [SerializeField]
     GameObject selectStonePrefab = null;
@@ -216,48 +251,22 @@ public class ScriptManager
 
         var action = (SelectStoneBoardAction)runScript.actions[useScriptCount];
 
-        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == action.isPutPos)
-        {
-            errorMessageDrawCount = errorMessageDrawMaxCount;
-
-            errorType = action.isPutPos ?
-                ErrorType.IsPutStonePosSelect :
-                ErrorType.IsRemoveStonePosSelect;
-
-            return;
-        }
-
-        int pos = _x + (_y * _manager.stoneBoardObj.HOLYZONTAL_SIZE);
-
-        if(targetStonePos.ContainsKey(pos))
-        {
-            targetStonePos[pos].UnSelectStonePos();
-            targetStonePos.Remove(pos);
-            return;
-        }
-
-        if (action.maxCount <= targetStonePos.Count)
-        {
-            errorMessageDrawCount = errorMessageDrawMaxCount;
-            errorType = ErrorType.IsRangeMaxOverCount;
-
-            return;
-        }
-
-        var script = _manager.stoneBoardObj.GetStonePosScript(_x, _y);
-        targetStonePos.Add(pos, script);
-        _manager.stoneBoardObj.SelectStonePos(_x, _y);
-
+        selectStoneBoardActionController.SelectTargetPos(_x, _y, _manager, action);
     }
-
 
     public ScriptActionData CreateScript(ScriptData _script, bool _regist = false)
     {
+
         var res = new ScriptActionData();
+        if (_script.parts == null) return res;
+        if (_script.parts.Length <= 0) return res;
+
         res.type = _script.type;
 
-        foreach(var scr in _script.parts)
+        for(int i = 0;i<_script.parts.Length;i++)
         {
+            var scr = _script.parts[i];
+
             if (CreateScriptAction(res, CreateBlockStoneAction, scr)) continue;
             if (CreateScriptAction(res, CreateBlockCardAction, scr)) continue;
             if (CreateScriptAction(res, CreateSelectStoneBoardAction, scr)) continue;
@@ -300,7 +309,7 @@ public class ScriptManager
             useScriptCount = 0;
             targetPlayer.Clear();
             targetCard.Clear();
-            targetStonePos.Clear();
+            selectStoneBoardActionController.ClearTarget();
             return;
         }
 
@@ -333,48 +342,7 @@ public class ScriptManager
 
     bool SelectStoneBoard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return false;
-
-        _controller.ActionStart();
-
-        var act = (SelectStoneBoardAction)_script;
-
-        string message = "";
-
-        if (errorMessageDrawCount < 0)
-        {
-            string tmp = act.minCount > targetStonePos.Count ?
-                $"残り:{act.minCount - targetStonePos.Count}" :
-                "選択済み";
-
-            message = act.minCount != act.maxCount ?
-                $"石を置く場所を{act.minCount}から{act.maxCount}選択してください。\n{tmp}" :
-                 $"石を置く場所を{act.minCount}選択してください。\n{tmp}";
-
-        }
-        else{
-
-            errorMessageDrawCount--;
-            if(errorType == ErrorType.IsRangeMaxOverCount)message = "これ以上選択できません";
-            if(errorType == ErrorType.isRangeMinOverCount) message = $"{act.minCount}以上選択してください";
-            if(errorType == ErrorType.IsPutStonePosSelect) message = $"既に石が置かれています";
-            if(errorType == ErrorType.IsRemoveStonePosSelect) message = $"その場所には石がありません";
-        }
-
-        _gameManager.SetMessate(message);
-
-        if (!_controller.isAction) return true;
-        if(act.minCount > targetStonePos.Count)
-        {
-            errorType = ErrorType.isRangeMinOverCount;
-            _controller.DownActionFlg();
-            return true;
-        }
-
-        _controller.ActionEnd();
-        useScriptCount++;
-
-        return true;
+        return selectStoneBoardActionController.SelectAction(_controller, _gameManager, _script);
     }
 
 
@@ -395,7 +363,7 @@ public class ScriptManager
 
         var act = (MoveStoneAction)_script;
 
-        foreach (var pos in targetStonePos)
+        foreach (var pos in selectStoneBoardActionController.GetTargetStonePos())
         {
             var sec = pos.Value;
 
@@ -403,8 +371,6 @@ public class ScriptManager
             if (!act.removeFlg) sec.PutStone(_gameManager.GetNowPlayer().stoneModel);
             else sec.RemovePutStone();
         }
-
-        targetStonePos.Clear();
 
         return true;
     }
