@@ -114,9 +114,7 @@ public class GameManager : MonoBehaviour
 
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
         {
-
-
-            var memberFlgs = manager.memberFlgs[i - 1];
+            var memberFlgs = manager.memberFlgs[i];
             CreateLocalPlayer(memberFlgs);
             CreateCPUPlayer(memberFlgs);
             CreateNetworkPlayer(memberFlgs);
