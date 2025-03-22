@@ -21,6 +21,10 @@ public class CardScript : MonoBehaviour
     [SerializeField, ReadOnly]
     public bool selectTargetFlg = false;
 
+
+    [SerializeField, ReadOnly]
+    ScriptManager.ErrorType errorType = ScriptManager.ErrorType.None;
+
     public bool isSelectTarget { get { return selectTargetFlg; } }
 
     [SerializeField]
@@ -145,14 +149,17 @@ public class CardScript : MonoBehaviour
 
         if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
 
-        int loopCount = 0;
-        for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
+        if(_action.magicAttributeMonth.Count > 0)
         {
-            int month = _action.magicAttributeMonth[loopCount];
-            if (magic.month == month) break;
-        }
+            int loopCount = 0;
+            for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
+            {
+                int month = _action.magicAttributeMonth[loopCount];
+                if (magic.month == month) break;
+            }
 
-        if (loopCount >= _action.magicAttributeMonth.Count) return;
+            if (loopCount >= _action.magicAttributeMonth.Count) return;
+        }
 
 
 
@@ -186,30 +193,38 @@ public class CardScript : MonoBehaviour
 
     bool SelectTargetArgmentTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
-        if ((_action.zoneType | zType) <= 0) return false;
-        if(_action.playerType >= 0)
+
+        if(zType != 0)
+            if ((_action.zoneType | zType) <= 0) return false;
+
+        if (_action.playerType >= 0)
         {
             if (_action.playerType  != 0 && _runPlayer.Equals(player)) return false;
             if (_action.playerType  != 1 && !_runPlayer.Equals(player)) return false;
         }
-        if ((_action.zoneType | zType) <= 0) return false;
 
         int loopCount = 0;
-        for ( loopCount = 0;loopCount < _action.particialName.Count;loopCount++)
+        if (_action.particialName.Count > 0)
         {
-            string particialName = _action.particialName[loopCount];
-            if (cardName.IndexOf(particialName) >= 0) break;
+            for (loopCount = 0; loopCount < _action.particialName.Count; loopCount++)
+            {
+                string particialName = _action.particialName[loopCount];
+                if (cardName.IndexOf(particialName) >= 0) break;
+            }
+
+            if (loopCount >= _action.particialName.Count) return false;
         }
 
-        if (loopCount >= _action.particialName.Count) return false;
-
-        for (loopCount = 0; loopCount < _action.particialDescription.Count; loopCount++)
+        if(_action.particialDescription.Count > 0)
         {
-            string description = _action.particialDescription[loopCount];
-            if (description.IndexOf(description) >= 0) break;
-        }
+            for (loopCount = 0; loopCount < _action.particialDescription.Count; loopCount++)
+            {
+                string description = _action.particialDescription[loopCount];
+                if (description.IndexOf(description) >= 0) break;
+            }
 
-        if (loopCount >= _action.particialDescription.Count) return false;
+            if (loopCount >= _action.particialDescription.Count) return false;
+        }
 
         return true;
     }
