@@ -6,12 +6,8 @@ using UnityEngine.UI;
 
 public class CardScript : MonoBehaviour
 {
-    [System.Serializable]
-    private class CardObject
-    {
-        public RawImage image = null;
-        public Animator animator = null;
-    }
+    [SerializeField]
+    int pushTimeToCardDescription = 1;
 
     [SerializeField, ReadOnly]
     public bool selectFlg = false;
@@ -28,7 +24,7 @@ public class CardScript : MonoBehaviour
     public bool isSelectTarget { get { return selectTargetFlg; } }
 
     [SerializeField]
-    CardObject front = new CardObject(), back = new CardObject();
+    CardPutScript front = null, back = null;
 
     [SerializeField,ReadOnly]
     CardData data = null;
@@ -66,6 +62,15 @@ public class CardScript : MonoBehaviour
         zType = _type;
     }
 
+    public bool OpenCardDescription(int _nowTime)
+    {
+        if (pushTimeToCardDescription > _nowTime) return false;
+
+        Debug.Log("Open Card Description");
+
+        return true;
+    }
+
     public void SelectAction()
     {
         manager.SelectCard(player,this, zType);
@@ -76,15 +81,15 @@ public class CardScript : MonoBehaviour
         SetSelectFlg(false);
     }
 
-    public void SetFrontTexture(Texture2D _tex){ if (front.image != null) front.image.texture = _tex; }
-    public void SetBackTexture(Texture2D _tex) { if (back.image != null) back.image.texture = _tex; }
+    public void SetFrontTexture(Texture2D _tex){ if (front.image != null) front.SetTexture(_tex); }
+    public void SetBackTexture(Texture2D _tex) { if (back.image != null) back.SetTexture(_tex); }
 
     public void SetSelectUnTarget()
     {
         if (!selectTargetFlg) return;
         selectTargetFlg = false;
-        SetAnimationVisible(front, false);
-        SetAnimationVisible(back, false);
+        front.SetAnimationVisible(false);
+        back.SetAnimationVisible(false);
     }
 
     public void SetSelectTargetTest(ScriptManager.SelectCardAction _action,Player _runPlayer)
@@ -99,8 +104,8 @@ public class CardScript : MonoBehaviour
     {
         if (selectFlg == _flg) return;
 
-        SetAnimation(front, _flg);
-        SetAnimation(back, _flg);
+        front.SetAnimation(_flg);
+        back.SetAnimation(_flg);
 
         selectFlg = _flg;
     }
@@ -126,21 +131,6 @@ public class CardScript : MonoBehaviour
         data = _data;
     }
 
-    void SetAnimation(CardObject _obj, bool _flg)
-    {
-        if (_obj.animator == null) return;
-
-        _obj.animator.SetBool("SelectFlg", _flg);
-    }
-
-    void SetAnimationVisible(CardObject _obj,bool _flg)
-    {
-        if (_obj.animator == null) return;
-
-        _obj.animator.gameObject.SetActive(_flg);
-    }
-
-
     void SetSelectMagicTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
         if (data.cardType != (int)CardData.CardType.Magic) return;
@@ -149,19 +139,7 @@ public class CardScript : MonoBehaviour
 
         if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
 
-        if(_action.magicAttributeMonth.Count > 0)
-        {
-            int loopCount = 0;
-            for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
-            {
-                int month = _action.magicAttributeMonth[loopCount];
-                if (magic.month == month) break;
-            }
-
-            if (loopCount >= _action.magicAttributeMonth.Count) return;
-        }
-
-
+        if(!IsPlayingMagicTest(_action, magic))return;
 
         SelectTargetTestSuccess();
     }
@@ -193,6 +171,7 @@ public class CardScript : MonoBehaviour
 
     bool SelectTargetArgmentTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
+        if (_action.normalPlaying) return true;
 
         if(zType != 0)
             if ((_action.zoneType | zType) <= 0) return false;
@@ -229,10 +208,53 @@ public class CardScript : MonoBehaviour
         return true;
     }
 
+    bool IsPlayingMagicTest(ScriptManager.SelectCardAction _action,MagicCardData _data)
+    {
+        if (!_action.normalPlaying) return true;
+
+        if (zType != ScriptManager.ZoneType.Book) return false;
+
+        if (_action.magicAttributeMonth.Count > 0)
+        {
+            int loopCount = 0;
+            for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
+            {
+                int month = _action.magicAttributeMonth[loopCount];
+                if (_data.month == month) break;
+            }
+
+            if (loopCount >= _action.magicAttributeMonth.Count) return false;
+        }
+
+
+        return true;
+    }
+
+    bool IsPlayingUseItemTest(ScriptManager.SelectCardAction _action, ItemCardData _data)
+    {
+        if (!_action.normalPlaying) return true;
+        if (zType != ScriptManager.ZoneType.Book) return false;
+
+
+
+
+
+
+
+
+        return true;
+    }
+
+    bool IsPlayingSetItemTest(ScriptManager.SelectCardAction _action, ItemCardData _data)
+    {
+        return true;
+    }
+
+
     void SelectTargetTestSuccess()
     {
         selectTargetFlg = true;
-        SetAnimationVisible(front, true);
-        SetAnimationVisible(back, true);
+        front.SetAnimationVisible(true);
+        back.SetAnimationVisible(true);
     }
 }
