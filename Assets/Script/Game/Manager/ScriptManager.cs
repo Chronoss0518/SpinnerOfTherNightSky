@@ -10,6 +10,7 @@ public class ScriptManager
     public ScriptManager()
     {
         selectStoneBoardActionController.Init(this);
+        selectCardActionController.Init(this);
     }
 
     abstract public class SelectScriptActionBase
@@ -27,7 +28,12 @@ public class ScriptManager
         IsPutStonePosSelect,
         IsRemoveStonePosSelect,
         IsRangeMaxOverCount,
-        isRangeMinOverCount,
+        IsRangeMinOverCount,
+        IsNotTargetZone,
+        IsNotRemoveStones,
+        IsNotPutItemZone,
+        IsNotParticialName,
+        IsNotParticialDescription,
         None,
     }
 
@@ -115,7 +121,7 @@ public class ScriptManager
         public ZoneType zoneType = 0;
         public SelectCardType cardType = 0;
         public List<int> magicAttributeMonth = new List<int>();
-        public bool removeStone = false;
+        public bool normalPlaying = true;
         public List<string> particialName = new List<string>();
         public List<string> particialDescription = new List<string>();
 
@@ -199,12 +205,10 @@ public class ScriptManager
 
     public int GetTargetPlayerCount { get { return targetPlayer.Count; } }
 
-    [SerializeField, ReadOnly]
-    List<CardScript> targetCard = new List<CardScript>();
-
-    public int GetTargetCardCount { get { return targetCard.Count; } }
-
     SelectStoneBoardActionController selectStoneBoardActionController = new SelectStoneBoardActionController();
+
+    SelectCardActionController selectCardActionController = new SelectCardActionController();
+
 
     [SerializeField,ReadOnly]
     int useScriptCount = 0;
@@ -309,7 +313,7 @@ public class ScriptManager
             runScript = null;
             useScriptCount = 0;
             targetPlayer.Clear();
-            targetCard.Clear();
+            selectCardActionController.ClearTarget();
             selectStoneBoardActionController.ClearTarget();
             return;
         }
@@ -537,9 +541,9 @@ public class ScriptManager
                 }
             }
 
-            if (args[i] == "--remove-stone")
+            if (args[i] == "--normal-playing")
             {
-                res.removeStone = true;
+                res.normalPlaying = true;
             }
 
             if (args[i] == "--particial-name" && args.Count > i + 1)

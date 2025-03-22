@@ -30,6 +30,7 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
 
     public void SelectTargetPos(int _x, int _y, GameManager _manager,SelectStoneBoardAction _runAction)
     {
+        if (_runAction == null) return;
         if (_manager.stoneBoardObj.IsPutStone(_x, _y) == _runAction.isPutPos)
         {
             manager.SetError(_runAction.isPutPos ?
@@ -87,7 +88,7 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
 
             manager.DownErrorMessageDrawCount();
             if (manager.GetErrorType() == ErrorType.IsRangeMaxOverCount) message = "これ以上選択できません";
-            if (manager.GetErrorType() == ErrorType.isRangeMinOverCount) message = $"{act.minCount}以上選択してください";
+            if (manager.GetErrorType() == ErrorType.IsRangeMinOverCount) message = $"{act.minCount}以上選択してください";
             if (manager.GetErrorType() == ErrorType.IsPutStonePosSelect) message = $"既に石が置かれています";
             if (manager.GetErrorType() == ErrorType.IsRemoveStonePosSelect) message = $"その場所には石がありません";
         }
@@ -97,7 +98,7 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
         if (!_controller.isAction) return true;
         if (act.minCount > targetStonePos.Count)
         {
-            manager.SetError(ErrorType.isRangeMinOverCount);
+            manager.SetError(ErrorType.IsRangeMinOverCount);
             _controller.DownActionFlg();
             return true;
         }
