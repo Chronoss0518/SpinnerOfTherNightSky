@@ -41,8 +41,6 @@ public class Book : MonoBehaviour
             if (i > 0) SetPageSocket(page.getBackCardSocket);
             if (i < PAGE_MAX_SIZE) SetPageSocket(page.getFrontCardSocket);
         }
-        UpdateSelectedCard();
-
 
         ActiveTest(nextButton, true);
         ActiveTest(backButton, false);
@@ -62,10 +60,7 @@ public class Book : MonoBehaviour
         
         if (nowPage >= PAGE_MAX_SIZE - 1) return;
 
-        //paperObject[nowPage].SetFrontPageActive(false);
-        //paperObject[nowPage + 1].SetBackPageActive(false);
         nowPage++;
-        UpdateSelectedCard();
 
         animator.SetInteger("PageCount", nowPage);
 
@@ -80,11 +75,8 @@ public class Book : MonoBehaviour
 
         if (nowPage < 1) return;
 
-        //paperObject[nowPage].SetFrontPageActive(false);
-        //paperObject[nowPage + 1].SetBackPageActive(false);
 
         nowPage--;
-        UpdateSelectedCard();
 
         animator.SetInteger("PageCount", nowPage);
 
@@ -98,7 +90,6 @@ public class Book : MonoBehaviour
         if (_page >= PAGE_MAX_SIZE) return;
         if (0 > _page) return;
         nowPage = _page;
-        UpdateSelectedCard();
         animator.SetInteger("PageCount", nowPage);
 
         ActiveTest(nextButton, nowPage < PAGE_MAX_SIZE - 1);
@@ -129,11 +120,6 @@ public class Book : MonoBehaviour
         Destroy(card);
     }
 
-    void UpdateSelectedCard()
-    {
-        //paperObject[nowPage].SetFrontPageActive(true);
-        //paperObject[nowPage + 1].SetBackPageActive(true);
-    }
     bool IsNumTest(int _num){ return (_num <= 0 && _num < CARD_SOCKET_MAX_SIZE); }
 
     void ActiveTest(GameObject _target,bool _active)

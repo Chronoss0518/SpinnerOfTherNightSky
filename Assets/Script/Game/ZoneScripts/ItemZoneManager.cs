@@ -1,6 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using Unity.Collections;
 
 public class ItemZoneManager : MonoBehaviour
 {
@@ -8,7 +9,8 @@ public class ItemZoneManager : MonoBehaviour
 
     const float PUT_POSITION = 1.5f;
 
-    public ItemCardScript[] items { get; private set; } = new ItemCardScript[PUT_ITEM_COUNT];
+    [SerializeField,ReadOnly]
+    private ItemCardScript[] items = new ItemCardScript[PUT_ITEM_COUNT];
 
     public void PutCard(int _num,ItemCardScript _card)
     {
@@ -41,16 +43,5 @@ public class ItemZoneManager : MonoBehaviour
     {
         return (_num >= 0 && _num < PUT_ITEM_COUNT);
     }
-
-#if UNITY_EDITOR
-
-    public ItemCardScript[] editorDisplayList;
-
-    void Update()
-    {
-        editorDisplayList = items;
-    }
-
-#endif
 
 }

@@ -1,12 +1,15 @@
 using System.Collections;
 using System.Collections.Generic;
+using Unity.Collections;
 using UnityEngine;
 
 public class TrashZoneManager : MonoBehaviour
 {
     const float PUT_POSITION = 1.5f;
     const float PUT_OVERLAP_POSITION = 0.02f;
-    List<CardScript> trashList {  get; set; } = new List<CardScript>();
+
+    [SerializeField,ReadOnly]
+    List<CardScript> trashList = new List<CardScript>();
 
     public void PutCard(CardScript _card)
     {
@@ -57,16 +60,5 @@ public class TrashZoneManager : MonoBehaviour
             i++;
         }
     }
-
-#if UNITY_EDITOR
-
-    public List<CardScript> editorDisplayList;
-
-    void Update()
-    {
-        editorDisplayList = trashList;
-    }
-
-#endif
 
 }

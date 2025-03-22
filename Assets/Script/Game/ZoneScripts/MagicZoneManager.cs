@@ -1,7 +1,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
-using Unity.VisualScripting.Antlr3.Runtime.Collections;
+using Unity.Collections;
 using UnityEngine;
 
 #if UNITY_EDITOR
@@ -11,7 +11,9 @@ public class MagicZoneManager : MonoBehaviour
 {
 
     const float PUT_POSITION = 1.5f;
-    public List<MagicCardScript> magicList { get; private set; } = new List<MagicCardScript>();
+
+    [SerializeField,ReadOnly]
+    List<MagicCardScript> magicList = new List<MagicCardScript>();
 
     public int GetPoint()
     {
@@ -76,17 +78,5 @@ public class MagicZoneManager : MonoBehaviour
     {
         return (_num <= 0 && _num < magicList.Count);
     }
-
-
-#if UNITY_EDITOR
-
-    public List<MagicCardScript> editorDisplayList;
-
-    void Update()
-    {
-        editorDisplayList = magicList;
-    }
-
-#endif
 
 }
