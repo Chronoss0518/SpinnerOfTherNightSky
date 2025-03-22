@@ -353,13 +353,7 @@ public class ScriptManager
 
     bool SelectCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
-        if (_script.type != ScriptType.SelectCard) return false;
-
-        if (!_controller.isAction) return true;
-
-        useScriptCount++;
-
-        return true;
+        return selectCardActionController.SelectAction(_controller, _gameManager, _script);
     }
 
     bool MoveStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)

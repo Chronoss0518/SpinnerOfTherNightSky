@@ -96,7 +96,7 @@ public class TurnManager
 
         selectSetTrap = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 4"),
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
     }
@@ -123,6 +123,7 @@ public class TurnManager
     {
         if (mainStep != MainStep.UseItem) return;
 
+        gameManager.RegistScript(selectItem);
 
         mainStep = MainStep.PutStone;
     }
@@ -154,10 +155,6 @@ public class TurnManager
         SelectCard();
         StartStep();
 
-        if (testPlayMagicCount < gameManager.PlayersCount) return;
-
-        gameManager.SetNowPlayerCount(tmpNowPlayerCount);
-        mainStep = MainStep.SetTrap;
     }
 
     void SetTrap()
@@ -165,8 +162,8 @@ public class TurnManager
         if (mainStep != MainStep.SetTrap) return;
 
 
+        gameManager.RegistScript(selectSetTrap);
 
-        
 
         mainStep = MainStep.EndTurn;
     }
@@ -218,6 +215,19 @@ public class TurnManager
     {
         if (playMagicStep != PlayMagicStep.EndStep) return;
 
+        testPlayCardCount++;
+        if (testPlayCardCount < gameManager.PlayersCount) return;
+        testPlayMagicCount++;
+        testPlayCardCount = 0;
+
+        gameManager.SetNowPlayerCount(tmpNowPlayerCount + testPlayMagicCount);
+
+
+        if (testPlayMagicCount < gameManager.PlayersCount) return;
+
+        testPlayMagicCount = 0;
+        gameManager.SetNowPlayerCount(tmpNowPlayerCount);
+        mainStep = MainStep.SetTrap;
     }
 
 
