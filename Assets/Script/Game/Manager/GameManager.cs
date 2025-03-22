@@ -62,6 +62,23 @@ public class GameManager : MonoBehaviour
         
     }
 
+    public void StartSelectCard(ScriptManager.SelectCardAction _action)
+    {
+        for(int i = 0;i<players.Count;i++)
+        {
+            players[i].SelectTargetStart(_action, players[nowPlayerCount]);
+        }
+    }
+
+    public void EndSelectCardTest()
+    {
+        for (int i = 0; i<players.Count; i++)
+        {
+            players[i].SelectTargetEnd();
+        }
+    }
+
+
     public void SetTextObject(Text _vText,Text _lText)
     {
         vMessage = _vText;

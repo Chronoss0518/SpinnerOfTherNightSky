@@ -52,7 +52,7 @@ public class SelectCardActionController : SelectScriptActionBase
         manager = _manager;
     }
 
-    public void SelectTargetPos(CardScript _card, GameManager _manager, SelectCardAction _runAction)
+    public void SelectCard(CardScript _card, GameManager _manager, SelectCardAction _runAction)
     {
         if (_runAction == null) return;
         if (_card == null) return;
@@ -87,12 +87,14 @@ public class SelectCardActionController : SelectScriptActionBase
     {
         if (_script.type != ScriptType.SelectCard) return false;
 
-        _controller.ActionStart();
 
         var act = (SelectCardAction)_script;
 
         if (targetZoneList.Count <= 0)
         {
+            _controller.ActionStart();
+            _gameManager.StartSelectCard(act);
+
             if ((act.zoneType | ZoneType.Book) > 0) targetZoneList.Add(BOOK_ZONE);
             if ((act.zoneType | ZoneType.MagicZone) > 0) targetZoneList.Add(MAGIC_ZONE);
             if ((act.zoneType | ZoneType.ItemZone) > 0) targetZoneList.Add(ITEM_ZONE);
@@ -146,6 +148,7 @@ public class SelectCardActionController : SelectScriptActionBase
 
         _controller.ActionEnd();
         manager.AddUseScriptCount();
+        _gameManager.EndSelectCardTest();
 
         targetZoneName = "";
         targetZoneList.Clear();

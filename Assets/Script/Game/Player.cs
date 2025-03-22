@@ -62,6 +62,22 @@ public class Player : MonoBehaviour
 
     public MagicZoneManager magicZone { get {return myMagicZone; } }
 
+    public void SelectTargetStart(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        if (book != null) book.SelectTargetTest(_action, _runPlayer);
+        if (itemZone != null) itemZone.SelectTargetTest(_action, _runPlayer);
+        if (trashZone != null) trashZone.SelectTargetTest(_action, _runPlayer);
+        if (magicZone != null) magicZone.SelectTargetTest(_action, _runPlayer);
+    }
+
+    public void SelectTargetEnd()
+    {
+        if (book != null) book.SelectTargetDown();
+        if (itemZone != null) itemZone.SelectTargetDown();
+        if (trashZone != null) trashZone.SelectTargetDown();
+        if (magicZone != null) magicZone.SelectTargetDown();
+    }
+
     public void Init(
         CardData[] _cardData,
         bool _createBookObject = false)
