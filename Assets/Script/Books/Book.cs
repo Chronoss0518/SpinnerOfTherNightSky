@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 
-public class Book : MonoBehaviour
+public class Book : ZoneScriptBase
 {
     public const int CARD_SOCKET_MAX_SIZE = 32;
     public const int PAGE_MAX_SIZE = 4;
@@ -51,6 +51,30 @@ public class Book : MonoBehaviour
         foreach(var card in _cardList)
         {
             PutCard(_player,_manager, card);
+        }
+    }
+
+    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        for(int i = 0;i < cardSocketList.Count;i++)
+        {
+            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>();
+
+            if (cardScript == null) continue;
+
+            cardScript.SetSelectTargetTest(_action, _runPlayer);
+        }
+    }
+
+    override public void SelectTargetDown()
+    {
+        for (int i = 0; i < cardSocketList.Count; i++)
+        {
+            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>();
+
+            if (cardScript == null) continue;
+
+            cardScript.SetSelectUnTarget();
         }
     }
 

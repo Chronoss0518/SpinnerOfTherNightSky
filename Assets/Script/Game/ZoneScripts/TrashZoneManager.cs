@@ -3,13 +3,29 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class TrashZoneManager : MonoBehaviour
+public class TrashZoneManager : ZoneScriptBase
 {
     const float PUT_POSITION = 1.5f;
     const float PUT_OVERLAP_POSITION = 0.02f;
 
     [SerializeField,ReadOnly]
     List<CardScript> trashList = new List<CardScript>();
+
+    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        for (int i = 0; i < trashList.Count; i++)
+        {
+            trashList[i].SetSelectTargetTest(_action, _runPlayer);
+        }
+    }
+
+    override public void SelectTargetDown()
+    {
+        for (int i = 0; i < trashList.Count; i++)
+        {
+            trashList[i].SetSelectUnTarget();
+        }
+    }
 
     public void PutCard(CardScript _card)
     {

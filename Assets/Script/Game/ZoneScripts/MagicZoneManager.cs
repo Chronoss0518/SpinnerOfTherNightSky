@@ -2,18 +2,39 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 using UnityEngine;
 
 #if UNITY_EDITOR
 using static UnityEditor.Progress;
 #endif
-public class MagicZoneManager : MonoBehaviour
+public class MagicZoneManager : ZoneScriptBase
 {
 
     const float PUT_POSITION = 1.5f;
 
     [SerializeField,ReadOnly]
     List<MagicCardScript> magicList = new List<MagicCardScript>();
+
+    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        for (int i = 0; i < magicList.Count; i++)
+        {
+            var cardScript = magicList[i].GetComponent<CardScript>();
+
+            cardScript.SetSelectTargetTest(_action, _runPlayer);
+        }
+    }
+
+    override public void SelectTargetDown()
+    {
+        for (int i = 0; i < magicList.Count; i++)
+        {
+            var cardScript = magicList[i].GetComponent<CardScript>();
+
+            cardScript.SetSelectUnTarget();
+        }
+    }
 
     public int GetPoint()
     {

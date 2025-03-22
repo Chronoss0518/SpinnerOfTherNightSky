@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 
-public class ItemZoneManager : MonoBehaviour
+public class ItemZoneManager : ZoneScriptBase
 {
     public const int PUT_ITEM_COUNT = 3;
 
@@ -12,6 +12,28 @@ public class ItemZoneManager : MonoBehaviour
     [SerializeField,ReadOnly]
     private ItemCardScript[] items = new ItemCardScript[PUT_ITEM_COUNT];
 
+    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        for (int i = 0; i < PUT_ITEM_COUNT; i++)
+        {
+            if (items[i] == null) continue;
+
+            var cardScript = items[i].GetComponent<CardScript>();
+
+            cardScript.SetSelectTargetTest(_action, _runPlayer);
+        }
+    }
+
+    override public void SelectTargetDown()
+    {
+        for (int i = 0; i < PUT_ITEM_COUNT; i++)
+        {
+            if (items[i] == null) continue;
+            var cardScript = items[i].GetComponent<CardScript>();
+
+            cardScript.SetSelectUnTarget();
+        }
+    }
     public void PutCard(int _num,ItemCardScript _card)
     {
         if (_card == null) return;

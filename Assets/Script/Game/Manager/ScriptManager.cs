@@ -546,6 +546,11 @@ public class ScriptManager
                 res.normalPlaying = true;
             }
 
+            if (args[i] == "--abnormal-playing")
+            {
+                res.normalPlaying = false;
+            }
+
             if (args[i] == "--particial-name" && args.Count > i + 1)
             {
                 res.particialName.Add(args[i + 1]);
