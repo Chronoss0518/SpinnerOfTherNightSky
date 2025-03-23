@@ -259,6 +259,17 @@ public class ScriptManager
         selectStoneBoardActionController.SelectTargetPos(_x, _y, _manager, action);
     }
 
+    public void SelectCard(CardScript _script, GameManager _manager)
+    {
+        if (_script == null) return;
+        if (runScript == null) return;
+        if (runScript.actions[useScriptCount].type != ScriptType.SelectCard) return;
+
+        var action = (SelectCardAction)runScript.actions[useScriptCount];
+
+        selectCardActionController.SelectCard(_script, _manager, action);
+    }
+
     public ScriptActionData CreateScript(ScriptData _script, bool _regist = false)
     {
 
@@ -492,17 +503,26 @@ public class ScriptManager
                     i += 1;
 
 
-            if (args[i] == "--zone-type-book" && args.Count > i + 1)
+            if (args[i] == "--zone-type-book")
                 res.zoneType |= ZoneType.Book;
 
-            if (args[i] == "--zone-type-magic-zone" && args.Count > i + 1)
+            if (args[i] == "--zone-type-magic-zone")
                 res.zoneType |= ZoneType.MagicZone;
 
-            if (args[i] == "--zone-type-item-zone" && args.Count > i + 1)
+            if (args[i] == "--zone-type-item-zone")
                 res.zoneType |= ZoneType.ItemZone;
 
-            if (args[i] == "--zone-type-trash-zone" && args.Count > i + 1)
+            if (args[i] == "--zone-type-trash-zone")
                 res.zoneType |= ZoneType.TrashZone;
+
+            if (args[i] == "--card-type-magic")
+                res.cardType |= SelectCardType.Magic;
+
+            if (args[i] == "--card-type-item")
+                res.cardType |= SelectCardType.Item;
+
+            if (args[i] == "--card-type-trap")
+                res.cardType |= SelectCardType.Trap;
 
 
             if (args[i] == "--card-type" && args.Count > i + 1)
@@ -510,7 +530,7 @@ public class ScriptManager
                 var type = 0;
                 if (int.TryParse(args[i + 1], out type))
                 {
-                    res.cardType = (SelectCardType)(type);
+                    res.cardType |= (SelectCardType)type;
                     i += 1;
                 }
             }
