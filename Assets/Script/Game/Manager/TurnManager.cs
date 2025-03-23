@@ -45,8 +45,8 @@ public class TurnManager
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectSetTrap = null;
 
-    MainStep mainStep = MainStep.StartTurn;
-    PlayMagicStep playMagicStep = PlayMagicStep.EndStep;
+    public MainStep mainStep { get; private set; } = MainStep.StartTurn;
+    public PlayMagicStep playMagicStep { get; private set; } = PlayMagicStep.EndStep;
 
     [SerializeField, ReadOnly]
     int tmpNowPlayerCount = 0;
@@ -71,7 +71,7 @@ public class TurnManager
 
         selectItem = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --is-put"),
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --player-type 0 --zone-type-book --card-type 2 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
@@ -84,19 +84,19 @@ public class TurnManager
 
         selectMagic = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 1"),
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 1 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
 
         selectCard = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5"),
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
 
         selectSetTrap = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
-                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6"),
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
     }
