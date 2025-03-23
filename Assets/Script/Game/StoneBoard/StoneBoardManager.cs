@@ -42,8 +42,8 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField,ReadOnly]
     List<List<StonePosScript>> stoneList = new List<List<StonePosScript>>();
 
-    [SerializeField, ReadOnly]
-    List<GameObject> createVerticalStonePos = new List<GameObject>();
+    [SerializeField]
+    List<int> putStoneList = new List<int>();
 
     [SerializeField, ReadOnly]
     private bool isBlockFlg = false;
@@ -60,32 +60,6 @@ public class StoneBoardManager : MonoBehaviour
     public void SetBlockFlg(bool _flg)
     {
         isBlockFlg = _flg;
-    }
-
-    public void SetActive(bool _flg)
-    {
-        foreach(var pos in createVerticalStonePos)
-        {
-            pos.SetActive(_flg);
-        }
-    }
-
-    public void SetActiveIsNotPut(bool _flg)
-    {
-        foreach (var pos in createVerticalStonePos)
-        {
-            if(pos.transform.childCount <= 0)
-                pos.SetActive(_flg);
-        }
-    }
-
-    public void SetActiveIsPut(bool _flg)
-    {
-        foreach (var pos in createVerticalStonePos)
-        {
-            if (pos.transform.childCount > 0)
-                pos.SetActive(_flg);
-        }
     }
 
     public void PutStone(int _x, int _y, GameObject _stone)
@@ -210,7 +184,6 @@ public class StoneBoardManager : MonoBehaviour
                 tmpVPos += interval.x;
             }
 
-            createVerticalStonePos.Add(verticalPos);
             pos.z += interval.y;
         }
     }
