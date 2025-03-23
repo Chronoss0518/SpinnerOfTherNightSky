@@ -95,10 +95,16 @@ public class SelectCardActionController : SelectScriptActionBase
             _controller.ActionStart();
             _gameManager.StartSelectCard(act);
 
-            if ((act.zoneType | ZoneType.Book) > 0) targetZoneList.Add(BOOK_ZONE);
-            if ((act.zoneType | ZoneType.MagicZone) > 0) targetZoneList.Add(MAGIC_ZONE);
-            if ((act.zoneType | ZoneType.ItemZone) > 0) targetZoneList.Add(ITEM_ZONE);
-            if ((act.zoneType | ZoneType.TrashZone) > 0) targetZoneList.Add(TRASH_ZONE);
+            if(act.zoneType == 0)
+                act.zoneType =  ZoneType.Book |
+                    ZoneType.MagicZone |
+                    ZoneType.ItemZone |
+                    ZoneType.TrashZone;
+
+            if ((act.zoneType & ZoneType.Book) > 0) targetZoneList.Add(BOOK_ZONE);
+            if ((act.zoneType & ZoneType.MagicZone) > 0) targetZoneList.Add(MAGIC_ZONE);
+            if ((act.zoneType & ZoneType.ItemZone) > 0) targetZoneList.Add(ITEM_ZONE);
+            if ((act.zoneType & ZoneType.TrashZone) > 0) targetZoneList.Add(TRASH_ZONE);
 
             targetPlayer = act.playerType == 0 ? YOUR_PLAYER + "の" :
                 act.playerType == 1 ? OTHER_PLAYER + "の" :
@@ -128,12 +134,13 @@ public class SelectCardActionController : SelectScriptActionBase
         else
         {
 
-            manager.DownErrorMessageDrawCount();
             if (manager.GetErrorType() == ErrorType.IsRangeMaxOverCount) message = "これ以上選択できません";
             if (manager.GetErrorType() == ErrorType.IsRangeMinOverCount) message = $"{act.selectMinCount}以上選択してください";
             if (manager.GetErrorType() == ErrorType.IsNotTargetZone) message = $"選択した場所のカードを選ぶことはできません";
             if (manager.GetErrorType() == ErrorType.IsNotRemoveStones) message = $"その魔法を使うには取り除く石がありません";
             if (manager.GetErrorType() == ErrorType.IsNotPutItemZone) message = $"道具を置くためのスペースがありません";
+
+            manager.DownErrorMessageDrawCount();
         }
 
         _gameManager.SetMessate(message);
