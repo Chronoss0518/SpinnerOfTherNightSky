@@ -33,7 +33,10 @@ public class CardPutScript : MonoBehaviour
     {
         if (animator == null) return;
 
-        animator.SetBool("SelectFlg", _flg);
+        //animator.SetBool("SelectFlg", _flg);
+
+        if(!_flg) animator.Play("CardUnSelectAnimation");
+        else animator.Play("CardSelectAnimation");
     }
 
     public void SetAnimationVisible(bool _flg)
@@ -53,8 +56,9 @@ public class CardPutScript : MonoBehaviour
     public void PushEnd()
     {
         pushNow = false;
-        if (!openFlg) return;
+        if (openFlg) return;
         if (cardObject == null) return;
+
         cardObject.SelectAction();
     }
 
@@ -63,7 +67,6 @@ public class CardPutScript : MonoBehaviour
         if (!pushNow) return;
         if (openFlg) return;
         int now = DateTime.Now.Subtract(startTime).Seconds;
-        Debug.Log($"Now Time{now}");
         if (beforeTime == now) return;
         openFlg = cardObject.OpenCardDescription(now);
         beforeTime = now;
