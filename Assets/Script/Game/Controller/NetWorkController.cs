@@ -8,9 +8,7 @@ public class NetWorkController : ControllerBase
     // Update is called once per frame
     void Update()
     {
-        
+        UpActionFlg();
     }
-
-    
 
 }

@@ -8,6 +8,6 @@ public class CPUController : ControllerBase
     // Update is called once per frame
     void Update()
     {
-        
+        UpActionFlg();
     }
 }
