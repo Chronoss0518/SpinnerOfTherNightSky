@@ -73,7 +73,7 @@ public class CardScript : MonoBehaviour
 
     public void SelectAction()
     {
-        manager.SelectCard(player,this, zType);
+        manager.SelectCard(this);
     }
 
     void Start()
@@ -133,9 +133,10 @@ public class CardScript : MonoBehaviour
 
     void SetSelectMagicTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
+        if (_action.cardType != 0)
+            if ((_action.cardType & ScriptManager.SelectCardType.Magic) <= 0) return;
         if (data.cardType != (int)CardData.CardType.Magic) return;
         var magic = (MagicCardData)data;
-        if ((_action.cardType | ScriptManager.SelectCardType.Magic) <= 0) return;
 
         if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
 
@@ -146,10 +147,11 @@ public class CardScript : MonoBehaviour
 
     void SetSelectItemTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
+        if(_action.cardType != 0)
+            if ((_action.cardType & ScriptManager.SelectCardType.Item) <= 0) return;
         if (data.cardType != (int)CardData.CardType.Item) return;
         var item = (ItemCardData)data;
         if (item.itemType != (int)ItemCardData.ItemType.Normal) return;
-        if ((_action.cardType | ScriptManager.SelectCardType.Item) <= 0) return;
 
         if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
 
@@ -158,10 +160,11 @@ public class CardScript : MonoBehaviour
 
     void SetSelectTrapTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
+        if (_action.cardType != 0)
+            if ((_action.cardType & ScriptManager.SelectCardType.Trap) <= 0) return;
         if (data.cardType != (int)CardData.CardType.Item) return;
         var item = (ItemCardData)data;
         if (item.itemType != (int)ItemCardData.ItemType.Trap) return;
-        if ((_action.cardType | ScriptManager.SelectCardType.Trap) <= 0) return;
 
         if(!SelectTargetArgmentTest(_action, _runPlayer))return;
 
@@ -212,7 +215,7 @@ public class CardScript : MonoBehaviour
     {
         if (!_action.normalPlaying) return true;
 
-        if (zType != ScriptManager.ZoneType.Book) return false;
+        if ((zType & ScriptManager.ZoneType.Book) <= 0) return false;
 
         if (_action.magicAttributeMonth.Count > 0)
         {
@@ -233,17 +236,26 @@ public class CardScript : MonoBehaviour
     bool IsPlayingUseItemTest(ScriptManager.SelectCardAction _action, ItemCardData _data)
     {
         if (!_action.normalPlaying) return true;
-        if (zType != ScriptManager.ZoneType.Book) return false;
+        var val = (zType &= ScriptManager.ZoneType.Book) |(zType &= ScriptManager.ZoneType.ItemZone);
+
+        if ((zType & ScriptManager.ZoneType.Book |
+            zType & ScriptManager.ZoneType.ItemZone) <= 0) return false;
 
 
+        return true;
+    }
 
-
+    bool IsPlayingUseTrapTest(ScriptManager.SelectCardAction _action, ItemCardData _data)
+    {
+        if (!_action.normalPlaying) return true;
+        if (zType != ScriptManager.ZoneType.ItemZone) return false;
 
 
 
 
         return true;
     }
+
 
     bool IsPlayingSetItemTest(ScriptManager.SelectCardAction _action, ItemCardData _data)
     {
