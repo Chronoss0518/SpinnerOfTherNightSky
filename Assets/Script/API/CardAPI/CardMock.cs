@@ -67,12 +67,12 @@ public class CardMock : CardAPIBase
         BookCardDataDTO.GenerateMagicCard(27,"Test27","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
         BookCardDataDTO.GenerateMagicCard(28,"Test28","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
         BookCardDataDTO.GenerateMagicCard(29,"Test29","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
-        BookCardDataDTO.GenerateItemCard(30,"Test30","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
-        BookCardDataDTO.GenerateItemCard(31,"Test31","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
-        BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
-        BookCardDataDTO.GenerateItemCard(33,"Test33","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
-        BookCardDataDTO.GenerateItemCard(34,"Test34","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
-        BookCardDataDTO.GenerateItemCard(35,"Test35","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
+        BookCardDataDTO.GenerateItemCard(30,"Test30","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(31,"Test31","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(33,"Test33","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(34,"Test34","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(35,"Test35","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
         BookCardDataDTO.GenerateItemCard(36,"Test36","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
         BookCardDataDTO.GenerateItemCard(37,"Test37","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
         BookCardDataDTO.GenerateItemCard(38,"Test38","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1),
@@ -80,8 +80,8 @@ public class CardMock : CardAPIBase
     };
 
     int[][] bookCardMappintMock = {
-        new int[] { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,31,31,32,32,33,33,34,34},
-        new int[] { 1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,31,31,32,32,33,33,34,34},
+        new int[] { 0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,30,30,31,31,35,35,36,36},
+        new int[] { 1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,31,31,32,32,35,35,36,36},
     };
 
     override public IEnumerator<GetCardResponse> GetCard(int id)
