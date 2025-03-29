@@ -9,6 +9,36 @@ using Unity.VisualScripting;
 [System.Serializable]
 public class TurnManager
 {
+    abstract public class TurnClass
+    {
+
+        public TurnClass(TurnManager _manager)
+        {
+            manager = _manager;
+        }
+        virtual public void Init() { }
+
+        abstract public void Update();
+
+        abstract public void Next();
+
+        public void SetMainStep(MainStep _turn)
+        {
+            manager.mainStep = _turn;
+        }
+
+        protected void ChangeTurn()
+        {
+            manager.changeTurn = true;
+        }
+
+        protected GameManager gameManager { get { return manager.gameManager; } }
+
+        protected MainStep mainStep { get { return manager.mainStep; } }
+
+        private TurnManager manager = null;
+    }
+
     public enum MainStep
     {
         StartTurn,
@@ -30,8 +60,13 @@ public class TurnManager
 
     GameManager gameManager = null;
 
+    private bool changeTurn = false;
+
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectItem = null;
+
+    [SerializeField,ReadOnly]
+    ScriptManager.ScriptActionData selectTrap = null;
 
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectStone = null;
@@ -43,7 +78,7 @@ public class TurnManager
     ScriptManager.ScriptActionData selectCard = null;
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectSetTrap = null;
+    ScriptManager.ScriptActionData selectSetItem = null;
 
     public MainStep mainStep { get; private set; } = MainStep.StartTurn;
     public PlayMagicStep playMagicStep { get; private set; } = PlayMagicStep.EndStep;
@@ -76,6 +111,13 @@ public class TurnManager
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
 
+        selectTrap = gameManager.CreateScript(new ScriptData(
+            new ScriptParts[] {
+                new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --player-type 0 --zone-type-item --card-type 4 --normal-playing"),
+               new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
+            ScriptManager.ActionType.Entry));
+
         selectStone = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
@@ -91,10 +133,11 @@ public class TurnManager
         selectCard = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5 --normal-playing"),
-               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
+               new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
             ScriptManager.ActionType.Entry));
 
-        selectSetTrap = gameManager.CreateScript(new ScriptData(
+        selectSetItem = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
@@ -161,8 +204,7 @@ public class TurnManager
     {
         if (mainStep != MainStep.SetTrap) return;
 
-
-        gameManager.RegistScript(selectSetTrap);
+        gameManager.RegistScript(selectSetItem);
 
 
         mainStep = MainStep.EndTurn;
@@ -222,13 +264,10 @@ public class TurnManager
 
         gameManager.SetNowPlayerCount(tmpNowPlayerCount + testPlayMagicCount);
 
-
         if (testPlayMagicCount < gameManager.PlayersCount) return;
 
         testPlayMagicCount = 0;
         gameManager.SetNowPlayerCount(tmpNowPlayerCount);
         mainStep = MainStep.SetTrap;
     }
-
-
 }
