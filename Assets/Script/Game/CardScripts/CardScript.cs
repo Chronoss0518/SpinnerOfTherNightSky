@@ -155,6 +155,9 @@ public class CardScript : MonoBehaviour
 
         if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
 
+        if (!IsPlayingUseItemTest(_action, item) &&
+            !IsPlayingSetItemTest(_action, item)) return;
+
         SelectTargetTestSuccess();
     }
 
@@ -167,6 +170,9 @@ public class CardScript : MonoBehaviour
         if (item.itemType != (int)ItemCardData.ItemType.Trap) return;
 
         if(!SelectTargetArgmentTest(_action, _runPlayer))return;
+
+        if (!IsPlayingUseTrapTest(_action, item) &&
+            !IsPlayingSetItemTest(_action, item)) return;
 
         SelectTargetTestSuccess();
     }
