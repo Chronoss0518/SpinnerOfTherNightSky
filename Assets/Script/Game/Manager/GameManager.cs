@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     TurnManager turnManager = new TurnManager();
 
     [SerializeField, ReadOnly]
-    List<CardScript> stack = new List<CardScript>();
+    List<CardData> stack = new List<CardData>();
 
     public int StackCount { get { return stack.Count; } }
 
@@ -51,6 +51,11 @@ public class GameManager : MonoBehaviour
     Manager manager = Manager.ins;
 
     bool initFlg { get; set; } = false;
+
+    public void AddStackCard(CardData _card)
+    {
+        stack.Add(_card);
+    }
 
     public void SelectStonePos(int _x,int _y)
     {
