@@ -8,6 +8,11 @@ public class TrashZoneManager : ZoneScriptBase
     const float PUT_POSITION = 1.5f;
     const float PUT_OVERLAP_POSITION = 0.02f;
 
+    public TrashZoneManager()
+    {
+        zoneType = ScriptManager.ZoneType.TrashZone;
+    }
+
     [SerializeField,ReadOnly]
     List<CardScript> trashList = new List<CardScript>();
 
@@ -39,7 +44,7 @@ public class TrashZoneManager : ZoneScriptBase
 
         trashList.Add(card.GetComponent<CardScript>());
     }
-    public void RemoveCard(int _num)
+    override public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
         var item = trashList[_num];

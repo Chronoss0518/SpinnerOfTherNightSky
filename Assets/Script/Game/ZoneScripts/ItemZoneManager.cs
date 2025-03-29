@@ -2,12 +2,18 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
+using Unity.VisualScripting;
 
 public class ItemZoneManager : ZoneScriptBase
 {
     public const int PUT_ITEM_COUNT = 3;
 
     const float PUT_POSITION = 1.5f;
+
+    public ItemZoneManager()
+    {
+        zoneType = ScriptManager.ZoneType.ItemZone;
+    }
 
     [SerializeField,ReadOnly]
     private ItemCardScript[] items = new ItemCardScript[PUT_ITEM_COUNT];
@@ -43,7 +49,7 @@ public class ItemZoneManager : ZoneScriptBase
         items[_num].transform.localPosition = new Vector3((_num - 1) * PUT_POSITION, 0.0f, 0.0f);
     }
 
-    public void RemoveCard(int _num)
+    override public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
         var item = items[_num];

@@ -13,6 +13,11 @@ public class MagicZoneManager : ZoneScriptBase
 
     const float PUT_POSITION = 1.5f;
 
+    public MagicZoneManager()
+    {
+        zoneType = ScriptManager.ZoneType.MagicZone;
+    }
+
     [SerializeField,ReadOnly]
     List<MagicCardScript> magicList = new List<MagicCardScript>();
 
@@ -73,12 +78,12 @@ public class MagicZoneManager : ZoneScriptBase
         magicList[_baseNum] = card;
     }
 
-    public void RemoveCard(int _num,bool _sortFlg = false)
+    override public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
         magicList[_num].transform.SetParent(null);
         Destroy(magicList[_num].gameObject);
-        if(_sortFlg) CardSort();
+        CardSort();
     }
 
     void CardSort()

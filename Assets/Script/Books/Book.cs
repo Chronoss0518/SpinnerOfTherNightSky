@@ -8,6 +8,11 @@ public class Book : ZoneScriptBase
     public const int CARD_SOCKET_MAX_SIZE = 32;
     public const int PAGE_MAX_SIZE = 4;
 
+    public Book()
+    {
+        zoneType = ScriptManager.ZoneType.Book;
+    }
+
     [SerializeField, ReadOnly]
     List<GameObject> cardSocketList = new List<GameObject>();
 
@@ -135,7 +140,7 @@ public class Book : ZoneScriptBase
         Instantiate(_card.gameObject, cardSocketList[_card.initBookPos].transform);
     }
 
-    public void RemoveCard(int _num, bool _sortFlg = false)
+    override public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
         if (cardSocketList[_num].transform.childCount <= 0) return;
