@@ -371,9 +371,13 @@ public class ScriptManager
     {
         if (_script.type != ScriptType.MoveStone) return false;
 
+        var targetStonePos = selectStoneBoardActionController.GetTargetStonePos();
+
+        if (targetStonePos.Count <= 0) return true;
+
         var act = (MoveStoneAction)_script;
 
-        foreach (var pos in selectStoneBoardActionController.GetTargetStonePos())
+        foreach (var pos in targetStonePos)
         {
             var sec = pos.Value;
 
@@ -389,12 +393,35 @@ public class ScriptManager
     {
         if (_script.type != ScriptType.MoveCard) return false;
 
+        var targetCards = selectCardActionController.GetTargetCard();
+
+        if (targetCards.Count <= 0) return true;
+
+        var act = (MoveCardAction)_script;
+
+        for(int i = 0;i< targetCards.Count;i++)
+        {
+            if (act.moveZone == ZoneType.MagicZone && targetCards[i].type == CardData.CardType.Item) continue;
+            if (act.moveZone == ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
+
+            
+
+
+
+        }
+
         return true;
     }
 
     bool Stack(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.Stack) return false;
+
+        var targetCards = selectCardActionController.GetTargetCard();
+
+        if (targetCards.Count <= 0 || targetCards.Count > 1) return true;
+
+        
 
         return true;
     }
@@ -627,9 +654,6 @@ public class ScriptManager
 
             if (args[i] == "--magic-zone")
                 res.moveZone = ZoneType.MagicZone;
-
-            if (args[i] == "--item-zone")
-                res.moveZone = ZoneType.ItemZone;
 
             if (args[i] == "--open-item-zone")
             {
