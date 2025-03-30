@@ -38,14 +38,11 @@ public class UseItem : TurnManager.TurnClass
     override public void Init() 
     {
         tmpNowPlayerCount = gameManager.nowPlayerCount;
+        gameManager.RegistScript(selectItem);
     }
 
     public override void Update()
     {
-        if(beforeStackCount <= 0)
-        {
-            gameManager.RegistScript(selectItem);
-        }
 
         int tmpCount = gameManager.stackCount;
 
