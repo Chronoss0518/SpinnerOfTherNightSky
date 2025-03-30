@@ -37,7 +37,7 @@ public class PlayMagic : TurnManager.TurnClass
     public override void Init()
     {
         base.Init();
-
+        beforeStackCount = 0;
         tmpNowPlayerCount = gameManager.nowPlayerCount;
         gameManager.RegistScript(selectMagic);
     }

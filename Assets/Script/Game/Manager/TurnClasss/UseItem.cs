@@ -37,6 +37,7 @@ public class UseItem : TurnManager.TurnClass
 
     override public void Init() 
     {
+        beforeStackCount = 0;
         tmpNowPlayerCount = gameManager.nowPlayerCount;
         gameManager.RegistScript(selectItem);
     }
