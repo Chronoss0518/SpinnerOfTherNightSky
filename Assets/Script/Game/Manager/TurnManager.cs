@@ -74,15 +74,16 @@ public class TurnManager
 
     public void Update()
     {
+        if (changeTurn)
+        {
+            runTurn.Next();
+            runTurn = null;
+            runTurn = turnClass[(int)mainStep];
+            runTurn.Init();
+            changeTurn = false;
+            return;
+        }
+
         runTurn.Update();
-
-        if (!changeTurn) return;
-
-        runTurn.Next();
-        runTurn = null;
-        runTurn = turnClass[(int)mainStep];
-        runTurn.Init();
-        changeTurn = false;
-
     }
 }
