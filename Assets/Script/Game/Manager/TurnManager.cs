@@ -1,22 +1,15 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
-using Unity.VisualScripting;
-
-
 
 [System.Serializable]
 public class TurnManager
 {
+    [System.Serializable]
     abstract public class TurnClass
     {
+        public TurnClass(TurnManager _manager){ manager = _manager; }
 
-        public TurnClass(TurnManager _manager)
-        {
-            manager = _manager;
-        }
-        virtual public void Init() { }
+        virtual public void Init() {}
 
         abstract public void Update();
 
@@ -62,6 +55,10 @@ public class TurnManager
 
     private bool changeTurn = false;
 
+    TurnClass[] turnClass = null;
+
+    TurnClass runTurn = null;
+
     [SerializeField, ReadOnly]
     ScriptManager.ScriptActionData selectItem = null;
 
@@ -103,6 +100,10 @@ public class TurnManager
         gameManager = _gm;
         mainStep = MainStep.StartTurn;
         playMagicStep = PlayMagicStep.EndStep;
+
+        turnClass =  new TurnClass[] { new StartTurn(this), };
+
+        runTurn = turnClass[(int)mainStep];
 
         selectItem = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
@@ -146,6 +147,17 @@ public class TurnManager
 
     public void Update()
     {
+        if(changeTurn)
+        {
+            runTurn.Next();
+            runTurn = null;
+            runTurn = turnClass[(int)mainStep];
+            runTurn.Init();
+            changeTurn = false;
+        }
+
+        runTurn.Update();
+
         TurnEnd();
         SetTrap();
         PlayMagic();
@@ -240,10 +252,10 @@ public class TurnManager
 
         playMagicStep = PlayMagicStep.EndStep;
 
-        if (gameManager.StackCount <= 0) return;
+        if (gameManager.stackCount <= 0) return;
 
         playCardUserCount = tmpNowPlayerCount + otherPlayerCount;
-        playCardUserCount %= gameManager.PlayersCount;
+        playCardUserCount %= gameManager.playersCount;
 
         playMagicStep = PlayMagicStep.StartStep;
         gameManager.RegistScript(selectCard);
@@ -258,13 +270,13 @@ public class TurnManager
         if (playMagicStep != PlayMagicStep.EndStep) return;
 
         testPlayCardCount++;
-        if (testPlayCardCount < gameManager.PlayersCount) return;
+        if (testPlayCardCount < gameManager.playersCount) return;
         testPlayMagicCount++;
         testPlayCardCount = 0;
 
         gameManager.SetNowPlayerCount(tmpNowPlayerCount + testPlayMagicCount);
 
-        if (testPlayMagicCount < gameManager.PlayersCount) return;
+        if (testPlayMagicCount < gameManager.playersCount) return;
 
         testPlayMagicCount = 0;
         gameManager.SetNowPlayerCount(tmpNowPlayerCount);
