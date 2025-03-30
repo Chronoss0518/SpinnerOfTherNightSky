@@ -19,6 +19,7 @@ public class PutStone : TurnManager.TurnClass
     public override void Update()
     {
         gameManager.RegistScript(selectStone);
+        ChangeTurn();
     }
 
     public override void Next()
