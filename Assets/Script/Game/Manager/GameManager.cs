@@ -17,7 +17,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<Player> players = new List<Player>();
 
-    public int PlayersCount { get { return players.Count; } }
+    public int playersCount { get { return players.Count; } }
 
     [SerializeField]
     Player playerPrefab = null;
@@ -39,7 +39,7 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<CardData> stack = new List<CardData>();
 
-    public int StackCount { get { return stack.Count; } }
+    public int stackCount { get { return stack.Count; } }
 
     [SerializeField]
     StoneBoardManager stoneBoard = null;
