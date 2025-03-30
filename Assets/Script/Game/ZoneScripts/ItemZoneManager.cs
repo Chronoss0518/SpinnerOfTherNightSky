@@ -18,6 +18,20 @@ public class ItemZoneManager : ZoneScriptBase
     [SerializeField,ReadOnly]
     private ItemCardScript[] items = new ItemCardScript[PUT_ITEM_COUNT];
 
+    public int nowPutCount { get
+        {
+            int res = 0;
+
+            for (int i = 0; i < PUT_ITEM_COUNT; i++)
+            {
+                if (items[i] == null) continue;
+                res++;
+            }
+
+            return res;
+        }
+    }
+
     override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
