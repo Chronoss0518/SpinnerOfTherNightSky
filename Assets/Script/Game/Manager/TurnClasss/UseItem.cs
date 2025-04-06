@@ -79,6 +79,6 @@ public class UseItem : TurnManager.TurnClass
     public override void Next()
     {
         gameManager.SetNowPlayerCount(tmpNowPlayerCount);
-        SetMainStep(TurnManager.MainStep.UseItem);
+        SetMainStep(TurnManager.MainStep.PutStone);
     }
 }
