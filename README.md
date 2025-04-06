@@ -154,19 +154,19 @@ ItemZoneへ出す事で発動できます。
 graph TD;
 
 Player[Player:PlayMagic
-ターンプレイヤーは手札から術を利用するかの確認をします※]
+ターンプレイヤーは魔導書から術を発動するかの確認をします※]
 OtherPlayer[OtherPlayer:PlayMagic
-アザープレイヤーは手札から術を利用するかの確認をします※
+アザープレイヤーは魔導書から術を発動するかの確認をします※
     - 複数人いる場合は次に自身のターンになる人から順に確認します]
 
 Player:UseItem[Player:UseItem
-ターンプレイヤーは道具を手札から利用することができます]
+ターンプレイヤーは道具を魔導書から発動することができます]
 
 Player:PutStone[Player:PutStone
 ターンプレイヤーは石を1～3個を盤面に置きます]
 
 Player:SetTrap[Player:SetTrap
-ターンプレイヤーは手札の罠道具をItemZoneへ配置することができます]
+ターンプレイヤーは手札の罠をItemZoneへ配置することができます]
 
 End[End
 次のターンへ移行しターンプレイヤーを切り替えます]
@@ -180,31 +180,10 @@ Player:SetTrap-->End
 
 ```
 
-#### 上記の手順のうち、PlayMagicの部分の詳細手順を記述します
-
-``` mermaid
-graph TD;
-
-Start[Start PlayMagic]
-OtherStart[Start PlayMagic
-※違うプレイヤーでPlayMagicを再開]
-
-Start-->CheckCard
-CheckCard-->|カードを発動する場合|UseCard
-CheckCard-->|カードを発動しない場合|End
-UseCard-->OtherStart
-OtherStart-->End
-
-```
-
-1. CheckCard
-術の発動が確認されていない場合、ユーザーは手札にある術カードを利用するか確認し、利用しない場合はこの時点でこの手順を終了します
-以降のユーザーは術を発動するか罠を発動するかを確認します。
-2. UseCard
-ユーザーはカードを発動宣言をします
-3. Start PlayMagic
-現在のユーザーではないプレイヤーに同じ手順を行います
-- 複数人いる場合は次に自身のターンになる人から順に行います
+1. UseItemに入場したプレイヤーは魔導書及びItemZoneに存在する道具を選択して発動できます。
+   - 以降のプレイヤーは最後に発動したプレイヤー以外全員がItemZoneにある罠を発動しないまで繰り返します
+2. PlayMagicに入場し他プレイヤーは魔導書から術を選択して発動できます。
+    - 以降のプレイヤーは最後に発動したプレイヤー以外が魔導書から術及びItemZoneから罠を発動しないまで繰り返します
 
 
 
