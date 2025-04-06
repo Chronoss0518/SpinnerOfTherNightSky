@@ -46,7 +46,9 @@ public class ScriptManager
         MoveStone,//石の置く・石を取り除く//
         MoveCard,//カードを移動させる//
         Stack,//カードをStackする→カードの発動準備//
+        Stay,//永続効果の登録
         WinnerPoint,//ゲームに勝利するためのポイントを増減させる//
+        Skip,//Stackカードのスキップを行う
     }
 
     public enum ActionType : int
@@ -188,7 +190,6 @@ public class ScriptManager
     public class ScriptActionData
     {
         public ActionType type = ActionType.Entry;
-
         public List<ScriptAction> actions = new List<ScriptAction>();
     }
 
@@ -321,11 +322,11 @@ public class ScriptManager
         if (runScript == null) return;
         if (runScript.actions.Count <= useScriptCount)
         {
-            runScript = null;
             useScriptCount = 0;
             targetPlayer.Clear();
             selectCardActionController.ClearTarget();
             selectStoneBoardActionController.ClearTarget();
+            runScript = null;
             return;
         }
 
@@ -338,11 +339,14 @@ public class ScriptManager
         if (Stack(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (WinnerPoint(_controller, _gameManager, runScript.actions[useScriptCount])) return;
 
+
     }
 
     bool BlockStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.BlockStone) return false;
+
+        AddUseScriptCount();
 
         return true;
     }
@@ -351,6 +355,8 @@ public class ScriptManager
     bool BlockCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.BlockCard) return false;
+
+        AddUseScriptCount();
 
         return true;
     }
@@ -386,6 +392,8 @@ public class ScriptManager
             else sec.RemovePutStone();
         }
 
+        AddUseScriptCount();
+
         return true;
     }
 
@@ -395,7 +403,11 @@ public class ScriptManager
 
         var targetCards = selectCardActionController.GetTargetCard();
 
-        if (targetCards.Count <= 0) return true;
+        if (targetCards.Count <= 0)
+        {
+            AddUseScriptCount();
+            return true;
+        }
 
         var act = (MoveCardAction)_script;
 
@@ -405,10 +417,9 @@ public class ScriptManager
             if (act.moveZone == ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
 
             
-
-
-
         }
+
+        AddUseScriptCount();
 
         return true;
     }
@@ -419,8 +430,11 @@ public class ScriptManager
 
         var targetCards = selectCardActionController.GetTargetCard();
 
-        if (targetCards.Count <= 0 || targetCards.Count > 1) return true;
-
+        if (targetCards.Count <= 0)
+        {
+            AddUseScriptCount();
+            return true;
+        }
         
 
         return true;
@@ -429,6 +443,8 @@ public class ScriptManager
     bool WinnerPoint(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
     {
         if (_script.type != ScriptType.WinnerPoint) return false;
+
+        AddUseScriptCount();
 
         return true;
     }
