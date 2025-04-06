@@ -165,6 +165,10 @@ public class GameManager : MonoBehaviour
         var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
 
         scriptManager.RunScript(controller, this);
+
+        if (scriptManager.isRunScript) return;
+
+
     }
 
 
