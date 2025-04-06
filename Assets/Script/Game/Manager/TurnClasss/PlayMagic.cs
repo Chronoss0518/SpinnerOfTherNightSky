@@ -46,12 +46,6 @@ public class PlayMagic : TurnManager.TurnClass
     {
         int tmpCount = gameManager.stackCount;
 
-        if (beforeStackCount <= 0 && beforeStackCount >= tmpCount)
-        {
-            ChangeTurn();
-            return;
-        }
-
         if (gameManager.playersCount >= passPlayerCount)
         {
             ChangeTurn();
@@ -61,7 +55,7 @@ public class PlayMagic : TurnManager.TurnClass
         if (beforeStackCount < tmpCount)
         {
             scriptUsePlayerCount = gameManager.nowPlayerCount + passPlayerCount;
-            passPlayerCount = 0;
+            passPlayerCount = 1;
             gameManager.SetNowPlayerCount(scriptUsePlayerCount + 1);
             gameManager.RegistScript(selectCard);
             return;
