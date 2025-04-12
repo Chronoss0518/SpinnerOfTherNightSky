@@ -37,7 +37,7 @@ public class GameManager : MonoBehaviour
     TurnManager turnManager = new TurnManager();
 
     [SerializeField, ReadOnly]
-    List<CardData> stack = new List<CardData>();
+    List<CardScript> stack = new List<CardScript>();
 
     public int stackCount { get { return stack.Count; } }
 
@@ -52,7 +52,7 @@ public class GameManager : MonoBehaviour
 
     bool initFlg { get; set; } = false;
 
-    public void AddStackCard(CardData _card)
+    public void AddStackCard(CardScript _card)
     {
         stack.Add(_card);
     }
@@ -138,7 +138,6 @@ public class GameManager : MonoBehaviour
     {
         if (stoneBoard != null) stoneBoard.Init();
 
-
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
         {
             var memberFlgs = manager.memberFlgs[i];
@@ -146,21 +145,29 @@ public class GameManager : MonoBehaviour
             CreateCPUPlayer(memberFlgs);
             CreateNetworkPlayer(memberFlgs);
         }
+    }
 
+    bool IsInitializPlayers()
+    {
+        Debug.Log("Initialize Test");
+        foreach (var player in players)
+        {
+            if (player.initFlg) continue;
+            return false;
+        }
+
+        return true;
     }
 
     // Update is called once per frame
     void Update()
     {
+
         StartDice();
 
         if (!initFlg) return;
 
-        if (!scriptManager.isRunScript)
-        {
-            turnManager.Update();
-            return;
-        }
+        MainUpdate();
 
         var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
 
@@ -171,10 +178,20 @@ public class GameManager : MonoBehaviour
 
     }
 
+    void MainUpdate()
+    {
+        if (scriptManager.isRunScript) return;
+
+        turnManager.Update();
+    }
+
+
 
     void StartDice()
     {
         if (initFlg) return;
+
+        if (!IsInitializPlayers()) return;
 
         turnManager.Init(this);
 

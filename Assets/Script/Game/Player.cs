@@ -49,7 +49,7 @@ public class Player : MonoBehaviour
     [SerializeField, ReadOnly]
     Manager.DisplayAspectType beforeType = Manager.DisplayAspectType.None;
 
-
+    public bool initFlg { get; private set; } = false;
     public GameObject stoneModel { get { return stone; } }
 
     public void SetGameManager(GameManager _gameManager) {  gameManager = _gameManager; }
@@ -84,6 +84,8 @@ public class Player : MonoBehaviour
     {
         cardData = _cardData;
 
+        initFlg = true;
+
         if (!_createBookObject) return;
         if (book == null) return;
         if (book.initFlg) return;
@@ -92,6 +94,7 @@ public class Player : MonoBehaviour
         book.InitCard(this, gameManager, cardData);
 
         UpdateBookParent();
+
     }
 
     public void SetCPUController()
