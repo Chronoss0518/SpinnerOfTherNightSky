@@ -61,9 +61,9 @@ public class Book : ZoneScriptBase
 
     override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
     {
-        for(int i = 0;i < cardSocketList.Count;i++)
+        for (int i = 0;i < cardSocketList.Count;i++)
         {
-            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>();
+            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>(true);
 
             if (cardScript == null) continue;
 
@@ -75,7 +75,7 @@ public class Book : ZoneScriptBase
     {
         for (int i = 0; i < cardSocketList.Count; i++)
         {
-            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>();
+            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>(true);
 
             if (cardScript == null) continue;
 
