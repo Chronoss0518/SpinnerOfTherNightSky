@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class MagicCardScript : CardScriptBase
+public class MagicCardScript : CardScript.CardScriptBase
 {
 
     [SerializeField,ReadOnly]
@@ -36,5 +36,48 @@ public class MagicCardScript : CardScriptBase
     public int point { get; private set; } = 0;
 
     public void SetPoint(int _point) { point = _point; }
+
+    public override void Init(CardData _data)
+    {
+        var magicData = (MagicCardData)_data;
+        SetAttribute(magicData.month);
+        SetPoint(magicData.point);
+    }
+
+    public override void SetSelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    {
+        if (_action.cardType != 0)
+            if ((_action.cardType & ScriptManager.SelectCardType.Magic) <= 0) return;
+        if (baseData.cardType != (int)CardData.CardType.Magic) return;
+        var magic = (MagicCardData)baseData;
+
+        if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
+
+        if (!IsPlayingMagicTest(_action, magic)) return;
+
+        SelectTargetTestSuccess();
+    }
+
+    bool IsPlayingMagicTest(ScriptManager.SelectCardAction _action, MagicCardData _data)
+    {
+        if (!_action.normalPlaying) return true;
+
+        if ((zoneType & ScriptManager.ZoneType.Book) <= 0) return false;
+
+        if (_action.magicAttributeMonth.Count > 0)
+        {
+            int loopCount = 0;
+            for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
+            {
+                int month = _action.magicAttributeMonth[loopCount];
+                if (_data.month == month) break;
+            }
+
+            if (loopCount >= _action.magicAttributeMonth.Count) return false;
+        }
+
+
+        return true;
+    }
 
 }
