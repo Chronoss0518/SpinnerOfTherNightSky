@@ -430,12 +430,13 @@ public class ScriptManager
 
         var targetCards = selectCardActionController.GetTargetCard();
 
-        if (targetCards.Count <= 0)
+        if (targetCards.Count <= 0 || targetCards.Count >= 2)
         {
             AddUseScriptCount();
             return true;
         }
-        
+
+        var card = targetCards[0];
 
         return true;
     }
