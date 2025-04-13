@@ -62,7 +62,7 @@ public class Player : MonoBehaviour
 
     public MagicZoneManager magicZone { get {return myMagicZone; } }
 
-    public void SelectTargetStart(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    public void SelectTargetStart(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
         if (book != null) book.SelectTargetTest(_action, _runPlayer);
         if (itemZone != null) itemZone.SelectTargetTest(_action, _runPlayer);

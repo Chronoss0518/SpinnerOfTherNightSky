@@ -9,24 +9,24 @@ public class ScriptParts
     public ScriptParts(int _no,string _args) 
     {
         type = (ScriptManager.ScriptType)_no;
-        argments = _args;
+        arguments = _args;
     }
 
     public ScriptParts(CardAPIBase.ScriptPartsDTO _dto)
     {
         type = (ScriptManager.ScriptType)_dto.type;
-        argments = _dto.argments;
+        arguments = _dto.argments;
     }
 
     public ScriptManager.ScriptType type = 0;
-    public string argments = "";
+    public string arguments = "";
 }
 
 [System.Serializable]
 public class ScriptData
 {
     public ScriptData() { }
-    public ScriptData(ScriptParts[] _pats,ScriptManager.ActionType _type)
+    public ScriptData(ScriptParts[] _pats,ScriptManager.ArgumentType _type)
     {
         parts = _pats;
         type = _type;
@@ -40,11 +40,11 @@ public class ScriptData
         {
             parts[i] = new ScriptParts(_dto.parts[i]);
         }
-        type = (ScriptManager.ActionType)_dto.actionType;
+        type = (ScriptManager.ArgumentType)_dto.actionType;
     }
 
     public ScriptParts[] parts = null;
-    public ScriptManager.ActionType type = ScriptManager.ActionType.Stay;
+    public ScriptManager.ArgumentType type = ScriptManager.ArgumentType.Stay;
 }
 
 
