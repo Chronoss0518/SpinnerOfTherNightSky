@@ -20,47 +20,47 @@ public class ItemCardScript : CardScript.CardScriptBase
         SetType((ItemCardData.ItemType)itemData.itemType);
     }
 
-    public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        SetSelectItemTargetTest(_action, _runPlayer);
-        SetSelectTrapTargetTest(_action, _runPlayer);
+        SetSelectItemTargetTest(_argument, _runPlayer);
+        SetSelectTrapTargetTest(_argument, _runPlayer);
     }
 
-    void SetSelectItemTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    void SetSelectItemTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        if (_action.cardType != 0)
-            if ((_action.cardType & ScriptManager.SelectCardType.Item) <= 0) return;
+        if (_argument.cardType != 0)
+            if ((_argument.cardType & ScriptManager.SelectCardType.Item) <= 0) return;
         if (baseData.cardType != (int)CardData.CardType.Item) return;
         var item = (ItemCardData)baseData;
         if (item.itemType != (int)ItemCardData.ItemType.Normal) return;
 
-        if (!SelectTargetArgumentTest(_action, _runPlayer)) return;
+        if (!SelectTargetArgumentTest(_argument, _runPlayer)) return;
 
-        if (!IsPlayingUseItemTest(_action, item) &&
-            !IsPlayingSetItemTest(_action, item)) return;
+        if (!IsPlayingUseItemTest(_argument, item) &&
+            !IsPlayingSetItemTest(_argument, item)) return;
 
         SelectTargetTestSuccess();
     }
 
-    void SetSelectTrapTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    void SetSelectTrapTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        if (_action.cardType != 0)
-            if ((_action.cardType & ScriptManager.SelectCardType.Trap) <= 0) return;
+        if (_argument.cardType != 0)
+            if ((_argument.cardType & ScriptManager.SelectCardType.Trap) <= 0) return;
         if (baseData.cardType != (int)CardData.CardType.Item) return;
         var item = (ItemCardData)baseData;
         if (item.itemType != (int)ItemCardData.ItemType.Trap) return;
 
-        if (!SelectTargetArgumentTest(_action, _runPlayer)) return;
+        if (!SelectTargetArgumentTest(_argument, _runPlayer)) return;
 
-        if (!IsPlayingUseTrapTest(_action, item) &&
-            !IsPlayingSetItemTest(_action, item)) return;
+        if (!IsPlayingUseTrapTest(_argument, item) &&
+            !IsPlayingSetItemTest(_argument, item)) return;
 
         SelectTargetTestSuccess();
     }
 
-    bool IsPlayingUseItemTest(ScriptManager.SelectCardArgument _action, ItemCardData _data)
+    bool IsPlayingUseItemTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
     {
-        if (!_action.normalPlaying) return true;
+        if (!_argument.normalPlaying) return true;
         var val = (zoneType & ScriptManager.ZoneType.Book) |
             (zoneType & ScriptManager.ZoneType.ItemZone);
 
@@ -70,9 +70,9 @@ public class ItemCardScript : CardScript.CardScriptBase
         return true;
     }
 
-    bool IsPlayingUseTrapTest(ScriptManager.SelectCardArgument _action, ItemCardData _data)
+    bool IsPlayingUseTrapTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
     {
-        if (!_action.normalPlaying) return true;
+        if (!_argument.normalPlaying) return true;
         if (zoneType != ScriptManager.ZoneType.ItemZone) return false;
 
 
@@ -82,7 +82,7 @@ public class ItemCardScript : CardScript.CardScriptBase
     }
 
 
-    bool IsPlayingSetItemTest(ScriptManager.SelectCardArgument _action, ItemCardData _data)
+    bool IsPlayingSetItemTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
     {
         return true;
     }

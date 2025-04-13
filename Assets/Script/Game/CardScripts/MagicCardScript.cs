@@ -44,36 +44,36 @@ public class MagicCardScript : CardScript.CardScriptBase
         SetPoint(magicData.point);
     }
 
-    public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        if (_action.cardType != 0)
-            if ((_action.cardType & ScriptManager.SelectCardType.Magic) <= 0) return;
+        if (_argument.cardType != 0)
+            if ((_argument.cardType & ScriptManager.SelectCardType.Magic) <= 0) return;
         if (baseData.cardType != (int)CardData.CardType.Magic) return;
         var magic = (MagicCardData)baseData;
 
-        if (!SelectTargetArgumentTest(_action, _runPlayer)) return;
+        if (!SelectTargetArgumentTest(_argument, _runPlayer)) return;
 
-        if (!IsPlayingMagicTest(_action, magic)) return;
+        if (!IsPlayingMagicTest(_argument, magic)) return;
 
         SelectTargetTestSuccess();
     }
 
-    bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _action, MagicCardData _data)
+    bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
     {
-        if (!_action.normalPlaying) return true;
+        if (!_argument.normalPlaying) return true;
 
         if ((zoneType & ScriptManager.ZoneType.Book) <= 0) return false;
 
-        if (_action.magicAttributeMonth.Count > 0)
+        if (_argument.magicAttributeMonth.Count > 0)
         {
             int loopCount = 0;
-            for (loopCount = 0; loopCount < _action.magicAttributeMonth.Count; loopCount++)
+            for (loopCount = 0; loopCount < _argument.magicAttributeMonth.Count; loopCount++)
             {
-                int month = _action.magicAttributeMonth[loopCount];
+                int month = _argument.magicAttributeMonth[loopCount];
                 if (_data.month == month) break;
             }
 
-            if (loopCount >= _action.magicAttributeMonth.Count) return false;
+            if (loopCount >= _argument.magicAttributeMonth.Count) return false;
         }
 
 

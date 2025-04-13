@@ -18,7 +18,7 @@ public class CardScript : MonoBehaviour
 
         public abstract void Init(CardData _data);
 
-        public abstract void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer);
+        public abstract void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer);
 
         public string cardName { get { return baseCard.name; } }
 
@@ -30,9 +30,9 @@ public class CardScript : MonoBehaviour
         protected Player zType { get { return baseCard.player; } }
         protected GameManager manager { get { return baseCard.manager; } }
         protected ScriptManager.ZoneType zoneType { get { return baseCard.zType; } }
-        protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+        protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
         {
-            return baseCardObj.SelectTargetArgumentTest(_action,_runPlayer);
+            return baseCardObj.SelectTargetArgumentTest(_argument,_runPlayer);
         }
 
         protected void SelectTargetTestSuccess()
@@ -131,14 +131,14 @@ public class CardScript : MonoBehaviour
         back.SetAnimationVisible(false);
     }
 
-    public void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    public void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
 
         CardScriptBase card = data.cardType == (int)CardData.CardType.Magic ?
             gameObject.GetComponent<MagicCardScript>() :
             gameObject.GetComponent<ItemCardScript>();
 
-        card.SetSelectTargetTest(_action, _runPlayer);
+        card.SetSelectTargetTest(_argument, _runPlayer);
     }
 
     public void SetSelectFlg(bool _flg)
@@ -151,40 +151,40 @@ public class CardScript : MonoBehaviour
         selectFlg = _flg;
     }
 
-    protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
+    protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        if (_action.normalPlaying) return true;
+        if (_argument.normalPlaying) return true;
 
         if (zType != 0)
-            if ((_action.zoneType | zType) <= 0) return false;
+            if ((_argument.zoneType | zType) <= 0) return false;
 
-        if (_action.playerType >= 0)
+        if (_argument.playerType >= 0)
         {
-            if (_action.playerType  != 0 && _runPlayer.Equals(player)) return false;
-            if (_action.playerType  != 1 && !_runPlayer.Equals(player)) return false;
+            if (_argument.playerType  != 0 && _runPlayer.Equals(player)) return false;
+            if (_argument.playerType  != 1 && !_runPlayer.Equals(player)) return false;
         }
 
         int loopCount = 0;
-        if (_action.particialName.Count > 0)
+        if (_argument.particialName.Count > 0)
         {
-            for (loopCount = 0; loopCount < _action.particialName.Count; loopCount++)
+            for (loopCount = 0; loopCount < _argument.particialName.Count; loopCount++)
             {
-                string particialName = _action.particialName[loopCount];
+                string particialName = _argument.particialName[loopCount];
                 if (cardName.IndexOf(particialName) >= 0) break;
             }
 
-            if (loopCount >= _action.particialName.Count) return false;
+            if (loopCount >= _argument.particialName.Count) return false;
         }
 
-        if (_action.particialDescription.Count > 0)
+        if (_argument.particialDescription.Count > 0)
         {
-            for (loopCount = 0; loopCount < _action.particialDescription.Count; loopCount++)
+            for (loopCount = 0; loopCount < _argument.particialDescription.Count; loopCount++)
             {
-                string description = _action.particialDescription[loopCount];
+                string description = _argument.particialDescription[loopCount];
                 if (description.IndexOf(description) >= 0) break;
             }
 
-            if (loopCount >= _action.particialDescription.Count) return false;
+            if (loopCount >= _argument.particialDescription.Count) return false;
         }
 
         return true;
