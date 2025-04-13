@@ -44,21 +44,21 @@ public class MagicCardScript : CardScript.CardScriptBase
         SetPoint(magicData.point);
     }
 
-    public override void SetSelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
         if (_action.cardType != 0)
             if ((_action.cardType & ScriptManager.SelectCardType.Magic) <= 0) return;
         if (baseData.cardType != (int)CardData.CardType.Magic) return;
         var magic = (MagicCardData)baseData;
 
-        if (!SelectTargetArgmentTest(_action, _runPlayer)) return;
+        if (!SelectTargetArgumentTest(_action, _runPlayer)) return;
 
         if (!IsPlayingMagicTest(_action, magic)) return;
 
         SelectTargetTestSuccess();
     }
 
-    bool IsPlayingMagicTest(ScriptManager.SelectCardAction _action, MagicCardData _data)
+    bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _action, MagicCardData _data)
     {
         if (!_action.normalPlaying) return true;
 

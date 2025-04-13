@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 using UnityEngine.UI;
-using static ScriptManager;
 
 public class CardScript : MonoBehaviour
 {
@@ -19,7 +18,7 @@ public class CardScript : MonoBehaviour
 
         public abstract void Init(CardData _data);
 
-        public abstract void SetSelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer);
+        public abstract void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer);
 
         public string cardName { get { return baseCard.name; } }
 
@@ -31,9 +30,9 @@ public class CardScript : MonoBehaviour
         protected Player zType { get { return baseCard.player; } }
         protected GameManager manager { get { return baseCard.manager; } }
         protected ScriptManager.ZoneType zoneType { get { return baseCard.zType; } }
-        protected bool SelectTargetArgmentTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+        protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
         {
-            return baseCardObj.SelectTargetArgmentTest(_action,_runPlayer);
+            return baseCardObj.SelectTargetArgumentTest(_action,_runPlayer);
         }
 
         protected void SelectTargetTestSuccess()
@@ -111,7 +110,7 @@ public class CardScript : MonoBehaviour
         return true;
     }
 
-    public void SelectAction()
+    public void SelectArgument()
     {
         manager.SelectCard(this);
     }
@@ -132,7 +131,7 @@ public class CardScript : MonoBehaviour
         back.SetAnimationVisible(false);
     }
 
-    public void SetSelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    public void SetSelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
 
         CardScriptBase card = data.cardType == (int)CardData.CardType.Magic ?
@@ -152,7 +151,7 @@ public class CardScript : MonoBehaviour
         selectFlg = _flg;
     }
 
-    protected bool SelectTargetArgmentTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
         if (_action.normalPlaying) return true;
 
