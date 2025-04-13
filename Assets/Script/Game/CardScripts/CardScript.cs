@@ -110,7 +110,7 @@ public class CardScript : MonoBehaviour
         return true;
     }
 
-    public void SelectArgument()
+    public void SelectAction()
     {
         manager.SelectCard(this);
     }
