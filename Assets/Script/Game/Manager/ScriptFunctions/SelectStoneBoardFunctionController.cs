@@ -4,7 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using static ScriptManager;
 
-public class SelectStoneBoardActionController : SelectScriptActionBase
+public class SelectStoneBoardFunctionController : SelectScriptControllerBase
 {
     [SerializeField,ReadOnly]
     ScriptManager manager = null;
@@ -28,12 +28,12 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
     }
 
 
-    public void SelectTargetPos(int _x, int _y, GameManager _manager,SelectStoneBoardAction _runAction)
+    public void SelectTargetPos(int _x, int _y, GameManager _manager,SelectStoneBoardArgument _runArgument)
     {
-        if (_runAction == null) return;
-        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == _runAction.isPutPos)
+        if (_runArgument == null) return;
+        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == _runArgument.isPutPos)
         {
-            manager.SetError(_runAction.isPutPos ?
+            manager.SetError(_runArgument.isPutPos ?
                 ErrorType.IsPutStonePosSelect :
                 ErrorType.IsRemoveStonePosSelect);
 
@@ -49,7 +49,7 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
             return;
         }
 
-        if (_runAction.maxCount <= targetStonePos.Count)
+        if (_runArgument.maxCount <= targetStonePos.Count)
         {
             manager.SetError(ErrorType.IsRangeMaxOverCount);
             return;
@@ -62,13 +62,13 @@ public class SelectStoneBoardActionController : SelectScriptActionBase
     }
 
 
-    public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.SelectStoneBoard) return false;
 
         _controller.ActionStart();
 
-        var act = (SelectStoneBoardAction)_script;
+        var act = (SelectStoneBoardArgument)_script;
 
         string message = "";
 

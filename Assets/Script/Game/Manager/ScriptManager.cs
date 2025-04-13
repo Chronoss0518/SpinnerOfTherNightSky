@@ -9,19 +9,20 @@ public class ScriptManager
 {
     public ScriptManager()
     {
-        selectStoneBoardActionController.Init(this);
-        selectCardActionController.Init(this);
+       functions[(int)ScriptType.BlockStone] = new BlockStoneFunction(this);
+       functions[(int)ScriptType.BlockCard] = new BlockCardFunction(this);
+       functions[(int)ScriptType.SelectStoneBoard] = new SelectStoneBoardFunction(this);
+       functions[(int)ScriptType.SelectCard] = new SelectCardFunction(this);
+       functions[(int)ScriptType.MoveStone] = new MoveStoneFunction(this);
+       functions[(int)ScriptType.MoveCard] = new MoveCardFunction(this);
+       functions[(int)ScriptType.Stack] = new StackFunction(this);
+       functions[(int)ScriptType.Stay] = new StayFunction(this);
+       functions[(int)ScriptType.WinnerPoint] = new WinnerPointFunction(this);
+       functions[(int)ScriptType.Skip] = new BlockStoneFunction(this);
     }
 
-    abstract public class SelectScriptActionBase
-    {
-        abstract public bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptAction _script);
 
-        abstract public void ClearTarget();
-    }
-
-
-    delegate ScriptAction CreateMethod(ScriptParts _parts);
+    delegate ScriptArgument CreateMethod(ScriptParts _parts);
 
     public enum ErrorType : int
     {
@@ -51,7 +52,10 @@ public class ScriptManager
         Skip,//Stackカードのスキップを行う
     }
 
-    public enum ActionType : int
+
+    ScriptFunctionBase[] functions = new ScriptFunctionBase[10];
+
+    public enum ArgumentType : int
     {
         Entry,
         Stay,
@@ -75,30 +79,90 @@ public class ScriptManager
         Trap = 4
     }
 
-    public class ScriptAction
+    public class ScriptArgument
     {
         public ScriptType type;
     }
 
-    public class BlockStoneAction : ScriptAction
+    public abstract class ScriptFunctionBase
     {
-        public BlockStoneAction()
+
+        public ScriptFunctionBase(ScriptManager _manager)
+        {
+            if (_manager == null) return;
+            mgr = _manager;
+        }
+
+        public virtual void Release() { }
+
+        public abstract ScriptArgument GenerateArgument(ScriptParts _script);
+
+        public abstract bool Run(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script);
+
+
+        protected void SetSelectStoneBoardFunctionController(SelectStoneBoardFunctionController _controller)
+        {
+            if (_controller == null) return;
+            mgr.selectStoneBoardFunctionController = _controller;
+        }
+
+        protected void SetSelectCardFunctionController(SelectCardFunctionController _controller)
+        {
+            if (_controller == null) return;
+            mgr.selectCardFunctionController = _controller;
+        }
+
+        protected Dictionary<int, StonePosScript> GetTargetStonePos()
+        {
+            return mgr.selectStoneBoardFunctionController.GetTargetStonePos();
+        }
+
+        protected List<CardScript> GetTargetCard()
+        {
+            return mgr.selectCardFunctionController.GetTargetCard();
+        }
+
+        protected List<string> GenerateArgument(string _args)
+        {
+            return mgr.GenerateArgument(_args);
+        }
+
+        protected void AddUseScriptCount()
+        {
+            mgr.AddUseScriptCount();
+        }
+
+        protected ScriptManager manager { get { return mgr; } }
+
+        ScriptManager mgr = null;
+    }
+    
+    abstract public class SelectScriptControllerBase
+    {
+        abstract public bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script);
+
+        abstract public void ClearTarget();
+    }
+
+    public class BlockStoneArgument : ScriptArgument
+    {
+        public BlockStoneArgument()
         {
             type = ScriptType.BlockStone;
         }
     }
 
-    public class BlockCardAction : ScriptAction
+    public class BlockCardArgument : ScriptArgument
     {
-        public BlockCardAction()
+        public BlockCardArgument()
         {
             type = ScriptType.BlockCard;
         }
     }
 
-    public class SelectStoneBoardAction : ScriptAction
+    public class SelectStoneBoardArgument : ScriptArgument
     {
-        public SelectStoneBoardAction()
+        public SelectStoneBoardArgument()
         {
             type = ScriptType.SelectStoneBoard;
         }
@@ -108,9 +172,9 @@ public class ScriptManager
         public bool isPutPos = true;
     }
 
-    public class SelectCardAction : ScriptAction
+    public class SelectCardArgument : ScriptArgument
     {
-        public SelectCardAction()
+        public SelectCardArgument()
         {
             type = ScriptType.SelectCard;
         }
@@ -155,9 +219,9 @@ public class ScriptManager
         }
     }
 
-    public class MoveStoneAction : ScriptAction
+    public class MoveStoneArgument : ScriptArgument
     {
-        public MoveStoneAction()
+        public MoveStoneArgument()
         {
             type = ScriptType.MoveStone;
         }
@@ -165,9 +229,9 @@ public class ScriptManager
         public bool removeFlg = false;
     }
 
-    public class MoveCardAction : ScriptAction
+    public class MoveCardArgument : ScriptArgument
     {
-        public MoveCardAction()
+        public MoveCardArgument()
         {
             type = ScriptType.MoveCard;
         }
@@ -176,9 +240,9 @@ public class ScriptManager
         public ZoneType moveZone = 0;
     }
 
-    public class WinnerPointAction : ScriptAction
+    public class WinnerPointArgument : ScriptArgument
     {
-        public WinnerPointAction()
+        public WinnerPointArgument()
         {
             type = ScriptType.WinnerPoint;
         }
@@ -187,29 +251,23 @@ public class ScriptManager
         public int point = 0;
     }
 
-    public class ScriptActionData
+    public class ScriptArgumentData
     {
-        public ActionType type = ActionType.Entry;
-        public List<ScriptAction> actions = new List<ScriptAction>();
+        public ArgumentType type = ArgumentType.Entry;
+        public List<ScriptArgument> actions = new List<ScriptArgument>();
     }
 
-    ScriptActionData runScript = null;
+    ScriptArgumentData runScript = null;
     public bool isRunScript { get { return runScript != null; } }
 
     public ScriptType RunScriptType { get { return runScript.actions[useScriptCount].type; } }
 
 
-    List<ScriptActionData> stayScript = new List<ScriptActionData>();
+    List<ScriptArgumentData> stayScript = new List<ScriptArgumentData>();
 
-    [SerializeField, ReadOnly]
-    List<Player> targetPlayer = new List<Player>();
+    SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
 
-    public int GetTargetPlayerCount { get { return targetPlayer.Count; } }
-
-    SelectStoneBoardActionController selectStoneBoardActionController = new SelectStoneBoardActionController();
-
-    SelectCardActionController selectCardActionController = new SelectCardActionController();
-
+    SelectCardFunctionController selectCardFunctionController = null;
 
     [SerializeField,ReadOnly]
     int useScriptCount = 0;
@@ -247,17 +305,14 @@ public class ScriptManager
         errorMessageDrawCount = errorMessageDrawMaxCount;
     }
 
-    [SerializeField]
-    GameObject selectStonePrefab = null;
-
     public void SelectTargetPos(int _x,int _y,GameManager _manager)
     {
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
 
-        var action = (SelectStoneBoardAction)runScript.actions[useScriptCount];
+        var action = (SelectStoneBoardArgument)runScript.actions[useScriptCount];
 
-        selectStoneBoardActionController.SelectTargetPos(_x, _y, _manager, action);
+        selectStoneBoardFunctionController.SelectTargetPos(_x, _y, _manager, action);
     }
 
     public void SelectCard(CardScript _script, GameManager _manager)
@@ -266,15 +321,15 @@ public class ScriptManager
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectCard) return;
 
-        var action = (SelectCardAction)runScript.actions[useScriptCount];
+        var action = (SelectCardArgument)runScript.actions[useScriptCount];
 
-        selectCardActionController.SelectCard(_script, _manager, action);
+        selectCardFunctionController.SelectCard(_script, _manager, action);
     }
 
-    public ScriptActionData CreateScript(ScriptData _script, bool _regist = false)
+    public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false)
     {
 
-        var res = new ScriptActionData();
+        var res = new ScriptArgumentData();
         if (_script.parts == null) return res;
         if (_script.parts.Length <= 0) return res;
 
@@ -284,17 +339,27 @@ public class ScriptManager
         {
             var scr = _script.parts[i];
 
-            if (CreateScriptAction(res, CreateBlockStoneAction, scr)) continue;
-            if (CreateScriptAction(res, CreateBlockCardAction, scr)) continue;
-            if (CreateScriptAction(res, CreateSelectStoneBoardAction, scr)) continue;
-            if (CreateScriptAction(res, CreateSelectCardAction, scr)) continue;
-            if (CreateScriptAction(res, CreateMoveStoneAction, scr)) continue;
-            if (CreateScriptAction(res, CreateMoveCardAction, scr)) continue;
-            if (CreateScriptAction(res, CreateStackAction, scr)) continue;
-            if (CreateScriptAction(res, CreateWinnerPointAction, scr)) continue;
+            int scriptType = (int)scr.type;
+
+            var arg = functions[scriptType].GenerateArgument(_script.parts[i]);
+
+            if (arg == null) continue;
+
+            res.actions.Add(arg);
+
+            /*
+            if (CreateScriptArgument(res, CreateBlockStoneArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateBlockCardArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateSelectStoneBoardArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateSelectCardArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateMoveStoneArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateMoveCardArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateStackArgument, scr)) continue;
+            if (CreateScriptArgument(res, CreateWinnerPointArgument, scr)) continue;
+            */
         }
 
-        if (res.type == ActionType.Stay)
+        if (res.type == ArgumentType.Stay)
         {
             stayScript.Add(res);
             return null;
@@ -306,7 +371,7 @@ public class ScriptManager
         return res;
     }
 
-    public void SetRunScript(ScriptActionData _data)
+    public void SetRunScript(ScriptArgumentData _data)
     {
         if (_data == null) return;
         runScript = _data;
@@ -320,16 +385,13 @@ public class ScriptManager
     public void RunScript(ControllerBase _controller, GameManager _gameManager)
     {
         if (runScript == null) return;
-        if (runScript.actions.Count <= useScriptCount)
-        {
-            useScriptCount = 0;
-            targetPlayer.Clear();
-            selectCardActionController.ClearTarget();
-            selectStoneBoardActionController.ClearTarget();
-            runScript = null;
-            return;
-        }
 
+        var argument = runScript.actions[useScriptCount];
+        int scriptType = (int)argument.type;
+
+
+        functions[scriptType].Run(_controller,_gameManager, argument);
+        /*
         if (BlockStone(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (BlockCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (SelectStoneBoard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
@@ -338,11 +400,23 @@ public class ScriptManager
         if (MoveCard(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (Stack(_controller, _gameManager, runScript.actions[useScriptCount])) return;
         if (WinnerPoint(_controller, _gameManager, runScript.actions[useScriptCount])) return;
+        */
+
+
+        if (runScript.actions.Count > useScriptCount) return;
+
+        useScriptCount = 0;
+        runScript = null;
+        foreach (var func in functions)
+        {
+            func.Release();
+        }
+
 
 
     }
 
-    bool BlockStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool BlockStone(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.BlockStone) return false;
 
@@ -352,7 +426,7 @@ public class ScriptManager
     }
 
 
-    bool BlockCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool BlockCard(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.BlockCard) return false;
 
@@ -362,26 +436,26 @@ public class ScriptManager
     }
 
 
-    bool SelectStoneBoard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool SelectStoneBoard(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
-        return selectStoneBoardActionController.SelectAction(_controller, _gameManager, _script);
+        return selectStoneBoardFunctionController.SelectAction(_controller, _gameManager, _script);
     }
 
 
-    bool SelectCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool SelectCard(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
-        return selectCardActionController.SelectAction(_controller, _gameManager, _script);
+        return selectCardFunctionController.SelectAction(_controller, _gameManager, _script);
     }
 
-    bool MoveStone(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool MoveStone(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.MoveStone) return false;
 
-        var targetStonePos = selectStoneBoardActionController.GetTargetStonePos();
+        var targetStonePos = selectStoneBoardFunctionController.GetTargetStonePos();
 
         if (targetStonePos.Count <= 0) return true;
 
-        var act = (MoveStoneAction)_script;
+        var act = (MoveStoneArgument)_script;
 
         foreach (var pos in targetStonePos)
         {
@@ -397,11 +471,11 @@ public class ScriptManager
         return true;
     }
 
-    bool MoveCard(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool MoveCard(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.MoveCard) return false;
 
-        var targetCards = selectCardActionController.GetTargetCard();
+        var targetCards = selectCardFunctionController.GetTargetCard();
 
         if (targetCards.Count <= 0)
         {
@@ -409,7 +483,7 @@ public class ScriptManager
             return true;
         }
 
-        var act = (MoveCardAction)_script;
+        var act = (MoveCardArgument)_script;
 
         for(int i = 0;i< targetCards.Count;i++)
         {
@@ -424,11 +498,11 @@ public class ScriptManager
         return true;
     }
 
-    bool Stack(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool Stack(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.Stack) return false;
 
-        var targetCards = selectCardActionController.GetTargetCard();
+        var targetCards = selectCardFunctionController.GetTargetCard();
 
         if (targetCards.Count <= 0 || targetCards.Count >= 2)
         {
@@ -441,7 +515,7 @@ public class ScriptManager
         return true;
     }
 
-    bool WinnerPoint(ControllerBase _controller, GameManager _gameManager, ScriptAction _script)
+    bool WinnerPoint(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.WinnerPoint) return false;
 
@@ -451,7 +525,7 @@ public class ScriptManager
     }
 
 
-    bool CreateScriptAction(ScriptActionData _data, CreateMethod _method,ScriptParts _parts)
+    bool CreateScriptArgument(ScriptArgumentData _data, CreateMethod _method,ScriptParts _parts)
     {
         if (_method == null) return false;
         if (_data == null) return false;
@@ -465,37 +539,37 @@ public class ScriptManager
         return true;
     }
 
-    ScriptAction CreateBlockStoneAction(ScriptParts _script)
+    ScriptArgument CreateBlockStoneArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.BlockStone) return null;
 
-        var res = new BlockStoneAction();
+        var res = new BlockStoneArgument();
 
         res.type = ScriptType.BlockStone;
 
         return res;
     }
 
-    ScriptAction CreateBlockCardAction(ScriptParts _script)
+    ScriptArgument CreateBlockCardArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.BlockCard) return null;
 
-        var res = new BlockCardAction();
+        var res = new BlockCardArgument();
 
         res.type = ScriptType.BlockCard;
 
         return res;
     }
 
-    ScriptAction CreateSelectStoneBoardAction(ScriptParts _script)
+    ScriptArgument CreateSelectStoneBoardArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.SelectStoneBoard) return null;
 
-        var res = new SelectStoneBoardAction();
+        var res = new SelectStoneBoardArgument();
 
         res.type = ScriptType.SelectStoneBoard;
 
-        var args = GenerateArgment(_script.argments);
+        var args = GenerateArgument(_script.arguments);
 
         for(int i = 0; i < args.Count;i++)
         {
@@ -520,15 +594,15 @@ public class ScriptManager
 
     }
 
-    ScriptAction CreateSelectCardAction(ScriptParts _script)
+    ScriptArgument CreateSelectCardArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.SelectCard) return null;
 
-        var res = new SelectCardAction();
+        var res = new SelectCardArgument();
 
         res.type = ScriptType.SelectCard;
 
-        var args = GenerateArgment(_script.argments);
+        var args = GenerateArgument(_script.arguments);
 
         for (int i = 0; i < args.Count; i++)
         {
@@ -627,15 +701,15 @@ public class ScriptManager
 
     }
 
-    ScriptAction CreateMoveStoneAction(ScriptParts _script)
+    ScriptArgument CreateMoveStoneArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.MoveStone) return null;
 
-        var res = new MoveStoneAction();
+        var res = new MoveStoneArgument();
 
         res.type = ScriptType.MoveStone;
 
-        var args = GenerateArgment(_script.argments);
+        var args = GenerateArgument(_script.arguments);
 
         for (int i = 0; i < args.Count; i++)
         {
@@ -652,15 +726,15 @@ public class ScriptManager
 
     }
 
-    ScriptAction CreateMoveCardAction(ScriptParts _script)
+    ScriptArgument CreateMoveCardArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.MoveCard) return null;
 
-        var res = new MoveCardAction();
+        var res = new MoveCardArgument();
 
         res.type = ScriptType.MoveCard;
 
-        var args = GenerateArgment(_script.argments);
+        var args = GenerateArgument(_script.arguments);
 
         for (int i = 0; i < args.Count; i++)
         {
@@ -691,26 +765,26 @@ public class ScriptManager
         return res;
     }
 
-    ScriptAction CreateStackAction(ScriptParts _script)
+    ScriptArgument CreateStackArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.WinnerPoint) return null;
 
-        var res = new ScriptAction();
+        var res = new ScriptArgument();
 
         res.type = ScriptType.Stack;
 
         return res;
     }
 
-    ScriptAction CreateWinnerPointAction(ScriptParts _script)
+    ScriptArgument CreateWinnerPointArgument(ScriptParts _script)
     {
         if (_script.type != ScriptType.WinnerPoint) return null;
 
-        var res = new WinnerPointAction();
+        var res = new WinnerPointArgument();
 
         res.type = ScriptType.WinnerPoint;
 
-        var args = GenerateArgment(_script.argments);
+        var args = GenerateArgument(_script.arguments);
 
         for (int i = 0; i < args.Count; i++)
         {
@@ -730,7 +804,7 @@ public class ScriptManager
         return res;
     }
 
-    List<string> GenerateArgment(string _args)
+    List<string> GenerateArgument(string _args)
     {
         var args = _args.Split(' ');
 
@@ -766,8 +840,6 @@ public class ScriptManager
             res.Add(tmp);
 
         }
-
-
         return res;
     }
 
