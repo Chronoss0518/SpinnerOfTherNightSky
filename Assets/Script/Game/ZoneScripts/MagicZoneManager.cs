@@ -21,7 +21,7 @@ public class MagicZoneManager : ZoneScriptBase
     [SerializeField,ReadOnly]
     List<MagicCardScript> magicList = new List<MagicCardScript>();
 
-    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    override public void SelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
         for (int i = 0; i < magicList.Count; i++)
         {

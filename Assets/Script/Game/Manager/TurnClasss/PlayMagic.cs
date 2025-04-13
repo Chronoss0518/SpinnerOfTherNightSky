@@ -10,21 +10,21 @@ public class PlayMagic : TurnManager.TurnClass
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 1 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
 
         selectCard = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
     }
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectMagic = null;
+    ScriptManager.ScriptArgumentData selectMagic = null;
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectCard = null;
+    ScriptManager.ScriptArgumentData selectCard = null;
 
     int beforeStackCount = 0;
 

@@ -67,7 +67,7 @@ public class GameManager : MonoBehaviour
         scriptManager.SelectCard(_card, this);
     }
 
-    public void StartSelectCard(ScriptManager.SelectCardAction _action)
+    public void StartSelectCard(ScriptManager.SelectCardArgument _action)
     {
         for(int i = 0;i<players.Count;i++)
         {
@@ -123,12 +123,12 @@ public class GameManager : MonoBehaviour
         nowPlayerCount %= players.Count;
     }
 
-    public ScriptManager.ScriptActionData CreateScript(ScriptData _data)
+    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data)
     {
         return scriptManager.CreateScript(_data);
     }
 
-    public void RegistScript(ScriptManager.ScriptActionData _script)
+    public void RegistScript(ScriptManager.ScriptArgumentData _script)
     {
         scriptManager.SetRunScript(_script);
     }

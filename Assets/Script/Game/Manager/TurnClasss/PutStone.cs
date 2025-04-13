@@ -10,11 +10,11 @@ public class PutStone : TurnManager.TurnClass
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
                new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
     }
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectStone = null;
+    ScriptManager.ScriptArgumentData selectStone = null;
 
     public override void Update()
     {

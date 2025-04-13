@@ -6,7 +6,7 @@ abstract public class ZoneScriptBase : MonoBehaviour
 {
     public ScriptManager.ZoneType zoneType { get; protected set; } = 0;
 
-    abstract public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer);
+    abstract public void SelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer);
     abstract public void SelectTargetDown();
 
     abstract public void RemoveCard(int _num);

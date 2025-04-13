@@ -32,7 +32,7 @@ public class ItemZoneManager : ZoneScriptBase
         }
     }
 
-    override public void SelectTargetTest(ScriptManager.SelectCardAction _action, Player _runPlayer)
+    override public void SelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {

@@ -10,11 +10,11 @@ public class SetTrap : TurnManager.TurnClass
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
     }
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectSetItem = null;
+    ScriptManager.ScriptArgumentData selectSetItem = null;
 
     int beforeSetCount = 0;
 

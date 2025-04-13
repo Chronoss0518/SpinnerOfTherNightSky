@@ -5,10 +5,10 @@ using Unity.Collections;
 public class UseItem : TurnManager.TurnClass
 {
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectItem = null;
+    ScriptManager.ScriptArgumentData selectItem = null;
 
     [SerializeField, ReadOnly]
-    ScriptManager.ScriptActionData selectTrap = null;
+    ScriptManager.ScriptArgumentData selectTrap = null;
 
     int beforeStackCount = 0;
 
@@ -25,14 +25,14 @@ public class UseItem : TurnManager.TurnClass
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --player-type 0 --zone-type-book --card-type 2 --normal-playing"),
                 new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
 
         selectTrap = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --player-type 0 --zone-type-item --card-type 4 --normal-playing"),
                 new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ActionType.Entry));
+            ScriptManager.ArgumentType.Entry));
     }
 
     override public void Init() 
