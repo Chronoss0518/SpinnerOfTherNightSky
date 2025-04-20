@@ -27,6 +27,8 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
 
         var card = targetCards[0];
 
+        Stack(card, _gameManager);
+
         return true;
     }
 

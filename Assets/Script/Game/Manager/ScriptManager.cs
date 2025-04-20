@@ -132,6 +132,11 @@ public class ScriptManager
             mgr.AddUseScriptCount();
         }
 
+        protected void Stack(CardScript _script,GameManager _manager)
+        {
+            mgr.Stack(_script, _manager);
+        }
+
         protected ScriptManager manager { get { return mgr; } }
 
         ScriptManager mgr = null;
@@ -262,7 +267,6 @@ public class ScriptManager
 
     public ScriptType RunScriptType { get { return runScript.actions[useScriptCount].type; } }
 
-
     List<ScriptArgumentData> stayScript = new List<ScriptArgumentData>();
 
     SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
@@ -326,6 +330,11 @@ public class ScriptManager
         selectCardFunctionController.SelectCard(_script, _manager, action);
     }
 
+    void Stack(CardScript _script, GameManager _manager)
+    {
+        _manager.AddStackCard(_script);
+    }
+
     public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false)
     {
 
@@ -378,7 +387,6 @@ public class ScriptManager
         var argument = runScript.actions[useScriptCount];
         int scriptType = (int)argument.type;
 
-
         functions[scriptType].Run(_controller,_gameManager, argument);
 
         if (runScript.actions.Count > useScriptCount) return;
@@ -389,7 +397,6 @@ public class ScriptManager
         {
             func.Release();
         }
-
     }
 
     List<string> GenerateArgument(string _args)
