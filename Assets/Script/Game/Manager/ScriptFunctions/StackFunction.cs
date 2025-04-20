@@ -29,6 +29,7 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
 
         Stack(card, _gameManager);
 
+        AddUseScriptCount();
         return true;
     }
 
