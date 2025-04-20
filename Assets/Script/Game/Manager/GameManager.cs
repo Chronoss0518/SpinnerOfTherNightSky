@@ -39,6 +39,8 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     List<CardScript> stack = new List<CardScript>();
 
+    bool runStackFlg = false;
+
     public int stackCount { get { return stack.Count; } }
 
     [SerializeField]
@@ -133,6 +135,12 @@ public class GameManager : MonoBehaviour
         scriptManager.SetRunScript(_script);
     }
 
+    public void RunStackScriptStart()
+    {
+        if (stack.Count <= 0) return;
+        runStackFlg = true;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -149,7 +157,6 @@ public class GameManager : MonoBehaviour
 
     bool IsInitializPlayers()
     {
-        Debug.Log("Initialize Test");
         foreach (var player in players)
         {
             if (player.initFlg) continue;
@@ -169,23 +176,32 @@ public class GameManager : MonoBehaviour
 
         MainUpdate();
 
+        StackUpdate();
+
         var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
 
         scriptManager.RunScript(controller, this);
-
-        if (scriptManager.isRunScript) return;
-
 
     }
 
     void MainUpdate()
     {
         if (scriptManager.isRunScript) return;
+        if (runStackFlg) return;
 
         turnManager.Update();
     }
 
+    void StackUpdate()
+    {
+        if (scriptManager.isRunScript) return;
+        if (!runStackFlg) return;
 
+        var stackScript = stack[stack.Count - 1];
+
+        if (stack.Count > 0) return;
+        runStackFlg = false;
+    }
 
     void StartDice()
     {
