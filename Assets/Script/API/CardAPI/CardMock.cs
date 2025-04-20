@@ -67,8 +67,34 @@ public class CardMock : CardAPIBase
         BookCardDataDTO.GenerateMagicCard(27,"Test27","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
         BookCardDataDTO.GenerateMagicCard(28,"Test28","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
         BookCardDataDTO.GenerateMagicCard(29,"Test29","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },1,1,new CardMagicPosition[] {new CardMagicPosition(4,4) }),
-        BookCardDataDTO.GenerateItemCard(30,"Test30","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
-        BookCardDataDTO.GenerateItemCard(31,"Test31","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
+        BookCardDataDTO.GenerateItemCard(
+            30,
+            "ìîë‰",
+            "î’ñ Ç©ÇÁêŒÇ3Ç¬éÊÇËèúÇ≠",
+            "",
+            new ScriptDataDTO[]
+            {
+                new ScriptDataDTO(
+                    new ScriptPartsDTO[]
+                    {
+                        new ScriptPartsDTO(2,"--min 3 --max 3 --is-remove"),
+                        new ScriptPartsDTO(4,"--remove"),
+                    },0),
+            },0),
+        BookCardDataDTO.GenerateItemCard(
+            31,
+            "êËêØèpë‰",
+            "î’ñ Ç…êŒÇ2Ç¬íuÇ≠",
+            "",
+            new ScriptDataDTO[]
+            {
+                new ScriptDataDTO(
+                    new ScriptPartsDTO[]
+                    {
+                        new ScriptPartsDTO(2,"--min 2 --max 2 --is-put"),
+                        new ScriptPartsDTO(4,"--put"),
+                    },0),
+            },0),
         BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
         BookCardDataDTO.GenerateItemCard(33,"Test33","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
         BookCardDataDTO.GenerateItemCard(34,"Test34","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
