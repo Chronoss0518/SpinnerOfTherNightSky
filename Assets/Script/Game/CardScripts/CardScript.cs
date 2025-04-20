@@ -1,3 +1,4 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -59,6 +60,9 @@ public class CardScript : MonoBehaviour
     public bool isSelectTarget { get { return selectTargetFlg; } }
 
     [SerializeField]
+    public Text cardNameUI = null;
+
+    [SerializeField]
     CardPutScript front = null, back = null;
 
     [SerializeField,ReadOnly]
@@ -99,6 +103,15 @@ public class CardScript : MonoBehaviour
 
         card.SetBaseCard(this);
         card.Init(_data);
+
+        SetCardName(_data.name);
+    }
+
+    public void SetCardName(string _name)
+    {
+        if (String.IsNullOrWhiteSpace(_name)) return;
+        if (cardNameUI == null) return;
+        cardNameUI.text = _name;
     }
 
     public bool OpenCardDescription(int _nowTime)
