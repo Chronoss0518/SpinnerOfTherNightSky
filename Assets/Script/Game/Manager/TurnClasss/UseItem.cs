@@ -55,6 +55,7 @@ public class UseItem : TurnManager.TurnClass
 
         if(gameManager.playersCount >= passPlayerCount)
         {
+            gameManager.RunStackScriptStart();
             ChangeTurn();
             return;
         }

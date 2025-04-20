@@ -48,6 +48,7 @@ public class PlayMagic : TurnManager.TurnClass
 
         if (gameManager.playersCount >= passPlayerCount)
         {
+            gameManager.RunStackScriptStart();
             ChangeTurn();
             return;
         }
