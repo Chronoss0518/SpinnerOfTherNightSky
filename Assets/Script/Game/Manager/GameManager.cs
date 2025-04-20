@@ -199,6 +199,10 @@ public class GameManager : MonoBehaviour
 
         var stackScript = stack[stack.Count - 1];
 
+        stack.RemoveAt(stack.Count - 1);
+
+        scriptManager.CreateScript(stackScript.script[0], true);
+
         if (stack.Count > 0) return;
         runStackFlg = false;
     }
