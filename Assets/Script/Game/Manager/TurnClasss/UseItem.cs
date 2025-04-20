@@ -18,6 +18,8 @@ public class UseItem : TurnManager.TurnClass
 
     int passPlayerCount = 0;
 
+    bool reRunFlg = false;
+
     public UseItem(TurnManager _manager) : base(_manager)
     {
         selectItem = gameManager.CreateScript(new ScriptData(
@@ -37,13 +39,23 @@ public class UseItem : TurnManager.TurnClass
 
     override public void Init() 
     {
+        scriptUsePlayerCount = 0;
         beforeStackCount = 0;
+        passPlayerCount = 0;
         tmpNowPlayerCount = gameManager.nowPlayerCount;
         gameManager.RegistScript(selectItem);
     }
 
     public override void Update()
     {
+        if (reRunFlg)
+        {
+            reRunFlg = false;
+            gameManager.SetNowPlayerCount(tmpNowPlayerCount);
+            Init();
+            return;
+        }
+
 
         int tmpCount = gameManager.stackCount;
 
@@ -56,7 +68,7 @@ public class UseItem : TurnManager.TurnClass
         if(gameManager.playersCount >= passPlayerCount)
         {
             gameManager.RunStackScriptStart();
-            ChangeTurn();
+            reRunFlg = true;
             return;
         }
 
