@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class SkipFunction : ScriptManager.ScriptFunctionBase
 {
     public SkipFunction(ScriptManager _manager) : base(_manager) { }

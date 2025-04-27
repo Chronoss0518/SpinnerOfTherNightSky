@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class SelectCardFunction : ScriptManager.ScriptFunctionBase
 {
     public SelectCardFunction(ScriptManager _manager) : base(_manager)

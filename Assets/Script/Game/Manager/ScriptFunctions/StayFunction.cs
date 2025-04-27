@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class StayFunction : ScriptManager.ScriptFunctionBase
 {
     public StayFunction(ScriptManager _manager) : base(_manager) { }

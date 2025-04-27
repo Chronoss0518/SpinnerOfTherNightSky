@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 {
     public MoveCardFunction(ScriptManager _manager) : base(_manager) { }
@@ -60,7 +56,7 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
             if (act.moveZone == ScriptManager.ZoneType.MagicZone && targetCards[i].type == CardData.CardType.Item) continue;
             if (act.moveZone == ScriptManager.ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
 
-
+            
         }
 
         AddUseScriptCount();

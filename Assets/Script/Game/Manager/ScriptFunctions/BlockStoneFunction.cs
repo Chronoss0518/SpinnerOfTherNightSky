@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BlockStoneFunction : ScriptManager.ScriptFunctionBase
 {
     public BlockStoneFunction(ScriptManager _manager) : base(_manager) { }

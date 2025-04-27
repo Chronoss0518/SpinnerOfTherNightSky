@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class StackFunction : ScriptManager.ScriptFunctionBase
 {
     public StackFunction(ScriptManager _manager) : base(_manager) { }

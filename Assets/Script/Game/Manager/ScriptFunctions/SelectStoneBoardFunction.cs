@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class SelectStoneBoardFunction : ScriptManager.ScriptFunctionBase
 {
     public SelectStoneBoardFunction(ScriptManager _manager) : base(_manager)

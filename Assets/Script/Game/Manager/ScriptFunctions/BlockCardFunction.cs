@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class BlockCardFunction : ScriptManager.ScriptFunctionBase
 {
     public BlockCardFunction(ScriptManager _manager) : base(_manager) { }

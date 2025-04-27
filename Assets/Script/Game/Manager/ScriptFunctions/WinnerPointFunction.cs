@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class WinnerPointFunction : ScriptManager.ScriptFunctionBase
 {
     public WinnerPointFunction(ScriptManager _manager) : base(_manager) { }

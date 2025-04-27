@@ -1,7 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
-
 public class MoveStoneFunction : ScriptManager.ScriptFunctionBase
 {
     public MoveStoneFunction(ScriptManager _manager) : base(_manager) { }
