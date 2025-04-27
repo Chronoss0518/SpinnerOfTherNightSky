@@ -71,19 +71,27 @@ public class MagicZoneManager : ZoneScriptBase
         if (_card == null) return;
         if (!IsNumTest(_baseNum)) return;
 
-        RemoveCard(_baseNum);
-
+        
         var card = Instantiate(_card, transform);
         card.transform.localPosition = new Vector3(_baseNum * PUT_POSITION, 0.0f, 0.0f);
         magicList[_baseNum] = card;
     }
 
-    override public void RemoveCard(int _num)
+    override public void RemoveCard(CardScript _card)
     {
-        if (!IsNumTest(_num)) return;
-        magicList[_num].transform.SetParent(null);
-        Destroy(magicList[_num].gameObject);
-        CardSort();
+        if (_card == null) return;
+
+        for (int num = 0; num < magicList.Count; num++)
+        {
+            if (!_card.gameObject.Equals(magicList[num].gameObject)) continue;
+
+            magicList[num].transform.SetParent(null);
+            Destroy(magicList[num].gameObject);
+            magicList.RemoveAt(num);
+            CardSort();
+            break;
+        }
+
     }
 
     void CardSort()

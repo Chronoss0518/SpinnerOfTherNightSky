@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 using Unity.VisualScripting;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
 
 public class ItemZoneManager : ZoneScriptBase
 {
@@ -54,6 +55,24 @@ public class ItemZoneManager : ZoneScriptBase
             cardScript.SetSelectUnTarget();
         }
     }
+
+    public void SelectPositionTargetUp()
+    {
+        for (int i = 0; i < PUT_ITEM_COUNT; i++)
+        {
+            if (items[i] == null) continue;
+
+        }
+    }
+
+    public void SelectPositionTargetDown()
+    {
+        for (int i = 0; i < PUT_ITEM_COUNT; i++)
+        {
+
+        }
+    }
+
     public void PutCard(int _num,ItemCardScript _card)
     {
         if (_card == null) return;
@@ -63,13 +82,28 @@ public class ItemZoneManager : ZoneScriptBase
         items[_num].transform.localPosition = new Vector3((_num - 1) * PUT_POSITION, 0.0f, 0.0f);
     }
 
-    override public void RemoveCard(int _num)
+    public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
         var item = items[_num];
         if (item == null) return;
         item.transform.SetParent(null);
         Destroy(item.gameObject);
+    }
+
+    override public void RemoveCard(CardScript _card)
+    {
+        if (_card == null) return;
+
+        for (int num = 0; num < PUT_ITEM_COUNT; num++)
+        {
+            if (!_card.gameObject.Equals(items[num].gameObject)) continue;
+
+            items[num].transform.SetParent(null);
+            Destroy(items[num].gameObject);
+            items[num] = null;
+            break;
+        }
     }
 
     public void OpenCard(int _num)

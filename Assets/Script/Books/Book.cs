@@ -2,6 +2,8 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
+using Unity.VisualScripting.Antlr3.Runtime.Collections;
+using System;
 
 public class Book : ZoneScriptBase
 {
@@ -140,16 +142,21 @@ public class Book : ZoneScriptBase
         Instantiate(_card.gameObject, cardSocketList[_card.initBookPos].transform);
     }
 
-    override public void RemoveCard(int _num)
+    override public void RemoveCard(CardScript _card)
     {
-        if (!IsNumTest(_num)) return;
-        if (cardSocketList[_num].transform.childCount <= 0) return;
-        var card = cardSocketList[_num].transform.GetChild(cardSocketList[_num].transform.childCount - 1).gameObject;
-        card.transform.SetParent(null);
-        Destroy(card);
-    }
+        if (_card == null) return;
 
-    bool IsNumTest(int _num){ return (_num <= 0 && _num < CARD_SOCKET_MAX_SIZE); }
+        for (int num = 0; num < cardSocketList.Count; num++)
+        {
+            var card = cardSocketList[num].transform.GetChild(cardSocketList[num].transform.childCount - 1).gameObject;
+            if (!_card.gameObject.Equals(card)) continue;
+
+            card.transform.SetParent(null);
+            Destroy(card);
+            break;
+        }
+
+    }
 
     void ActiveTest(GameObject _target,bool _active)
     {
