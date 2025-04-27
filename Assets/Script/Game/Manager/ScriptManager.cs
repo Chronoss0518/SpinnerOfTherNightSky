@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
+using UnityEngine.Accessibility;
 
 [System.Serializable]
 public class ScriptManager
@@ -13,8 +14,10 @@ public class ScriptManager
        functions[(int)ScriptType.BlockCard] = new BlockCardFunction(this);
        functions[(int)ScriptType.SelectStoneBoard] = new SelectStoneBoardFunction(this);
        functions[(int)ScriptType.SelectCard] = new SelectCardFunction(this);
+       functions[(int)ScriptType.SelectItemZone] = new SelectCardFunction(this);
        functions[(int)ScriptType.MoveStone] = new MoveStoneFunction(this);
        functions[(int)ScriptType.MoveCard] = new MoveCardFunction(this);
+       functions[(int)ScriptType.OpenItemZoneCard] = new MoveCardFunction(this);
        functions[(int)ScriptType.Stack] = new StackFunction(this);
        functions[(int)ScriptType.Stay] = new StayFunction(this);
        functions[(int)ScriptType.WinnerPoint] = new WinnerPointFunction(this);
@@ -44,16 +47,19 @@ public class ScriptManager
         BlockCard,//石を取り除かせない・カードを無効にする//
         SelectStoneBoard,//盤面の場所を選択する//
         SelectCard,//魔導書からカードを選択する//
+        SelectItemZone,//魔導書からカードを選択する//
         MoveStone,//石の置く・石を取り除く//
         MoveCard,//カードを移動させる//
+        OpenItemZoneCard,//カードを移動させる//
         Stack,//カードをStackする→カードの発動準備//
         Stay,//永続効果の登録
         WinnerPoint,//ゲームに勝利するためのポイントを増減させる//
         Skip,//Stackカードのスキップを行う
+        None,
     }
 
 
-    ScriptFunctionBase[] functions = new ScriptFunctionBase[10];
+    ScriptFunctionBase[] functions = new ScriptFunctionBase[(int)ScriptType.None];
 
     public enum ArgumentType : int
     {
@@ -110,6 +116,12 @@ public class ScriptManager
         {
             if (_controller == null) return;
             mgr.selectCardFunctionController = _controller;
+        }
+
+        protected void SetSelectItemZoneFunctionController(SelectItemZoneFunctionController _controller)
+        {
+            if (_controller == null) return;
+            mgr.selectItemZoneFunctionController = _controller;
         }
 
         protected Dictionary<int, StonePosScript> GetTargetStonePos()
@@ -224,6 +236,17 @@ public class ScriptManager
         }
     }
 
+    public class SelectItemZoneArgument : ScriptArgument
+    {
+        public SelectItemZoneArgument()
+        {
+            type = ScriptType.SelectItemZone;
+        }
+
+        //1:自身,2:自身以外;
+        public int selectTarget = 0;
+    }
+
     public class MoveStoneArgument : ScriptArgument
     {
         public MoveStoneArgument()
@@ -243,6 +266,14 @@ public class ScriptManager
 
         public bool openFlg = false;
         public ZoneType moveZone = 0;
+    }
+
+    public class OpenItemZoneCardArgument : ScriptArgument
+    {
+        public OpenItemZoneCardArgument()
+        {
+            type = ScriptType.MoveCard;
+        }
     }
 
     public class WinnerPointArgument : ScriptArgument
@@ -272,6 +303,8 @@ public class ScriptManager
     SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
 
     SelectCardFunctionController selectCardFunctionController = null;
+
+    SelectItemZoneFunctionController selectItemZoneFunctionController = null;
 
     [SerializeField,ReadOnly]
     int useScriptCount = 0;
@@ -309,7 +342,7 @@ public class ScriptManager
         errorMessageDrawCount = errorMessageDrawMaxCount;
     }
 
-    public void SelectTargetPos(int _x,int _y,GameManager _manager)
+    public void SelectTargetPos(int _x, int _y, GameManager _manager)
     {
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
@@ -328,6 +361,16 @@ public class ScriptManager
         var action = (SelectCardArgument)runScript.actions[useScriptCount];
 
         selectCardFunctionController.SelectCard(_script, _manager, action);
+    }
+
+    public void SelectTargetItemZonePos(int _num, GameManager _manager)
+    {
+        if (runScript == null) return;
+        if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
+
+        var action = (SelectItemZoneArgument)runScript.actions[useScriptCount];
+
+        selectItemZoneFunctionController.SelectPos(_num, _manager, action);
     }
 
     void Stack(CardScript _script, GameManager _manager)
