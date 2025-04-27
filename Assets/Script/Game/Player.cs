@@ -78,6 +78,16 @@ public class Player : MonoBehaviour
         if (magicZone != null) magicZone.SelectTargetDown();
     }
 
+    public void SelectTargetItemZoneStart()
+    {
+        if (itemZone != null) itemZone.SelectPositionTargetUp();
+    }
+
+    public void SelectTargetItemZoneEnd()
+    {
+        if (itemZone != null) itemZone.SelectPositionTargetDown();
+    }
+
     public void Init(
         CardData[] _cardData,
         bool _createBookObject = false)
