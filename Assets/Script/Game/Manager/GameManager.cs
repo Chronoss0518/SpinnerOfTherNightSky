@@ -85,6 +85,30 @@ public class GameManager : MonoBehaviour
         }
     }
 
+    public void SelectItemZone(int _num)
+    {
+        scriptManager.SelectTargetItemZonePos(_num, this);
+    }
+
+    public void StartSelectItemZone(ScriptManager.SelectItemZoneArgument _action)
+    {
+        for (int i = 0; i<players.Count; i++)
+        {
+            if (_action.selectTarget == 1 && i != nowPlayerCount) continue;
+            if (_action.selectTarget == 2 && i == nowPlayerCount) continue;
+
+            players[i].SelectTargetItemZoneStart();
+        }
+    }
+
+    public void EndSelectItemZone(ScriptManager.SelectItemZoneArgument _action)
+    {
+        for (int i = 0; i<players.Count; i++)
+        {
+            players[i].SelectTargetItemZoneEnd();
+        }
+    }
+
 
     public void SetTextObject(Text _vText,Text _lText)
     {
