@@ -68,6 +68,8 @@ public class CardScript : MonoBehaviour
     [SerializeField,ReadOnly]
     protected CardData data = null;
 
+    public CardData baseData { get { return data; } }
+
     public string cardName { get { return data.name; } }
 
     public string description { get { return data.description; } }
