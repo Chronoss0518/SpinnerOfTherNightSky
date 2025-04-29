@@ -34,6 +34,12 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 
             if (args[i] == "--trash-zone")
                 res.moveZone = ScriptManager.ZoneType.TrashZone;
+
+            if (args[i] == "--target-have-player")
+                res.targetUsePlayer = false;
+
+            if (args[i] == "--target-use-player")
+                res.targetUsePlayer = true;
         }
 
         return res;
@@ -56,12 +62,32 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
             if (act.moveZone == ScriptManager.ZoneType.MagicZone && targetCards[i].type == CardData.CardType.Item) continue;
             if (act.moveZone == ScriptManager.ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
 
-            
+            var card = targetCards[i].baseData;
+
+            var player = MoveUsePlayerZone(null, _controller, act);
+            player = MoveHavePlayerZone(player, _gameManager, act, card);
+
+
+            if (act.moveZone == ScriptManager.ZoneType.MagicZone)
+
         }
 
         AddUseScriptCount();
 
         return true;
+    }
+
+    Player MoveUsePlayerZone(Player _player,ControllerBase _controller,ScriptManager.MoveCardArgument _arg)
+    {
+        if (!_arg.targetUsePlayer) return _player;
+
+        return _controller.GetComponent<Player>();
+    }
+
+    Player MoveHavePlayerZone(Player _player,GameManager _gameManager, ScriptManager.MoveCardArgument _arg,CardData _card)
+    {
+        if (_arg.targetUsePlayer) return _player;
+        return _gameManager.GetPlayer(_card.havePlayer);
     }
 
 }

@@ -265,6 +265,7 @@ public class ScriptManager
         }
 
         public bool openFlg = false;
+        public bool targetUsePlayer = true;
         public ZoneType moveZone = 0;
     }
 
