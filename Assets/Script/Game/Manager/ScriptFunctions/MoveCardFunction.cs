@@ -48,6 +48,7 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
         var targetCards = GetTargetCard();
+        int targetPos = GetItemZonePos();
 
         if (targetCards.Count <= 0)
         {
@@ -63,12 +64,24 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
             if (act.moveZone == ScriptManager.ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
 
             var card = targetCards[i].baseData;
+            var zone = targetCards[i].zone;
 
             var player = MoveUsePlayerZone(null, _controller, act);
             player = MoveHavePlayerZone(player, _gameManager, act, card);
 
+            zone.RemoveCard(card);
 
             if (act.moveZone == ScriptManager.ZoneType.MagicZone)
+                player.magicZone.PutCard(player, _gameManager, card);
+
+            if (act.moveZone == ScriptManager.ZoneType.ItemZone)
+                player.itemZone.PutCard(targetPos, player, _gameManager, card, act.openFlg);
+
+            if (act.moveZone == ScriptManager.ZoneType.TrashZone)
+                player.trashZone.PutCard(player, _gameManager, card);
+
+            if (act.moveZone == ScriptManager.ZoneType.Book)
+                player.bookZone.PutCard(player, _gameManager, card);
 
         }
 
