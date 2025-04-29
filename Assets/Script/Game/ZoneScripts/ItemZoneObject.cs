@@ -101,6 +101,8 @@ public class ItemZoneObject : MonoBehaviour
 
     public bool IsPutCard() { return card != null; }
 
+    public bool IsOpen() { return openFlg; }
+
     // Update is called once per frame
     void Update()
     {
