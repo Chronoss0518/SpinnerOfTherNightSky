@@ -84,6 +84,7 @@ public class ItemZoneObject : MonoBehaviour
 
         cardObj.transform.localPosition = Vector3.zero;
         cardObj.transform.localRotation = Quaternion.identity;
+        cardObj.transform.localScale = Vector3.one;
 
         card = cardObj.GetComponent<CardScript>();
 
