@@ -56,6 +56,8 @@ public class Player : MonoBehaviour
 
     public ControllerBase controller { get { return controllerCom; } }
 
+    public Book bookZone { get { return book; } }
+
     public ItemZoneManager itemZone {  get { return myItemZone; } }
 
     public TrashZoneManager trashZone { get { return myTrashZone; } }
