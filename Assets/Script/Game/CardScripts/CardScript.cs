@@ -15,6 +15,8 @@ public class CardScript : MonoBehaviour
 
         public CardData baseData { get { return baseCard.data; } }
 
+        public bool IsCardData(CardData _card) { return baseCard.data.Equals(_card); }
+
         public void SetBaseCard(CardScript _card) { if (_card != null) baseCard = _card; }
 
         public abstract void Init(CardData _data);
@@ -69,6 +71,8 @@ public class CardScript : MonoBehaviour
     protected CardData data = null;
 
     public CardData baseData { get { return data; } }
+
+    public bool IsCardData(CardData _card) { return data.Equals(_card); }
 
     public string cardName { get { return data.name; } }
 
