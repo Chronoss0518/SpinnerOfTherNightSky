@@ -9,6 +9,6 @@ abstract public class ZoneScriptBase : MonoBehaviour
     abstract public void SelectTargetTest(ScriptManager.SelectCardArgument _action, Player _runPlayer);
     abstract public void SelectTargetDown();
 
-    abstract public void RemoveCard(CardScript _card);
+    abstract public void RemoveCard(CardData _card);
 
 }

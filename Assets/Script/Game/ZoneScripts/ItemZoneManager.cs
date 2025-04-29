@@ -16,8 +16,8 @@ public class ItemZoneManager : ZoneScriptBase
         zoneType = ScriptManager.ZoneType.ItemZone;
     }
 
-    [SerializeField,ReadOnly]
-    private ItemCardScript[] items = new ItemCardScript[PUT_ITEM_COUNT];
+    [SerializeField]
+    private ItemZoneObject[] items = null;
 
     public int nowPutCount { get
         {
@@ -37,11 +37,8 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
-            if (items[i] == null) continue;
-
-            var cardScript = items[i].GetComponent<CardScript>();
-
-            cardScript.SetSelectTargetTest(_action, _runPlayer);
+            if (!items[i].IsPutCard()) continue;
+            items[i].itemCard.SetSelectTargetTest(_action, _runPlayer);
         }
     }
 
@@ -49,10 +46,8 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
-            if (items[i] == null) continue;
-            var cardScript = items[i].GetComponent<CardScript>();
-
-            cardScript.SetSelectUnTarget();
+            if (!items[i].IsPutCard()) continue;
+            items[i].itemCard.SetSelectUnTarget();
         }
     }
 
@@ -60,7 +55,7 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
-            if (items[i] == null) continue;
+            if (items[i].IsPutCard()) continue;
 
         }
     }
@@ -73,36 +68,31 @@ public class ItemZoneManager : ZoneScriptBase
         }
     }
 
-    public void PutCard(int _num,ItemCardScript _card)
+    public void PutCard(int _num, Player _player, GameManager _manager, CardData _card,bool _openFlg = false)
     {
         if (_card == null) return;
+        if (_card.cardType == (int)CardData.CardType.Magic) return;
+        if (_manager == null) return;
+        if (_manager.cardPrefab == null) return;
         if (!IsNumTest(_num)) return;
-        var card = Instantiate(_card.gameObject, transform);
-        items[_num] = card.GetComponent<ItemCardScript>();
-        items[_num].transform.localPosition = new Vector3((_num - 1) * PUT_POSITION, 0.0f, 0.0f);
+        items[_num].SetItemCard(_card, _player, _manager, _openFlg);
     }
 
     public void RemoveCard(int _num)
     {
         if (!IsNumTest(_num)) return;
-        var item = items[_num];
-        if (item == null) return;
-        item.transform.SetParent(null);
-        Destroy(item.gameObject);
+        items[_num].RemoveCard();
     }
 
-    override public void RemoveCard(CardScript _card)
+    override public void RemoveCard(CardData _card)
     {
         if (_card == null) return;
 
         for (int num = 0; num < PUT_ITEM_COUNT; num++)
         {
-            if (!_card.gameObject.Equals(items[num].gameObject)) continue;
-
-            items[num].transform.SetParent(null);
-            Destroy(items[num].gameObject);
-            items[num] = null;
-            break;
+            if (!items[num].IsCardData(_card)) continue;
+            items[num].RemoveCard();
+            return;
         }
     }
 

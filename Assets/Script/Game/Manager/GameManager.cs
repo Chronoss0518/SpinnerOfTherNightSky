@@ -54,6 +54,12 @@ public class GameManager : MonoBehaviour
 
     bool initFlg { get; set; } = false;
 
+    [SerializeField]
+    GameObject cardPrefabBase = null;
+    
+    public GameObject cardPrefab { get { return cardPrefabBase; } }
+    
+
     public void AddStackCard(CardScript _card)
     {
         stack.Add(_card);

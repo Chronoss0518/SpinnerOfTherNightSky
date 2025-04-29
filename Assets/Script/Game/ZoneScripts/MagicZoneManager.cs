@@ -57,13 +57,18 @@ public class MagicZoneManager : ZoneScriptBase
         return magicList[_num].baseCardObj;
     }
 
-    public void PutCard(MagicCardScript _card)
+    public void PutCard(int _num, Player _player, GameManager _manager, CardData _card)
     {
         if (_card == null) return;
-
-        var card =  Instantiate(_card.gameObject, transform);
-        card.transform.localPosition = new Vector3(magicList.Count * PUT_POSITION, 0.0f, 0.0f);
-        magicList.Add(card.GetComponent<MagicCardScript>());
+        if (_card.cardType == (int)CardData.CardType.Magic) return;
+        if (_manager == null) return;
+        if (_manager.cardPrefab == null) return;
+        if (!IsNumTest(_num)) return;
+        var obj = Instantiate(_manager.cardPrefab, transform);
+        var script = obj.GetComponent<CardScript>();
+        script.Init(_player, _manager, _card, zoneType);
+        magicList[_num] = script.GetComponent<MagicCardScript>();
+        CardSort();
     }
 
     public void EvolutionCard(int _baseNum,MagicCardScript _card)
@@ -71,25 +76,24 @@ public class MagicZoneManager : ZoneScriptBase
         if (_card == null) return;
         if (!IsNumTest(_baseNum)) return;
 
-        
         var card = Instantiate(_card, transform);
         card.transform.localPosition = new Vector3(_baseNum * PUT_POSITION, 0.0f, 0.0f);
         magicList[_baseNum] = card;
     }
 
-    override public void RemoveCard(CardScript _card)
+    override public void RemoveCard(CardData _card)
     {
         if (_card == null) return;
 
         for (int num = 0; num < magicList.Count; num++)
         {
-            if (!_card.gameObject.Equals(magicList[num].gameObject)) continue;
+            if (!magicList[num].IsCardData(_card)) continue;
 
             magicList[num].transform.SetParent(null);
             Destroy(magicList[num].gameObject);
             magicList.RemoveAt(num);
             CardSort();
-            break;
+            return;
         }
 
     }

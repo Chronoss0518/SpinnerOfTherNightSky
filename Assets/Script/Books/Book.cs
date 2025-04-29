@@ -16,10 +16,10 @@ public class Book : ZoneScriptBase
     }
 
     [SerializeField, ReadOnly]
-    List<GameObject> cardSocketList = new List<GameObject>();
+    List<BookSocket> cardSocketList = new List<BookSocket>();
 
     [SerializeField]
-    Page[] paperObject = null;
+    BookPage[] paperObject = null;
 
     [SerializeField]
     int nowPage = 0;
@@ -29,9 +29,6 @@ public class Book : ZoneScriptBase
 
     [SerializeField]
     Animator animator = null;
-
-    [SerializeField]
-    GameObject cardPrefab = null;
 
     public bool initFlg { get; private set; } = false;
 
@@ -65,11 +62,8 @@ public class Book : ZoneScriptBase
     {
         for (int i = 0;i < cardSocketList.Count;i++)
         {
-            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>(true);
-
-            if (cardScript == null) continue;
-
-            cardScript.SetSelectTargetTest(_action, _runPlayer);
+            if (!cardSocketList[i].IsPutCard()) continue;
+            cardSocketList[i].socketCard.SetSelectTargetTest(_action, _runPlayer);
         }
     }
 
@@ -77,11 +71,8 @@ public class Book : ZoneScriptBase
     {
         for (int i = 0; i < cardSocketList.Count; i++)
         {
-            var cardScript = cardSocketList[i].GetComponentInChildren<CardScript>(true);
-
-            if (cardScript == null) continue;
-
-            cardScript.SetSelectUnTarget();
+            if (!cardSocketList[i].IsPutCard()) continue;
+            cardSocketList[i].socketCard.SetSelectUnTarget();
         }
     }
 
@@ -130,30 +121,19 @@ public class Book : ZoneScriptBase
     public void PutCard(Player _player, GameManager _manager,CardData _card)
     {
         if (_card == null) return;
-        var obj = Instantiate(cardPrefab, cardSocketList[_card.initBookPos].transform);
-        var script = obj.GetComponent<CardScript>();
-        script.Init(_player, _manager, _card,ScriptManager.ZoneType.Book);
+        if (_manager == null) return;
+        cardSocketList[_card.initBookPos].PutCard(_player,_manager, _card);
     }
 
-    public void PutCard(CardScript _card)
-    {
-        if (_card == null) return;
-
-        Instantiate(_card.gameObject, cardSocketList[_card.initBookPos].transform);
-    }
-
-    override public void RemoveCard(CardScript _card)
+    override public void RemoveCard(CardData _card)
     {
         if (_card == null) return;
 
         for (int num = 0; num < cardSocketList.Count; num++)
         {
-            var card = cardSocketList[num].transform.GetChild(cardSocketList[num].transform.childCount - 1).gameObject;
-            if (!_card.gameObject.Equals(card)) continue;
-
-            card.transform.SetParent(null);
-            Destroy(card);
-            break;
+            if (!cardSocketList[_card.initBookPos].IsCardData(_card))continue;
+            cardSocketList[_card.initBookPos].RemoveCard();
+            return;
         }
 
     }
@@ -165,7 +145,7 @@ public class Book : ZoneScriptBase
     }
 
 
-    void SetPageSocket(GameObject[] _sockets)
+    void SetPageSocket(BookSocket[] _sockets)
     {
         foreach(var socket in _sockets)
         {

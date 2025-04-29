@@ -45,13 +45,13 @@ public class TrashZoneManager : ZoneScriptBase
         trashList.Add(card.GetComponent<CardScript>());
     }
 
-    override public void RemoveCard(CardScript _card)
+    override public void RemoveCard(CardData _card)
     {
         if (_card == null) return;
 
         for(int num = 0; num < trashList.Count;num++)
         {
-            if (!_card.gameObject.Equals(trashList[num].gameObject)) continue;
+            if (!trashList[num].IsCardData(_card)) continue;
 
             trashList[num].transform.SetParent(null);
             Destroy(trashList[num].gameObject);
