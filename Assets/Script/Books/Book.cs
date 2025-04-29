@@ -54,6 +54,7 @@ public class Book : ZoneScriptBase
     {
         foreach(var card in _cardList)
         {
+            card.havePlayer = _manager.GetPlayerNum(_player);
             PutCard(_player,_manager, card);
         }
     }
