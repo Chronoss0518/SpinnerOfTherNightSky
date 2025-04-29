@@ -89,8 +89,7 @@ public class CardScript : MonoBehaviour
     [SerializeField, ReadOnly]
     GameManager manager = null;
 
-    [SerializeField,ReadOnly]
-    ZoneScriptBase zone = null;
+    public ZoneScriptBase zone { get; private set; } = null;
 
 
     public CardData.CardType type { get; private set; } = CardData.CardType.Magic;
