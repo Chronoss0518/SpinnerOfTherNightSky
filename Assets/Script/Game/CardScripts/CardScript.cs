@@ -32,7 +32,7 @@ public class CardScript : MonoBehaviour
         public int initBookPos { get { return baseCard.initBookPos; } }
         protected Player zType { get { return baseCard.player; } }
         protected GameManager manager { get { return baseCard.manager; } }
-        protected ScriptManager.ZoneType zoneType { get { return baseCard.zType; } }
+        protected ScriptManager.ZoneType zoneType { get { return baseCard.zone.zoneType; } }
         protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
         {
             return baseCardObj.SelectTargetArgumentTest(_argument,_runPlayer);
@@ -90,17 +90,17 @@ public class CardScript : MonoBehaviour
     GameManager manager = null;
 
     [SerializeField,ReadOnly]
-    ScriptManager.ZoneType zType = 0;
+    ZoneScriptBase zone = null;
 
 
     public CardData.CardType type { get; private set; } = CardData.CardType.Magic;
 
 
-    public void Init(Player _player, GameManager _gameManager, CardData _data,ScriptManager.ZoneType _type)
+    public void Init(Player _player, GameManager _gameManager, CardData _data, ZoneScriptBase _zone)
     {
         manager = _gameManager;
         player = _player;
-        zType = _type;
+        zone = _zone;
         data = _data;
 
         CardScriptBase card = data.cardType == (int)CardData.CardType.Magic ?
@@ -174,8 +174,8 @@ public class CardScript : MonoBehaviour
     {
         if (_argument.normalPlaying) return true;
 
-        if (zType != 0)
-            if ((_argument.zoneType | zType) <= 0) return false;
+        if (_argument.zoneType != 0)
+            if ((_argument.zoneType | zone.zoneType) <= 0) return false;
 
         if (_argument.playerType >= 0)
         {
