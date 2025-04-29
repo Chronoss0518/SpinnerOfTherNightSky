@@ -137,6 +137,17 @@ public class GameManager : MonoBehaviour
         return players[_num];
     }
 
+    public int GetPlayerNum(Player _player)
+    {
+        if (_player == null) return -1;
+        for(int i = 0;i<players.Count;i++)
+        {
+            if (!players[i].gameObject.Equals(_player.gameObject)) continue;
+            return i;
+        }
+        return -1;
+    }
+
     public Player GetNowPlayer()
     {
         return players[nowPlayerCount];
