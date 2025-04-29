@@ -28,7 +28,7 @@ public class CardMock : CardAPIBase
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
                     new ScriptPartsDTO[] { 
-                        new ScriptPartsDTO(14, "-t other -pt 1")
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.WinnerPoint, "-t other -pt 1")
                     },1
                 )
             },1,1,
@@ -77,8 +77,8 @@ public class CardMock : CardAPIBase
                 new ScriptDataDTO(
                     new ScriptPartsDTO[]
                     {
-                        new ScriptPartsDTO(2,"--min 3 --max 3 --is-remove"),
-                        new ScriptPartsDTO(4,"--remove"),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 3 --max 3 --is-remove"),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--remove"),
                     },0),
             },0),
         BookCardDataDTO.GenerateItemCard(
@@ -91,8 +91,8 @@ public class CardMock : CardAPIBase
                 new ScriptDataDTO(
                     new ScriptPartsDTO[]
                     {
-                        new ScriptPartsDTO(2,"--min 2 --max 2 --is-put"),
-                        new ScriptPartsDTO(4,"--put"),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 2 --max 2 --is-put"),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--put"),
                     },0),
             },0),
         BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
