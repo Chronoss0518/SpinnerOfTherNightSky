@@ -21,6 +21,8 @@ public class DebugManager : MonoBehaviour
         Manager.MemberType.None
     };
 
+    public bool localGameFlg = true;
+
     [SerializeField]
     int useBookNo = 0;
 
@@ -34,5 +36,6 @@ public class DebugManager : MonoBehaviour
         manager.memberFlgs = memberFlgs;
         manager.useBookNo = useBookNo;
         manager.randomPutStone = randomPutStone;
+        manager.localGameFlg = localGameFlg;
     }
 }

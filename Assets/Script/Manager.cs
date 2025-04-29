@@ -49,6 +49,8 @@ public class Manager
         MemberType.None
     };
 
+    public bool localGameFlg = true;
+
     [ReadOnly]
     public int useBookNo = 0;
 
