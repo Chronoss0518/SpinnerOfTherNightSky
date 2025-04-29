@@ -58,7 +58,9 @@ public class GameManager : MonoBehaviour
     GameObject cardPrefabBase = null;
     
     public GameObject cardPrefab { get { return cardPrefabBase; } }
-    
+
+    bool runDice = false;
+
 
     public void AddStackCard(CardScript _card)
     {
@@ -75,7 +77,7 @@ public class GameManager : MonoBehaviour
         scriptManager.SelectCard(_card, this);
     }
 
-    public bool SelectItemZonePos(int _pos)
+    public bool SelectItemZonePos(ItemZoneObject _pos)
     {
         return scriptManager.SelectTargetItemZonePos(_pos, this);
     }
@@ -96,9 +98,9 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void SelectItemZone(int _num)
+    public void SelectItemZone(ItemZoneObject _pos)
     {
-        scriptManager.SelectTargetItemZonePos(_num, this);
+        scriptManager.SelectTargetItemZonePos(_pos, this);
     }
 
     public void StartSelectItemZone(ScriptManager.SelectItemZoneArgument _action)
@@ -199,6 +201,8 @@ public class GameManager : MonoBehaviour
             CreateCPUPlayer(memberFlgs);
             CreateNetworkPlayer(memberFlgs);
         }
+        turnManager.Init(this);
+
     }
 
     bool IsInitializPlayers()
@@ -259,7 +263,7 @@ public class GameManager : MonoBehaviour
 
         if (!IsInitializPlayers()) return;
 
-        turnManager.Init(this);
+
 
         stoneBoard.PutRandomStone(manager.randomPutStone, initRandomPutStone);
 

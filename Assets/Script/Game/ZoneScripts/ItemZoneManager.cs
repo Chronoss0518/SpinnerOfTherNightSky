@@ -20,7 +20,7 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i<PUT_ITEM_COUNT; i++)
         {
-            items[i].Init(i, _manager);
+            items[i].Init(this,i, _manager);
         }
     }
 

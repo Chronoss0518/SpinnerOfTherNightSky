@@ -18,23 +18,31 @@ public class ItemZoneObject : MonoBehaviour
     [SerializeField, ReadOnly]
     GameManager manager = null;
 
-    [SerializeField, ReadOnly]
-    int pos = 0;
-
     [SerializeField]
     Animator animator = null;
 
+    [SerializeField, ReadOnly]
+    ItemZoneManager itemZone = null;
+
+    public ItemZoneManager itemZoneManager { get { return itemZone; } }
+
+    [SerializeField, ReadOnly]
+    int pos = -1;
+    public int position { get { return pos; } }
+
+    [SerializeField,ReadOnly]
     bool selectFlg = false;
 
-    public void Init(int _pos,GameManager _manager)
+    public void Init(ItemZoneManager _itemZone,int _pos, GameManager _manager)
     {
         manager = _manager;
+        itemZone = _itemZone;
         pos = _pos;
     }
 
     public void SelectPos()
     {
-        if(!manager.SelectItemZonePos(pos))return;
+        if(!manager.SelectItemZonePos(this))return;
         selectFlg = !selectFlg;
         SetAnimation(selectFlg);
     }

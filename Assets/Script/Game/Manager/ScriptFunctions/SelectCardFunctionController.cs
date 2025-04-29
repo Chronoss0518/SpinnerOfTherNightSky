@@ -4,6 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
+[System.Serializable]
 public class SelectCardFunctionController : SelectScriptControllerBase
 {
     public const string BOOK_ZONE = "ñÇì±èë";

@@ -85,11 +85,13 @@ public class ScriptManager
         Trap = 4
     }
 
+    [System.Serializable]
     public class ScriptArgument
     {
         public ScriptType type;
     }
 
+    [System.Serializable]
     public abstract class ScriptFunctionBase
     {
 
@@ -134,9 +136,9 @@ public class ScriptManager
             return mgr.selectCardFunctionController.GetTargetCard();
         }
 
-        protected int GetItemZonePos()
+        protected ItemZoneObject GetItemZonePos()
         {
-            return mgr.selectItemZoneFunctionController.TargetPos;
+            return mgr.selectItemZoneFunctionController.GetTargetPos();
         }
 
         protected List<string> GenerateArgument(string _args)
@@ -152,13 +154,15 @@ public class ScriptManager
         protected void Stack(CardScript _script,GameManager _manager)
         {
             mgr.Stack(_script, _manager);
+
+
         }
 
         protected ScriptManager manager { get { return mgr; } }
 
         ScriptManager mgr = null;
     }
-    
+
     abstract public class SelectScriptControllerBase
     {
         abstract public bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script);
@@ -306,11 +310,20 @@ public class ScriptManager
 
     List<ScriptArgumentData> stayScript = new List<ScriptArgumentData>();
 
+    [SerializeField,ReadOnly]
     SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
 
+    public SelectStoneBoardFunctionController selectStoneBoardController { get { return selectStoneBoardFunctionController; } }
+
+    [SerializeField, ReadOnly]
     SelectCardFunctionController selectCardFunctionController = null;
 
+    public SelectCardFunctionController selectCardController { get { return selectCardFunctionController; } }
+
+    [SerializeField, ReadOnly]
     SelectItemZoneFunctionController selectItemZoneFunctionController = null;
+
+    public SelectItemZoneFunctionController selectItemZoneController { get { return selectItemZoneFunctionController; } }
 
     [SerializeField,ReadOnly]
     int useScriptCount = 0;
@@ -369,14 +382,14 @@ public class ScriptManager
         selectCardFunctionController.SelectCard(_script, _manager, action);
     }
 
-    public bool SelectTargetItemZonePos(int _num, GameManager _manager)
+    public bool SelectTargetItemZonePos(ItemZoneObject _pos, GameManager _manager)
     {
         if (runScript == null) return false;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectItemZone) return false;
 
         var action = (SelectItemZoneArgument)runScript.actions[useScriptCount];
 
-        return selectItemZoneFunctionController.SelectPos(_num, _manager, action);
+        return selectItemZoneFunctionController.SelectPos(_pos, _manager, action);
     }
 
     void Stack(CardScript _script, GameManager _manager)

@@ -4,17 +4,20 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
+[System.Serializable]
 public class SelectItemZoneFunctionController : SelectScriptControllerBase
 {
 
     [SerializeField, ReadOnly]
     ScriptManager manager = null;
 
-    public int TargetPos { get; private set; } = -1;
+    public ItemZoneObject targetPos = null;
+
+    public ItemZoneObject GetTargetPos() { return targetPos; }
 
     public override void ClearTarget()
     {
-        TargetPos = -1;
+        targetPos = null;
     }
 
     public void Init(ScriptManager _manager)
@@ -22,18 +25,18 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         manager = _manager;
     }
 
-    public bool SelectPos(int _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
+    public bool SelectPos(ItemZoneObject _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
     {
         if (_runArgument == null) return false;
-        if (_pos < 0) return false;
-        if (_pos >= ItemZoneManager.PUT_ITEM_COUNT) return false;
-        if(TargetPos != -1 && TargetPos != _pos)
+        if (_pos == null) return false;
+        Debug.Log($"Select Item Zone Pos{_pos}");
+        if(targetPos != null && targetPos != _pos)
         {
             manager.SetError(ErrorType.IsNotTargetZone);
             return false;
         }
 
-        TargetPos = TargetPos == _pos ? -1 : _pos;
+        targetPos = targetPos == _pos ? null : _pos;
         return true;
     }
 
@@ -51,7 +54,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
 
         if (manager.GetErrorType() == ErrorType.None)
         {
-            message = $"カードを配置するItemZoneを指定してください。\n{(TargetPos >= 0 ? "選択済み" : "未選択")}";
+            message = $"カードを配置するItemZoneを指定してください。\n{(targetPos != null ? "選択済み" : "未選択")}";
         }
         else
         {
@@ -64,7 +67,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         _gameManager.SetMessate(message);
 
         if (!_controller.isAction) return true;
-        if (TargetPos < 0)
+        if (targetPos == null)
         {
             manager.SetError(ErrorType.IsRangeMinOverCount);
             _controller.DownActionFlg();

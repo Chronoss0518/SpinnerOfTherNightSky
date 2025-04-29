@@ -4,6 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using static ScriptManager;
 
+[System.Serializable]
 public class SelectStoneBoardFunctionController : SelectScriptControllerBase
 {
     [SerializeField,ReadOnly]
