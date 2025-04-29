@@ -6,6 +6,8 @@ public class ItemZoneObject : MonoBehaviour
 
     public CardScript itemCard { get { return card; } }
 
+    public void SetOpenFlg(bool _flg) { openFlg = _flg; }
+
     public void SetItemCard(CardData _card, Player _player, GameManager _gameManager,bool openFlg = false)
     {
         if (_gameManager == null) return;
@@ -35,11 +37,18 @@ public class ItemZoneObject : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+        if (beforeOpenFlg == openFlg) return;
 
+        transform.localRotation = openFlg ?
+            Quaternion.identity :
+            Quaternion.Euler(0.0f, 0.0f, 180.0f);
+
+        beforeOpenFlg = openFlg;
     }
 
     [SerializeField, ReadOnly]
     bool openFlg = false;
+
     bool beforeOpenFlg = false;
 
     [SerializeField,ReadOnly]
