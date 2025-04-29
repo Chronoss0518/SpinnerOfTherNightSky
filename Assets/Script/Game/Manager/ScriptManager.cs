@@ -134,6 +134,11 @@ public class ScriptManager
             return mgr.selectCardFunctionController.GetTargetCard();
         }
 
+        protected int GetItemZonePos()
+        {
+            return mgr.selectItemZoneFunctionController.TargetPos;
+        }
+
         protected List<string> GenerateArgument(string _args)
         {
             return mgr.GenerateArgument(_args);

@@ -75,6 +75,11 @@ public class GameManager : MonoBehaviour
         scriptManager.SelectCard(_card, this);
     }
 
+    public void SelectItemZonePos(int _pos)
+    {
+        scriptManager.SelectTargetItemZonePos(_pos, this);
+    }
+
     public void StartSelectCard(ScriptManager.SelectCardArgument _action)
     {
         for(int i = 0;i<players.Count;i++)
