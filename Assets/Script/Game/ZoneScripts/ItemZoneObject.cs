@@ -1,10 +1,69 @@
 using UnityEngine;
 using Unity.Collections;
+using System;
 
 public class ItemZoneObject : MonoBehaviour
 {
 
     public CardScript itemCard { get { return card; } }
+
+    [SerializeField, ReadOnly]
+    bool openFlg = false;
+
+    bool beforeOpenFlg = false;
+
+    [SerializeField, ReadOnly]
+    CardScript card = null;
+
+    [SerializeField, ReadOnly]
+    GameManager manager = null;
+
+    [SerializeField, ReadOnly]
+    int pos = 0;
+
+    [SerializeField]
+    Animator animator = null;
+
+    bool selectFlg = false;
+
+    public void Init(int _pos,GameManager _manager)
+    {
+        manager = _manager;
+        pos = _pos;
+    }
+
+    public void SelectPos()
+    {
+        if(!manager.SelectItemZonePos(pos))return;
+        selectFlg = !selectFlg;
+        SetAnimation(selectFlg);
+    }
+
+    public void SelectTargetTest()
+    {
+        if (card == null) return;
+        SetAnimationVisible(true);
+    }
+
+    public void SelectTargetEnd()
+    {
+        SetAnimationVisible(false);
+    }
+
+    public void SetAnimation(bool _flg)
+    {
+        if (animator == null) return;
+
+        if (!_flg) animator.Play("CardUnSelectAnimation");
+        else animator.Play("CardSelectAnimation");
+    }
+
+    public void SetAnimationVisible(bool _flg)
+    {
+        if (animator == null) return;
+
+        animator.gameObject.SetActive(_flg);
+    }
 
     public void SetOpenFlg(bool _flg) { openFlg = _flg; }
 
@@ -46,11 +105,4 @@ public class ItemZoneObject : MonoBehaviour
         beforeOpenFlg = openFlg;
     }
 
-    [SerializeField, ReadOnly]
-    bool openFlg = false;
-
-    bool beforeOpenFlg = false;
-
-    [SerializeField,ReadOnly]
-    CardScript card = null;
 }

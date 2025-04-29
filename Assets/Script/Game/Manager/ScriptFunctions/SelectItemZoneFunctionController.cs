@@ -23,18 +23,19 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         manager = _manager;
     }
 
-    public void SelectPos(int _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
+    public bool SelectPos(int _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
     {
-        if (_runArgument == null) return;
-        if (_pos < 0) return;
-        if (_pos >= ItemZoneManager.PUT_ITEM_COUNT) return;
+        if (_runArgument == null) return false;
+        if (_pos < 0) return false;
+        if (_pos >= ItemZoneManager.PUT_ITEM_COUNT) return false;
         if(TargetPos != -1 && TargetPos != _pos)
         {
             manager.SetError(ErrorType.IsNotTargetZone);
-            return;
+            return false;
         }
 
         TargetPos = TargetPos == _pos ? -1 : _pos;
+        return true;
     }
 
 

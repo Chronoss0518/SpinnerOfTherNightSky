@@ -369,14 +369,14 @@ public class ScriptManager
         selectCardFunctionController.SelectCard(_script, _manager, action);
     }
 
-    public void SelectTargetItemZonePos(int _num, GameManager _manager)
+    public bool SelectTargetItemZonePos(int _num, GameManager _manager)
     {
-        if (runScript == null) return;
-        if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
+        if (runScript == null) return false;
+        if (runScript.actions[useScriptCount].type != ScriptType.SelectItemZone) return false;
 
         var action = (SelectItemZoneArgument)runScript.actions[useScriptCount];
 
-        selectItemZoneFunctionController.SelectPos(_num, _manager, action);
+        return selectItemZoneFunctionController.SelectPos(_num, _manager, action);
     }
 
     void Stack(CardScript _script, GameManager _manager)
