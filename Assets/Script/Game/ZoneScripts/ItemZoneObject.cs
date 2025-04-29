@@ -41,7 +41,7 @@ public class ItemZoneObject : MonoBehaviour
 
     public void SelectTargetTest()
     {
-        if (card == null) return;
+        if (card != null) return;
         SetAnimationVisible(true);
     }
 

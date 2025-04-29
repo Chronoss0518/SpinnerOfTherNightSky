@@ -112,7 +112,7 @@ public class GameManager : MonoBehaviour
         }
     }
 
-    public void EndSelectItemZone(ScriptManager.SelectItemZoneArgument _action)
+    public void EndSelectItemZone()
     {
         for (int i = 0; i<players.Count; i++)
         {

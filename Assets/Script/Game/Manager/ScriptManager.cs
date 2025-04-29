@@ -14,7 +14,7 @@ public class ScriptManager
        functions[(int)ScriptType.BlockCard] = new BlockCardFunction(this);
        functions[(int)ScriptType.SelectStoneBoard] = new SelectStoneBoardFunction(this);
        functions[(int)ScriptType.SelectCard] = new SelectCardFunction(this);
-       functions[(int)ScriptType.SelectItemZone] = new SelectCardFunction(this);
+       functions[(int)ScriptType.SelectItemZone] = new SelectItemZoneFunction(this);
        functions[(int)ScriptType.MoveStone] = new MoveStoneFunction(this);
        functions[(int)ScriptType.MoveCard] = new MoveCardFunction(this);
        functions[(int)ScriptType.OpenItemZoneCard] = new MoveCardFunction(this);

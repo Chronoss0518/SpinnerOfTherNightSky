@@ -12,7 +12,6 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
 
     public int TargetPos { get; private set; } = -1;
 
-
     public override void ClearTarget()
     {
         TargetPos = -1;
@@ -42,9 +41,11 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
     public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.SelectItemZone) return false;
-        StartManager(_gameManager);
-
         var act = (SelectItemZoneArgument)_script;
+
+        _controller.ActionStart();
+        StartManager(_gameManager,act);
+
 
         string message = "";
 
@@ -72,14 +73,16 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
 
         _controller.ActionEnd();
         manager.AddUseScriptCount();
-        _gameManager.EndSelectCardTest();
+        _gameManager.EndSelectItemZone();
         startFlg = false;
         return true;
     }
 
-    private void StartManager(GameManager _manager)
+    private void StartManager(GameManager _manager, SelectItemZoneArgument _arg)
     {
         if (startFlg) return;
+
+        _manager.StartSelectItemZone(_arg);
 
         startFlg = true;
     }

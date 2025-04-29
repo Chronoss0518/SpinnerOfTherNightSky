@@ -63,8 +63,7 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
-            if (items[i].IsPutCard()) continue;
-
+            items[i].SelectTargetTest();
         }
     }
 
@@ -72,7 +71,7 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
-
+            items[i].SelectTargetEnd();
         }
     }
 
