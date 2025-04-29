@@ -355,28 +355,23 @@ MonoBehaviour:
   playerPrefab: {fileID: 2431698666257173391, guid: 2449ad3d1ab7e13489b79cd49a1faae1, type: 3}
   cameraObject: {fileID: 849056416}
   scriptManager:
-    targetPlayer: []
-    targetCard: []
+    useScriptCount: 0
     errorMessageDrawMaxCount: 180
     errorMessageDrawCount: -1
     errorType: 0
-    selectStonePrefab: {fileID: 986349050056078361, guid: ae35624adfd21fa40a202946e14c8b72, type: 3}
   turnManager:
-    tmpNowPlayerCount: 0
-    playCardUserCount: 0
-    otherPlayerCount: 0
-    testPlayMagicCount: 0
-    testPlayCardCount: 0
+    mainStep: 0
   stack: []
   stoneBoard: {fileID: 340119966476239371}
   manager:
     IS_DEBUG_FLG: 1
     IS_MOCK_FLG: 1
     gameType: 0
-    cpuFlgs: 
+    memberFlgs: 00000000010000000300000003000000
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
+  cardPrefabBase: {fileID: 7100464425579502893, guid: 24e42c1359b92674b8912f89d799756c, type: 3}
 --- !u!4 &1028437353
 Transform:
   m_ObjectHideFlags: 0
@@ -835,12 +830,12 @@ MonoBehaviour:
     IS_DEBUG_FLG: 1
     IS_MOCK_FLG: 1
     gameType: 0
-    cpuFlgs: 
+    memberFlgs: 00000000010000000300000003000000
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
   gameType: 0
-  cpuFlgs: 000000000200000002000000
+  memberFlgs: 00000000010000000300000003000000
   useBookNo: 0
   randomPutStone: 10
 --- !u!4 &1813436577
