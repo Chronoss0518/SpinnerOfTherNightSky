@@ -96,6 +96,8 @@ public class Player : MonoBehaviour
     {
         cardData = _cardData;
 
+        itemZone.Init(gameManager);
+
         initFlg = true;
 
         if (!_createBookObject) return;

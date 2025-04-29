@@ -16,6 +16,14 @@ public class ItemZoneManager : ZoneScriptBase
         zoneType = ScriptManager.ZoneType.ItemZone;
     }
 
+    public void Init(GameManager _manager)
+    {
+        for (int i = 0; i<PUT_ITEM_COUNT; i++)
+        {
+            items[i].Init(i, _manager);
+        }
+    }
+
     [SerializeField]
     private ItemZoneObject[] items = null;
 
