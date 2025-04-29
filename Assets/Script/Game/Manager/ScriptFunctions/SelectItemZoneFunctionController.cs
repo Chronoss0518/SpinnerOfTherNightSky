@@ -29,7 +29,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
     {
         if (_runArgument == null) return false;
         if (_pos == null) return false;
-        Debug.Log($"Select Item Zone Pos{_pos}");
+
         if(targetPos != null && targetPos != _pos)
         {
             manager.SetError(ErrorType.IsNotTargetZone);
