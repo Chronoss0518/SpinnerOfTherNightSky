@@ -80,6 +80,8 @@ public class CardScript : MonoBehaviour
 
     public ScriptData[] script { get { return data.script; } }
 
+    public CardData.CardType type { get { return (CardData.CardType)data.cardType; } }
+
     public int initBookPos { get { return data.initBookPos; } }
 
     [SerializeField, ReadOnly]
@@ -92,7 +94,6 @@ public class CardScript : MonoBehaviour
     public ZoneScriptBase zone { get; private set; } = null;
 
 
-    public CardData.CardType type { get; private set; } = CardData.CardType.Magic;
 
 
     public void Init(Player _player, GameManager _gameManager, CardData _data, ZoneScriptBase _zone)
