@@ -114,7 +114,7 @@ public class ItemZoneManager : ZoneScriptBase
 
     private bool IsNumTest(int _num)
     {
-        return (_num >= 0 && _num < PUT_ITEM_COUNT);
+        return (_num > 0 && _num < PUT_ITEM_COUNT);
     }
 
 }
