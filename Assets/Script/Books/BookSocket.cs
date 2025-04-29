@@ -10,8 +10,8 @@ public class BookSocket : MonoBehaviour
         if (_card == null) return;
         if (_manager == null) return;
         var obj = Instantiate(_manager.cardPrefab, transform);
-        var script = obj.GetComponent<CardScript>();
-        script.Init(_player, _manager, _card, ScriptManager.ZoneType.Book);
+        card = obj.GetComponent<CardScript>();
+        card.Init(_player, _manager, _card, ScriptManager.ZoneType.Book);
     }
 
     public void RemoveCard()
