@@ -49,7 +49,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
 
         if (manager.GetErrorType() == ErrorType.None)
         {
-            message = $"配置先のItemZoneを指定してください。\n{(TargetPos >= 0 ? "選択済み" : "未選択")}";
+            message = $"カードを配置するItemZoneを指定してください。\n{(TargetPos >= 0 ? "選択済み" : "未選択")}";
         }
         else
         {
