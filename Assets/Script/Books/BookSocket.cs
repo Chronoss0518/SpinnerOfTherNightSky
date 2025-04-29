@@ -5,13 +5,13 @@ public class BookSocket : MonoBehaviour
 {
     public CardScript socketCard { get { return card; } }
 
-    public void PutCard(Player _player, GameManager _manager, CardData _card)
+    public void PutCard(Player _player, GameManager _manager, CardData _card,Book _book)
     {
         if (_card == null) return;
         if (_manager == null) return;
         var obj = Instantiate(_manager.cardPrefab, transform);
         card = obj.GetComponent<CardScript>();
-        card.Init(_player, _manager, _card, ScriptManager.ZoneType.Book);
+        card.Init(_player, _manager, _card, _book);
     }
 
     public void RemoveCard()

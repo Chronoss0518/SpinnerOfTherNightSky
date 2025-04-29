@@ -66,7 +66,7 @@ public class MagicZoneManager : ZoneScriptBase
         if (!IsNumTest(_num)) return;
         var obj = Instantiate(_manager.cardPrefab, transform);
         var script = obj.GetComponent<CardScript>();
-        script.Init(_player, _manager, _card, zoneType);
+        script.Init(_player, _manager, _card, this);
         magicList[_num] = script.GetComponent<MagicCardScript>();
         CardSort();
     }

@@ -75,7 +75,7 @@ public class ItemZoneManager : ZoneScriptBase
         if (_manager == null) return;
         if (_manager.cardPrefab == null) return;
         if (!IsNumTest(_num)) return;
-        items[_num].SetItemCard(_card, _player, _manager, _openFlg);
+        items[_num].SetItemCard(_card, _player, _manager,this, _openFlg);
     }
 
     public void RemoveCard(int _num)

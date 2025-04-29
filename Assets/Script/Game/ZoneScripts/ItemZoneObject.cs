@@ -8,7 +8,7 @@ public class ItemZoneObject : MonoBehaviour
 
     public void SetOpenFlg(bool _flg) { openFlg = _flg; }
 
-    public void SetItemCard(CardData _card, Player _player, GameManager _gameManager,bool openFlg = false)
+    public void SetItemCard(CardData _card, Player _player, GameManager _gameManager,ItemZoneManager _zone,bool openFlg = false)
     {
         if (_gameManager == null) return;
         if (_gameManager.cardPrefab == null) return;
@@ -20,7 +20,7 @@ public class ItemZoneObject : MonoBehaviour
 
         card = cardObj.GetComponent<CardScript>();
 
-        card.Init(_player, _gameManager, _card, ScriptManager.ZoneType.ItemZone);
+        card.Init(_player, _gameManager, _card, _zone);
     }
 
     public void RemoveCard()

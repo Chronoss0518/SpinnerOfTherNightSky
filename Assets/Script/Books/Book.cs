@@ -123,7 +123,7 @@ public class Book : ZoneScriptBase
     {
         if (_card == null) return;
         if (_manager == null) return;
-        cardSocketList[_card.initBookPos].PutCard(_player,_manager, _card);
+        cardSocketList[_card.initBookPos].PutCard(_player, _manager, _card, this);
     }
 
     override public void RemoveCard(CardData _card)
