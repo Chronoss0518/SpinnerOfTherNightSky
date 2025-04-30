@@ -283,7 +283,7 @@ public class ScriptManager
     {
         public OpenItemZoneCardArgument()
         {
-            type = ScriptType.MoveCard;
+            type = ScriptType.OpenItemZoneCard;
         }
     }
 

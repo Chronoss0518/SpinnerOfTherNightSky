@@ -4,7 +4,7 @@ public class OpenItemZoneCardFunction : ScriptManager.ScriptFunctionBase
 
     public override ScriptManager.ScriptArgument GenerateArgument(ScriptParts _script)
     {
-        var res = new ScriptManager.MoveCardArgument();
+        var res = new ScriptManager.OpenItemZoneCardArgument();
 
         res.type = ScriptManager.ScriptType.OpenItemZoneCard;
 
