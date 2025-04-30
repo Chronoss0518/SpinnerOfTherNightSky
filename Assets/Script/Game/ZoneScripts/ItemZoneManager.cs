@@ -126,6 +126,18 @@ public class ItemZoneManager : ZoneScriptBase
         items[_num].SetOpenFlg(true);
     }
 
+    public void OpenCard(CardData _card)
+    {
+        if (_card == null) return;
+
+        for (int num = 0; num < PUT_ITEM_COUNT; num++)
+        {
+            if (!items[num].IsCardData(_card)) continue;
+            items[num].SetOpenFlg(true);
+            return;
+        }
+    }
+
     private bool IsNumTest(int _num)
     {
         return (_num >= 0 && _num < PUT_ITEM_COUNT);
