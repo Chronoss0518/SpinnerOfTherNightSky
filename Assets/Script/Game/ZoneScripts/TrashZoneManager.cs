@@ -32,11 +32,11 @@ public class TrashZoneManager : ZoneScriptBase
         }
     }
 
-    public void PutCard(CardData _card)
+    public CardScript PutCard(CardData _card)
     {
-        if (_card == null) return;
-        if (manager == null) return;
-        if (manager.cardPrefab == null) return;
+        if (_card == null) return null;
+        if (manager == null) return null;
+        if (manager.cardPrefab == null) return null;
         var card = Instantiate(manager.cardPrefab, transform);
         var script = card.GetComponent<CardScript>();
         script.Init(player, manager, _card, this);
@@ -45,7 +45,8 @@ public class TrashZoneManager : ZoneScriptBase
             trashList.Count * PUT_OVERLAP_POSITION,
             Random.Range(-PUT_POSITION, PUT_POSITION));
 
-        trashList.Add(card.GetComponent<CardScript>());
+        trashList.Add(script);
+        return script;
     }
 
     override public void RemoveCard(CardData _card)

@@ -121,11 +121,12 @@ public class Book : ZoneScriptBase
         ActiveTest(backButton, nowPage > 0 );
     }
 
-    public void PutCard(CardData _card)
+    public CardScript PutCard(CardData _card)
     {
-        if (_card == null) return;
-        if (manager == null) return;
+        if (_card == null) return null;
+        if (manager == null) return null;
         cardSocketList[_card.initBookPos].PutCard(player, manager, _card, this);
+        return cardSocketList[_card.initBookPos].socketCard;
     }
 
     override public void RemoveCard(CardData _card)
