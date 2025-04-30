@@ -96,7 +96,7 @@ public class ItemZoneObject : MonoBehaviour
     public void RemoveCard()
     {
         if (card == null) return;
-        Destroy(card);
+        Destroy(card.gameObject);
         card = null;
     }
 

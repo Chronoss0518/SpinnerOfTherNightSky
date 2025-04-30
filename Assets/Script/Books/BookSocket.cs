@@ -17,7 +17,7 @@ public class BookSocket : MonoBehaviour
     public void RemoveCard()
     {
         if (card == null) return;
-        Destroy(card);
+        Destroy(card.gameObject);
         card = null;
     }
 
