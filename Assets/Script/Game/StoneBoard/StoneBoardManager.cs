@@ -50,13 +50,6 @@ public class StoneBoardManager : MonoBehaviour
 
     public bool isBlock { get { return isBlockFlg; } }
 
-    public bool IsRange(int _x,int _y)
-    {
-        return 
-            _x >= 0 && _x < HOLYZONTAL &&
-            _y >= 0 && _y < VERTICAL;
-    }
-
     public void SetBlockFlg(bool _flg)
     {
         isBlockFlg = _flg;
@@ -118,15 +111,6 @@ public class StoneBoardManager : MonoBehaviour
         stoneList[_x][_y].RemovePutStone();
     }
 
-
-    public bool IsPutStone(int _x, int _y)
-    {
-        if (!IsRange(_x, _y)) return false;
-
-        return stoneList[_x][_y].IsPutStone();
-    }
-
-
     public void SelectStonePos(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return;
@@ -141,6 +125,19 @@ public class StoneBoardManager : MonoBehaviour
         stoneList[_x][_y].UnSelectStonePos();
     }
 
+    public bool IsRange(int _x, int _y)
+    {
+        return
+            _x >= 0 && _x < HOLYZONTAL &&
+            _y >= 0 && _y < VERTICAL;
+    }
+
+    public bool IsPutStone(int _x, int _y)
+    {
+        if (!IsRange(_x, _y)) return false;
+
+        return stoneList[_x][_y].IsPutStone();
+    }
 
     public bool IsSelectStonePos(int _x, int _y)
     {
