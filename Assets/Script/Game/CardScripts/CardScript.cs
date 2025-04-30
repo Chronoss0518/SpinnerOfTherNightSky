@@ -15,7 +15,7 @@ public class CardScript : MonoBehaviour
 
         public CardData baseData { get { return baseCard.data; } }
 
-        public bool IsCardData(CardData _card) { return baseCard.data.Equals(_card); }
+        public bool IsCardData(CardData _card) { return baseCard.IsCardData(_card); }
 
         public void SetBaseCard(CardScript _card) { if (_card != null) baseCard = _card; }
 
@@ -30,9 +30,10 @@ public class CardScript : MonoBehaviour
         public ScriptData[] script { get { return baseCard.script; } }
 
         public int initBookPos { get { return baseCard.initBookPos; } }
-        protected Player zType { get { return baseCard.player; } }
+        protected Player player { get { return baseCard.player; } }
         protected GameManager manager { get { return baseCard.manager; } }
-        protected ScriptManager.ZoneType zoneType { get { return baseCard.zone.zoneType; } }
+        protected ZoneScriptBase zone { get { return baseCard.zone; } }
+
         protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
         {
             return baseCardObj.SelectTargetArgumentTest(_argument,_runPlayer);
@@ -170,8 +171,8 @@ public class CardScript : MonoBehaviour
 
         if (_argument.playerType >= 0)
         {
-            if (_argument.playerType  != 0 && _runPlayer.Equals(player)) return false;
-            if (_argument.playerType  != 1 && !_runPlayer.Equals(player)) return false;
+            if (_argument.playerType  != 0 && ReferenceEquals(_runPlayer,player)) return false;
+            if (_argument.playerType  != 1 && !ReferenceEquals(_runPlayer, player)) return false;
         }
 
         int loopCount = 0;

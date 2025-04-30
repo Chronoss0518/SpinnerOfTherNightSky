@@ -62,7 +62,7 @@ public class MagicCardScript : CardScript.CardScriptBase
     {
         if (!_argument.normalPlaying) return true;
 
-        if ((zoneType & ScriptManager.ZoneType.Book) <= 0) return false;
+        if ((zone.zoneType & ScriptManager.ZoneType.Book) <= 0) return false;
 
         if (_argument.magicAttributeMonth.Count > 0)
         {
