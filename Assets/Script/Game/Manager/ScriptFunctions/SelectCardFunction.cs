@@ -120,6 +120,12 @@ public class SelectCardFunction : ScriptManager.ScriptFunctionBase
 
         }
 
+        if (res.zoneType <= 0)
+            res.zoneType = ScriptManager.ZoneType.Book |
+                ScriptManager.ZoneType.MagicZone |
+                ScriptManager.ZoneType.ItemZone|
+                ScriptManager.ZoneType.TrashZone;
+
         return res;
 
     }

@@ -77,12 +77,6 @@ public class SelectCardFunctionController : SelectScriptControllerBase
             _controller.ActionStart();
             _gameManager.StartSelectCard(act);
 
-            if(act.zoneType == 0)
-                act.zoneType =  ZoneType.Book |
-                    ZoneType.MagicZone |
-                    ZoneType.ItemZone |
-                    ZoneType.TrashZone;
-
             if ((act.zoneType & ZoneType.Book) > 0) targetZoneList.Add(BOOK_ZONE);
             if ((act.zoneType & ZoneType.MagicZone) > 0) targetZoneList.Add(MAGIC_ZONE);
             if ((act.zoneType & ZoneType.ItemZone) > 0) targetZoneList.Add(ITEM_ZONE);
