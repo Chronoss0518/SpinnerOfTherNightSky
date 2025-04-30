@@ -59,9 +59,6 @@ public class GameManager : MonoBehaviour
     
     public GameObject cardPrefab { get { return cardPrefabBase; } }
 
-    bool runDice = false;
-
-
     public void AddStackCard(CardScript _card)
     {
         stack.Add(_card);

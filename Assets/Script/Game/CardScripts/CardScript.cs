@@ -55,10 +55,6 @@ public class CardScript : MonoBehaviour
     [SerializeField, ReadOnly]
     public bool selectTargetFlg = false;
 
-
-    [SerializeField, ReadOnly]
-    ScriptManager.ErrorType errorType = ScriptManager.ErrorType.None;
-
     public bool isSelectTarget { get { return selectTargetFlg; } }
 
     [SerializeField]
