@@ -250,6 +250,8 @@ public class GameManager : MonoBehaviour
 
         scriptManager.CreateScript(stackScript.script[0], true);
 
+        scriptManager.SetPlayCardScript(stackScript);
+
         if (stack.Count > 0) return;
         runStackFlg = false;
     }
