@@ -10,8 +10,6 @@ public class CardMock : CardAPIBase
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
                     new ScriptPartsDTO[] {
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
                     }
                 ), },6,1,
             new CardMagicPosition[]{
@@ -25,8 +23,6 @@ public class CardMock : CardAPIBase
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
                     new ScriptPartsDTO[] {
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
                     }
                 ), },8,1,
             new CardMagicPosition[]{
@@ -40,9 +36,7 @@ public class CardMock : CardAPIBase
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
                     new ScriptPartsDTO[] {
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.Stay, " -t other -pt 1"),
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
                     }
                 ),
             },1,1,
@@ -93,7 +87,6 @@ public class CardMock : CardAPIBase
                     {
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 3 --max 3 --is-remove"),
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--remove"),
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd,""),
                     })
             },0),
         BookCardDataDTO.GenerateItemCard(
@@ -108,7 +101,6 @@ public class CardMock : CardAPIBase
                     {
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 2 --max 2 --is-put"),
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--put"),
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd,""),
                     }),
             },0),
         BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
