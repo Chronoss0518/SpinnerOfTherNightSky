@@ -72,16 +72,16 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
             zone.RemoveCard(card);
 
             if (act.moveZone == ScriptManager.ZoneType.MagicZone)
-                player.magicZone.PutCard(player, _gameManager, card);
+                player.magicZone.PutCard(card);
 
             if (act.moveZone == ScriptManager.ZoneType.ItemZone)
-                player.itemZone.PutCard(targetItemZonePos.position, player, _gameManager, card, act.openFlg);
+                player.itemZone.PutCard(targetItemZonePos.position, card, act.openFlg);
 
             if (act.moveZone == ScriptManager.ZoneType.TrashZone)
-                player.trashZone.PutCard(player, _gameManager, card);
+                player.trashZone.PutCard(card);
 
             if (act.moveZone == ScriptManager.ZoneType.Book)
-                player.bookZone.PutCard(player, _gameManager, card);
+                player.bookZone.PutCard(card);
 
         }
 
@@ -100,7 +100,7 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
     Player MoveHavePlayerZone(Player _player,GameManager _gameManager, ScriptManager.MoveCardArgument _arg,CardData _card)
     {
         if (_arg.targetUsePlayer) return _player;
-        return _gameManager.GetPlayer(_card.havePlayer);
+        return _card.havePlayer;
     }
 
 }

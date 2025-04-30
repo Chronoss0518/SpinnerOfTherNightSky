@@ -19,9 +19,9 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
             return true;
         }
 
-        var card = targetCards[0];
+        var obj = new GameManager.StackObject(_controller.GetComponent<Player>(), targetCards[0]);
 
-        Stack(card, _gameManager);
+        Stack(obj, _gameManager);
 
         AddUseScriptCount();
         return true;

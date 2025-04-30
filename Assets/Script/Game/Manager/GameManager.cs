@@ -36,8 +36,26 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
 
+
+    public class StackObject
+    {
+        public StackObject(Player _player, CardScript _card)
+        {
+            player = _player;
+            card = _card;
+        }
+
+        public Player player = null;
+        public CardScript card = null;
+    }
+
+
     [SerializeField, ReadOnly]
-    List<CardScript> stack = new List<CardScript>();
+    List<StackObject> stack = new List<StackObject>();
+
+    [SerializeField, ReadOnly]
+    StackObject playCardScript = null;
+
 
     bool runStackFlg = false;
 
@@ -56,10 +74,10 @@ public class GameManager : MonoBehaviour
 
     [SerializeField]
     GameObject cardPrefabBase = null;
-    
+
     public GameObject cardPrefab { get { return cardPrefabBase; } }
 
-    public void AddStackCard(CardScript _card)
+    public void AddStackCard(StackObject _card)
     {
         stack.Add(_card);
     }
@@ -228,7 +246,8 @@ public class GameManager : MonoBehaviour
         var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
 
         scriptManager.RunScript(controller, this);
-
+        
+        StackCardScriptEnd();
     }
 
     void MainUpdate()
@@ -244,13 +263,11 @@ public class GameManager : MonoBehaviour
         if (scriptManager.isRunScript) return;
         if (!runStackFlg) return;
 
-        var stackScript = stack[stack.Count - 1];
+        playCardScript = stack[stack.Count - 1];
 
         stack.RemoveAt(stack.Count - 1);
 
-        scriptManager.CreateScript(stackScript.script[0], true);
-
-        scriptManager.SetPlayCardScript(stackScript);
+        scriptManager.CreateScript(playCardScript.card.script[0], true);
 
         if (stack.Count > 0) return;
         runStackFlg = false;
@@ -380,4 +397,47 @@ public class GameManager : MonoBehaviour
         return playerCom;
     }
 
+    void StackCardScriptEnd()
+    {
+        if (scriptManager.isRunScript) return;
+        if (playCardScript == null) return;
+
+        MagicActionEnd();
+        ItemActionEnd();
+
+        playCardScript = null;
+    }
+
+    void MagicActionEnd()
+    {
+        if (playCardScript.card.type != CardData.CardType.Magic) return;
+
+        var magic = playCardScript.card.GetComponent<MagicCardScript>();
+
+        bool removeStoneFailedFlg = magic.removeStoneFailedFlg;
+
+        var cardData = playCardScript.card.baseData;
+        var zone = playCardScript.card.zone;
+
+        zone.RemoveCard(cardData);
+
+        if(!removeStoneFailedFlg)
+            playCardScript.player.magicZone.PutCard(cardData);
+        else
+            cardData.havePlayer.trashZone.PutCard(cardData);
+    }
+
+    void ItemActionEnd()
+    {
+        if (playCardScript.card.type != CardData.CardType.Item) return;
+
+        var cardData = playCardScript.card.baseData;
+        var zone = playCardScript.card.zone;
+
+        var player = cardData.havePlayer;
+
+        zone.RemoveCard(cardData);
+
+        player.trashZone.PutCard(cardData);
+    }
 }

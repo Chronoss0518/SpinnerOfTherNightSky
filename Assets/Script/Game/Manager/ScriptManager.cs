@@ -52,8 +52,6 @@ public class ScriptManager
         MoveCard,//カードを移動させる//
         OpenItemZoneCard,//ItemZoneのカードを展開する//
         Stack,//カードをStackする→カードの発動準備//
-        MagicRemoveStone,//術の発動時に石を取り除く処理//
-        ActionEnd,//カードの処理が終了した際の処理//
         Stay,//永続効果の登録
         WinnerPoint,//ゲームに勝利するためのポイントを増減させる//
         Skip,//Stackカードのスキップを行う
@@ -125,9 +123,7 @@ public class ScriptManager
 
         protected ItemZoneObject targetItemZonePos { get { return mgr.targetItemZonePos; } set { mgr.targetItemZonePos = value; } }
 
-        protected bool playMagicExceptionFlg { get { return mgr.playMagicException; } set { mgr.playMagicException = value; } }
-
-        protected CardScript playCardScript { get { return mgr.playCardScript; } }
+        protected bool passMagicNormalPlayFlg { get { return mgr.passMagicNormalPlayFlg; } set { mgr.passMagicNormalPlayFlg = value; } }
 
         protected List<string> GenerateArgument(string _args)
         {
@@ -139,7 +135,7 @@ public class ScriptManager
             mgr.AddUseScriptCount();
         }
 
-        protected void Stack(CardScript _script,GameManager _manager)
+        protected void Stack(GameManager.StackObject _script,GameManager _manager)
         {
             mgr.Stack(_script, _manager);
         }
@@ -331,11 +327,8 @@ public class ScriptManager
     public ItemZoneObject targetItemZonePos = null;
 
 
-    [SerializeField, ReadOnly]
-    bool playMagicException = false;
+    public bool passMagicNormalPlayFlg { get; private set; } = false;
 
-    [SerializeField, ReadOnly]
-    CardScript playCardScript = null;
 
 
     [SerializeField,ReadOnly]
@@ -374,12 +367,6 @@ public class ScriptManager
         errorMessageDrawCount = errorMessageDrawMaxCount;
     }
 
-    public void SetPlayCardScript(CardScript _script)
-    {
-        if (_script == null) return;
-        playCardScript = _script;
-    }
-
     public void SelectTargetPos(int _x, int _y, GameManager _manager)
     {
         if (runScript == null) return;
@@ -411,7 +398,7 @@ public class ScriptManager
         return selectItemZoneFunctionController.SelectPos(_pos, _manager, action);
     }
 
-    void Stack(CardScript _script, GameManager _manager)
+    void Stack(GameManager.StackObject _script, GameManager _manager)
     {
         _manager.AddStackCard(_script);
     }
