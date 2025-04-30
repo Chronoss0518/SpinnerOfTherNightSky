@@ -5,6 +5,10 @@ using UnityEngine;
 
 public class MagicCardScript : CardScript.CardScriptBase
 {
+    RectInt starPosSize = new RectInt(0, 0, 0, 0);
+    
+    //ˆê”Ô¶‘¤‚É‚ ‚èŽž“_‚Åˆê”Ôã‚ÌˆÊ’u((1,2)‚Æ(2,1)‚Å‚Í(1,2)‚ð—Dæ‚·‚é)//
+    Vector2Int starPosLeftTopPos = Vector2Int.zero;
 
     [SerializeField,ReadOnly]
     private MagicCardData.CardAttribute attribute = MagicCardData.CardAttribute.Spring;
@@ -42,6 +46,21 @@ public class MagicCardScript : CardScript.CardScriptBase
         var magicData = (MagicCardData)_data;
         SetAttribute(magicData.month);
         SetPoint(magicData.point);
+
+        starPosSize.xMin =  starPosSize.yMin = 99;
+        starPosSize.xMax = starPosSize.yMax = 0;
+
+        foreach (var pos in magicData.starPos)
+        {
+            starPosSize.xMin = starPosSize.xMin > pos.x ? pos.x : starPosSize.xMin;
+            starPosSize.xMax = starPosSize.xMax < pos.x ? pos.x : starPosSize.xMax;
+            starPosSize.yMin = starPosSize.yMin > pos.y ? pos.y : starPosSize.yMin;
+            starPosSize.yMax = starPosSize.yMax > pos.y ? pos.y : starPosSize.yMax;
+
+            if (starPosLeftTopPos.x < pos.x) continue;
+            if (starPosLeftTopPos.y < pos.y) continue;
+            starPosLeftTopPos = pos;
+        }
     }
 
     public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
@@ -55,15 +74,15 @@ public class MagicCardScript : CardScript.CardScriptBase
 
         if (!IsPlayingMagicTest(_argument, magic)) return;
 
+        if (!IsNormalPlayingMagicTest(_argument, magic)) return;
+
         SelectTargetTestSuccess();
     }
 
+
+
     bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
     {
-        if (!_argument.normalPlaying) return true;
-
-        if ((zone.zoneType & ScriptManager.ZoneType.Book) <= 0) return false;
-
         if (_argument.magicAttributeMonth.Count > 0)
         {
             int loopCount = 0;
@@ -76,8 +95,41 @@ public class MagicCardScript : CardScript.CardScriptBase
             if (loopCount >= _argument.magicAttributeMonth.Count) return false;
         }
 
+        return true;
+    }
+
+
+    bool IsNormalPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
+    {
+        if (!_argument.normalPlaying) return true;
+
+        var stoneBoard = manager.stoneBoardObj;
+
+        for (int v = starPosLeftTopPos.y; v < stoneBoard.VERTICAL_SIZE - starPosSize.yMax; v++)
+        {
+            for (int h = starPosLeftTopPos.x; h < stoneBoard.VERTICAL_SIZE - starPosSize.xMax; h++)
+            {
+                if (!stoneBoard.IsPutStone(v, h)) continue;
+                if (!FindStarPos(h, v, _data, stoneBoard)) continue;
+                return true;
+            }
+        }
+
+        return false;
+    }
+
+
+    bool FindStarPos(int targetX, int targetY, MagicCardData _data,StoneBoardManager _stoneBoard)
+    {
+        foreach(var pos in _data.starPos)
+        {
+            if (!_stoneBoard.IsPutStone(targetX + pos.x, targetY + pos.y))
+                return false;
+        }
 
         return true;
     }
+
+
 
 }
