@@ -167,8 +167,6 @@ public class CardScript : MonoBehaviour
 
     protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
-        if (_argument.normalPlaying) return true;
-
         if (_argument.playerType >= 0)
         {
             if (_argument.playerType  != 0 && ReferenceEquals(_runPlayer,player)) return false;
