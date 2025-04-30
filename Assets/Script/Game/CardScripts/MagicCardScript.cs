@@ -19,6 +19,10 @@ public class MagicCardScript : CardScript.CardScriptBase
     private MagicCardData.CardAttributeMonth attributeMonth = 0;
     public MagicCardData.CardAttributeMonth month { get { return attributeMonth; } }
 
+    public bool removeStoneFailedFlg { get; private set; } = false;
+    public int point { get; private set; } = 0;
+    public void SetPoint(int _point) { point = _point; }
+
     public void SetAttribute(int _attribute) {
         if (_attribute < 0) return;
         if (_attribute >= 12) return;
@@ -36,10 +40,6 @@ public class MagicCardScript : CardScript.CardScriptBase
         if (_attribute >= (int)(attribute) * 3) return;
         attribute = MagicCardData.CardAttribute.Spring;
     }
-
-    public int point { get; private set; } = 0;
-
-    public void SetPoint(int _point) { point = _point; }
 
     public override void Init(CardData _data)
     {
@@ -79,7 +79,10 @@ public class MagicCardScript : CardScript.CardScriptBase
         SelectTargetTestSuccess();
     }
 
-
+    public void RemoveStoneTest()
+    {
+        
+    }
 
     bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
     {
@@ -129,7 +132,5 @@ public class MagicCardScript : CardScript.CardScriptBase
 
         return true;
     }
-
-
 
 }
