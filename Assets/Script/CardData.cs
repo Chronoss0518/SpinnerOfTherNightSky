@@ -26,10 +26,9 @@ public class ScriptParts
 public class ScriptData
 {
     public ScriptData() { }
-    public ScriptData(ScriptParts[] _pats,ScriptManager.ArgumentType _type)
+    public ScriptData(ScriptParts[] _pats)
     {
         parts = _pats;
-        type = _type;
     }
 
     public ScriptData(CardAPIBase.ScriptDataDTO _dto)
@@ -40,11 +39,9 @@ public class ScriptData
         {
             parts[i] = new ScriptParts(_dto.parts[i]);
         }
-        type = (ScriptManager.ArgumentType)_dto.actionType;
     }
 
     public ScriptParts[] parts = null;
-    public ScriptManager.ArgumentType type = ScriptManager.ArgumentType.Stay;
 }
 
 
@@ -108,7 +105,7 @@ public class CardData
         script = new ScriptData[_script.Length];
         for (int i = 0; i < _script.Length; i++)
         {
-            script[i] = new ScriptData(_script[i].parts, _script[i].type);
+            script[i] = new ScriptData(_script[i].parts);
         }
     }
 

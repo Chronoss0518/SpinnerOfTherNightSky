@@ -7,7 +7,13 @@ public class CardMock : CardAPIBase
 {
     BookCardDataDTO[] cardMock = new BookCardDataDTO[]{
         BookCardDataDTO.GenerateMagicCard(0,"南十字-Complater","","",
-            new ScriptDataDTO[]{new ScriptDataDTO() },6,1,
+            new ScriptDataDTO[]{
+                new ScriptDataDTO(
+                    new ScriptPartsDTO[] {
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
+                    }
+                ), },6,1,
             new CardMagicPosition[]{
                 new CardMagicPosition(2,0),
                 new CardMagicPosition(1,1),
@@ -16,7 +22,13 @@ public class CardMock : CardAPIBase
             }
         ),
         BookCardDataDTO.GenerateMagicCard(1,"矢-Complater","","",
-            new ScriptDataDTO[]{new ScriptDataDTO() },8,1,
+            new ScriptDataDTO[]{
+                new ScriptDataDTO(
+                    new ScriptPartsDTO[] {
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
+                    }
+                ), },8,1,
             new CardMagicPosition[]{
                 new CardMagicPosition(0,1),
                 new CardMagicPosition(2,2),
@@ -27,10 +39,12 @@ public class CardMock : CardAPIBase
         BookCardDataDTO.GenerateMagicCard(2,"盾-Complater","[Stay]自身以外のプレイヤーは勝利に必要なポイントが1増える","",
             new ScriptDataDTO[]{
                 new ScriptDataDTO(
-                    new ScriptPartsDTO[] { 
-                        new ScriptPartsDTO((int)ScriptManager.ScriptType.WinnerPoint, "-t other -pt 1")
-                    },1
-                )
+                    new ScriptPartsDTO[] {
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.MagicRemoveStone, ""),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.Stay, " -t other -pt 1"),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd, ""),
+                    }
+                ),
             },1,1,
             new CardMagicPosition[] {
                 new CardMagicPosition(1, 0),
@@ -79,7 +93,8 @@ public class CardMock : CardAPIBase
                     {
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 3 --max 3 --is-remove"),
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--remove"),
-                    },0),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd,""),
+                    })
             },0),
         BookCardDataDTO.GenerateItemCard(
             31,
@@ -93,7 +108,8 @@ public class CardMock : CardAPIBase
                     {
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.SelectStoneBoard,"--min 2 --max 2 --is-put"),
                         new ScriptPartsDTO((int)ScriptManager.ScriptType.MoveStone,"--put"),
-                    },0),
+                        new ScriptPartsDTO((int)ScriptManager.ScriptType.ActionEnd,""),
+                    }),
             },0),
         BookCardDataDTO.GenerateItemCard(32,"Test32","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),
         BookCardDataDTO.GenerateItemCard(33,"Test33","Test","",new ScriptDataDTO[]{new ScriptDataDTO() },0),

@@ -9,8 +9,7 @@ public class SetTrap : TurnManager.TurnClass
         selectSetItem = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 1 --min 0 --max 1 --zone-type-book --card-type 6 --normal-playing"),
-               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ArgumentType.Entry));
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
     }
 
     [SerializeField, ReadOnly]

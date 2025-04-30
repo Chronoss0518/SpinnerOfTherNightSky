@@ -27,15 +27,13 @@ public class UseItem : TurnManager.TurnClass
                 new ScriptParts((int)ScriptManager.ScriptType.SelectItemZone, "--target-player"),
                 new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
                 new ScriptParts((int)ScriptManager.ScriptType.OpenItemZoneCard,""),
-                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ArgumentType.Entry));
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
 
         selectTrap = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--min 0 --max 1 --player-type 0 --zone-type-item --card-type 4 --normal-playing"),
-                new ScriptParts((int)ScriptManager.ScriptType.OpenItemZoneCard, "--open-item-zone"),
-                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),},
-            ScriptManager.ArgumentType.Entry));
+                new ScriptParts((int)ScriptManager.ScriptType.OpenItemZoneCard, ""),
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
     }
 
     override public void Init() 

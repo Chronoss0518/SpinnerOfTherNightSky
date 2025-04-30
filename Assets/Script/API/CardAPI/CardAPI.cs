@@ -68,7 +68,6 @@ abstract public class CardAPIBase
         public ScriptDataDTO() { }
         public ScriptDataDTO(ScriptDataDTO _cm) 
         {
-            actionType = _cm.actionType;
             if (_cm.parts == null) return;
 
             parts = new ScriptPartsDTO[_cm.parts.Length];
@@ -79,9 +78,8 @@ abstract public class CardAPIBase
             }
         }
 
-        public ScriptDataDTO(ScriptPartsDTO[] _parts,int _type)
+        public ScriptDataDTO(ScriptPartsDTO[] _parts)
         {
-            actionType = _type;
             if (_parts == null) return;
 
             parts = new ScriptPartsDTO[_parts.Length];
@@ -94,9 +92,6 @@ abstract public class CardAPIBase
 
         [JsonProperty("card_scripts"), DefaultValue(null)]
         public ScriptPartsDTO[] parts { get; set; } = null;
-
-        [JsonProperty("type_name"), DefaultValue(0)]
-        public int actionType { get; set; } = 0;
     }
 
     public class CardDataDTO

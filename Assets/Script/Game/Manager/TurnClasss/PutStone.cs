@@ -9,8 +9,7 @@ public class PutStone : TurnManager.TurnClass
         selectStone = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectStoneBoard, "--min 1 --max 3 --is-put"),
-               new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),},
-            ScriptManager.ArgumentType.Entry));
+               new ScriptParts((int)ScriptManager.ScriptType.MoveStone, "--put"),}));
     }
 
     [SerializeField, ReadOnly]
