@@ -4,7 +4,6 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
-[System.Serializable]
 public class SelectCardFunctionController : SelectScriptControllerBase
 {
     public const string BOOK_ZONE = "ñÇì±èë";
@@ -17,18 +16,6 @@ public class SelectCardFunctionController : SelectScriptControllerBase
     public const string ALL_PLAYER = "ëSñÇèpét";
 
     [SerializeField, ReadOnly]
-    ScriptManager manager = null;
-
-    [SerializeField, ReadOnly]
-    List<CardScript> targetCard = new List<CardScript>();
-
-    public int TargetCardCount { get { return targetCard.Count; } }
-
-    [SerializeField, ReadOnly]
-    List<CardScript> targetCards = new List<CardScript>();
-
-
-    [SerializeField, ReadOnly]
     List<string> targetZoneList = new List<string>();
 
     [SerializeField, ReadOnly]
@@ -36,7 +23,6 @@ public class SelectCardFunctionController : SelectScriptControllerBase
 
     [SerializeField,ReadOnly]
     string targetZoneName = "";
-
 
     public List<CardScript> GetTargetCard()
     {
@@ -46,11 +32,6 @@ public class SelectCardFunctionController : SelectScriptControllerBase
     public override void ClearTarget()
     {
         targetCards.Clear();
-    }
-
-    public void Init(ScriptManager _manager)
-    {
-        manager = _manager;
     }
 
     public void SelectCard(CardScript _card, GameManager _manager, SelectCardArgument _runArgument)

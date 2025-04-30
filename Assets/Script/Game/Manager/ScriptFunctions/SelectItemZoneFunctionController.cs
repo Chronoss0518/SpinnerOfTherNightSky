@@ -4,25 +4,14 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
-[System.Serializable]
 public class SelectItemZoneFunctionController : SelectScriptControllerBase
 {
 
-    [SerializeField, ReadOnly]
-    ScriptManager manager = null;
-
-    public ItemZoneObject targetPos = null;
-
-    public ItemZoneObject GetTargetPos() { return targetPos; }
+    public ItemZoneObject GetTargetPos() { return targetItemZonePos; }
 
     public override void ClearTarget()
     {
-        targetPos = null;
-    }
-
-    public void Init(ScriptManager _manager)
-    {
-        manager = _manager;
+        targetItemZonePos = null;
     }
 
     public bool SelectPos(ItemZoneObject _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
@@ -30,13 +19,13 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         if (_runArgument == null) return false;
         if (_pos == null) return false;
 
-        if(targetPos != null && targetPos != _pos)
+        if(targetItemZonePos != null && targetItemZonePos != _pos)
         {
             manager.SetError(ErrorType.IsNotTargetZone);
             return false;
         }
 
-        targetPos = targetPos == _pos ? null : _pos;
+        targetItemZonePos = targetItemZonePos == _pos ? null : _pos;
         return true;
     }
 
@@ -44,6 +33,13 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
     public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.SelectItemZone) return false;
+
+        if (targetCards.Count <= 0)
+        {
+            manager.AddUseScriptCount();
+            return true;
+        }
+
         var act = (SelectItemZoneArgument)_script;
 
         _controller.ActionStart();
@@ -54,7 +50,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
 
         if (manager.GetErrorType() == ErrorType.None)
         {
-            message = $"カードを配置するItemZoneを指定してください。\n{(targetPos != null ? "選択済み" : "未選択")}";
+            message = $"カードを配置するItemZoneを指定してください。\n{(targetItemZonePos != null ? "選択済み" : "未選択")}";
         }
         else
         {
@@ -67,7 +63,7 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         _gameManager.SetMessate(message);
 
         if (!_controller.isAction) return true;
-        if (targetPos == null)
+        if (targetItemZonePos == null)
         {
             manager.SetError(ErrorType.IsRangeMinOverCount);
             _controller.DownActionFlg();

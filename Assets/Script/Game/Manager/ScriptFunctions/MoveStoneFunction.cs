@@ -27,8 +27,6 @@ public class MoveStoneFunction : ScriptManager.ScriptFunctionBase
 
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
-        var targetStonePos = GetTargetStonePos();
-
         if (targetStonePos.Count <= 0) return true;
 
         var act = (ScriptManager.MoveStoneArgument)_script;

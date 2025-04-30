@@ -13,8 +13,6 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
 
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
-        var targetCards = GetTargetCard();
-
         if (targetCards.Count <= 0 || targetCards.Count >= 2)
         {
             AddUseScriptCount();

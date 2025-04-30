@@ -91,7 +91,6 @@ public class ScriptManager
         public ScriptType type;
     }
 
-    [System.Serializable]
     public abstract class ScriptFunctionBase
     {
 
@@ -126,20 +125,12 @@ public class ScriptManager
             mgr.selectItemZoneFunctionController = _controller;
         }
 
-        protected Dictionary<int, StonePosScript> GetTargetStonePos()
-        {
-            return mgr.selectStoneBoardFunctionController.GetTargetStonePos();
-        }
+        protected Dictionary<int, StonePosScript> targetStonePos { get { return mgr.targetStonePos; } }
 
-        protected List<CardScript> GetTargetCard()
-        {
-            return mgr.selectCardFunctionController.GetTargetCard();
-        }
+        protected List<CardScript> targetCards { get { return mgr.targetCards; } }
 
-        protected ItemZoneObject GetItemZonePos()
-        {
-            return mgr.selectItemZoneFunctionController.GetTargetPos();
-        }
+        protected ItemZoneObject targetItemZonePos { get { return mgr.targetItemZonePos; } set { mgr.targetItemZonePos = value; } }
+
 
         protected List<string> GenerateArgument(string _args)
         {
@@ -165,9 +156,24 @@ public class ScriptManager
 
     abstract public class SelectScriptControllerBase
     {
+        public virtual void Init(ScriptManager _manager)
+        {
+            mgr = _manager;
+        }
+
         abstract public bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script);
 
         abstract public void ClearTarget();
+
+        protected Dictionary<int, StonePosScript> targetStonePos { get { return mgr.targetStonePos; } }
+
+        protected List<CardScript> targetCards { get { return mgr.targetCards; } }
+
+        protected ItemZoneObject targetItemZonePos { get { return mgr.targetItemZonePos; } set { mgr.targetItemZonePos = value; } }
+
+        protected ScriptManager manager { get { return mgr; } }
+
+        ScriptManager mgr = null;
     }
 
     public class BlockStoneArgument : ScriptArgument
@@ -313,16 +319,25 @@ public class ScriptManager
     [SerializeField,ReadOnly]
     SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
 
+    [SerializeField, ReadOnly]
+    Dictionary<int, StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
+
     public SelectStoneBoardFunctionController selectStoneBoardController { get { return selectStoneBoardFunctionController; } }
 
     [SerializeField, ReadOnly]
     SelectCardFunctionController selectCardFunctionController = null;
+
+    [SerializeField, ReadOnly]
+    List<CardScript> targetCards = new List<CardScript>();
+
 
     public SelectCardFunctionController selectCardController { get { return selectCardFunctionController; } }
 
     [SerializeField, ReadOnly]
     SelectItemZoneFunctionController selectItemZoneFunctionController = null;
 
+    [SerializeField, ReadOnly]
+    public ItemZoneObject targetItemZonePos = null;
     public SelectItemZoneFunctionController selectItemZoneController { get { return selectItemZoneFunctionController; } }
 
     [SerializeField,ReadOnly]

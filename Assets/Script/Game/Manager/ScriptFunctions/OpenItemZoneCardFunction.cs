@@ -13,12 +13,11 @@ public class OpenItemZoneCardFunction : ScriptManager.ScriptFunctionBase
 
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
-        var targetPos = GetItemZonePos();
 
-        if (targetPos == null) return true;
-        if (targetPos.IsOpen()) return true;
+        if (targetItemZonePos == null) return true;
+        if (targetItemZonePos.IsOpen()) return true;
 
-        targetPos.SetOpenFlg(true);
+        targetItemZonePos.SetOpenFlg(true);
 
         return true;
     }

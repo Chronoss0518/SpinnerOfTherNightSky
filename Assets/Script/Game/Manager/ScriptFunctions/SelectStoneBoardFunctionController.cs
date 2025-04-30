@@ -4,15 +4,8 @@ using Unity.Collections;
 using UnityEngine;
 using static ScriptManager;
 
-[System.Serializable]
 public class SelectStoneBoardFunctionController : SelectScriptControllerBase
 {
-    [SerializeField,ReadOnly]
-    ScriptManager manager = null;
-
-    [SerializeField, ReadOnly]
-    Dictionary<int, StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
-
     public Dictionary<int, StonePosScript> GetTargetStonePos()
     {
         return targetStonePos;
@@ -22,12 +15,6 @@ public class SelectStoneBoardFunctionController : SelectScriptControllerBase
     {
         targetStonePos.Clear();
     }
-
-    public void Init(ScriptManager _manager)
-    {
-        manager = _manager;
-    }
-
 
     public void SelectTargetPos(int _x, int _y, GameManager _manager,SelectStoneBoardArgument _runArgument)
     {
@@ -75,13 +62,15 @@ public class SelectStoneBoardFunctionController : SelectScriptControllerBase
 
         if (manager.GetErrorType() == ErrorType.None)
         {
+            message = !act.isPutPos ? "石を取り除く場所を" : "石を置く場所を";
+
             string tmp = act.minCount > targetStonePos.Count ?
                 $"残り:{act.minCount - targetStonePos.Count}" :
                 "選択済み";
 
             message = act.minCount != act.maxCount ?
-                $"石を置く場所を{act.minCount}から{act.maxCount}選択してください。\n{tmp}" :
-                 $"石を置く場所を{act.minCount}選択してください。\n{tmp}";
+                $"{message}{act.minCount}から{act.maxCount}選択してください。\n{tmp}" :
+                 $"{message}{act.minCount}選択してください。\n{tmp}";
 
         }
         else
