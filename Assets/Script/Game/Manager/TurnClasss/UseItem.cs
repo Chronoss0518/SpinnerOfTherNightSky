@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.Collections;
 
-[System.Serializable]
 public class UseItem : TurnManager.TurnClass
 {
     [SerializeField, ReadOnly]

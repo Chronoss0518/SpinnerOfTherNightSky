@@ -1,7 +1,6 @@
 using UnityEngine;
 using Unity.Collections;
 
-[System.Serializable]
 public class PlayMagic : TurnManager.TurnClass
 {
     public PlayMagic(TurnManager _manager) : base(_manager)
