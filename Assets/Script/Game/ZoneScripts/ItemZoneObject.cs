@@ -100,7 +100,7 @@ public class ItemZoneObject : MonoBehaviour
         card = null;
     }
 
-    public bool IsCardData(CardData _card) { return card.IsCardData(_card); }
+    public bool IsCardData(CardData _card) { return card == null ? false : card.IsCardData(_card); }
 
     public bool IsPutCard() { return card != null; }
 
