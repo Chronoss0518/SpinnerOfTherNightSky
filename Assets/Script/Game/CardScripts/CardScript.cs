@@ -68,7 +68,7 @@ public class CardScript : MonoBehaviour
 
     public CardData baseData { get { return data; } }
 
-    public bool IsCardData(CardData _card) { return data.Equals(_card); }
+    public bool IsCardData(CardData _card) { return ReferenceEquals(data,_card); }
 
     public string cardName { get { return data.name; } }
 
@@ -88,8 +88,6 @@ public class CardScript : MonoBehaviour
     GameManager manager = null;
 
     public ZoneScriptBase zone { get; private set; } = null;
-
-
 
 
     public void Init(Player _player, GameManager _gameManager, CardData _data, ZoneScriptBase _zone)
@@ -169,9 +167,6 @@ public class CardScript : MonoBehaviour
     protected bool SelectTargetArgumentTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
     {
         if (_argument.normalPlaying) return true;
-
-        if (_argument.zoneType != 0)
-            if ((_argument.zoneType | zone.zoneType) <= 0) return false;
 
         if (_argument.playerType >= 0)
         {
