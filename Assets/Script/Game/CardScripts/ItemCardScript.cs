@@ -36,8 +36,7 @@ public class ItemCardScript : CardScript.CardScriptBase
 
         if (!SelectTargetArgumentTest(_argument, _runPlayer)) return;
 
-        if (!IsPlayingUseItemTest(_argument, item) &&
-            !IsPlayingSetItemTest(_argument, item)) return;
+        if (!IsNormalPlayingTest(_argument, item)) return;
 
         SelectTargetTestSuccess();
     }
@@ -52,38 +51,18 @@ public class ItemCardScript : CardScript.CardScriptBase
 
         if (!SelectTargetArgumentTest(_argument, _runPlayer)) return;
 
-        if (!IsPlayingUseTrapTest(_argument, item) &&
-            !IsPlayingSetItemTest(_argument, item)) return;
+        if (!IsNormalPlayingTest(_argument, item)) return;
 
         SelectTargetTestSuccess();
     }
 
-    bool IsPlayingUseItemTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
+    bool IsNormalPlayingTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
     {
         if (!_argument.normalPlaying) return true;
-        var val = (zoneType & ScriptManager.ZoneType.Book) |
-            (zoneType & ScriptManager.ZoneType.ItemZone);
 
-        if (val <= 0) return false;
+        if(player.itemZone.nowCanPutCount <= 0 &&
+            (zone.zoneType & ScriptManager.ZoneType.ItemZone) <= 0)return false;
 
-
-        return true;
-    }
-
-    bool IsPlayingUseTrapTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
-    {
-        if (!_argument.normalPlaying) return true;
-        if (zoneType != ScriptManager.ZoneType.ItemZone) return false;
-
-
-
-
-        return true;
-    }
-
-
-    bool IsPlayingSetItemTest(ScriptManager.SelectCardArgument _argument, ItemCardData _data)
-    {
         return true;
     }
 
