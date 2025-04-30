@@ -76,7 +76,7 @@ public class CardData
     public int cardType = 0;
     public ScriptData[] script = null;
     public int initBookPos = 0;
-    public int havePlayer = -1;
+    public Player havePlayer = null;
 
     static public CardData CreateCardDataFromDTO(CardAPIBase.CardDataDTO data)
     {
