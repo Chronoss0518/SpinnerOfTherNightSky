@@ -85,7 +85,6 @@ public class ScriptManager
         Trap = 4
     }
 
-    [System.Serializable]
     public class ScriptArgument
     {
         public ScriptType type;
