@@ -61,6 +61,8 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
             if (act.moveZone == ScriptManager.ZoneType.MagicZone && targetCards[i].type == CardData.CardType.Item) continue;
             if (act.moveZone == ScriptManager.ZoneType.ItemZone && targetCards[i].type == CardData.CardType.Magic) continue;
 
+            if (act.moveZone == targetCards[i].zone.zoneType) continue;
+
             var card = targetCards[i].baseData;
             var zone = targetCards[i].zone;
 
