@@ -57,15 +57,15 @@ public class MagicZoneManager : ZoneScriptBase
         return magicList[_num].baseCardObj;
     }
 
-    public void PutCard(Player _player, GameManager _manager, CardData _card)
+    public void PutCard(CardData _card)
     {
         if (_card == null) return;
         if (_card.cardType == (int)CardData.CardType.Magic) return;
-        if (_manager == null) return;
-        if (_manager.cardPrefab == null) return;
-        var obj = Instantiate(_manager.cardPrefab, transform);
+        if (manager == null) return;
+        if (manager.cardPrefab == null) return;
+        var obj = Instantiate(manager.cardPrefab, transform);
         var script = obj.GetComponent<CardScript>();
-        script.Init(_player, _manager, _card, this);
+        script.Init(player, manager, _card, this);
         magicList.Add(script.GetComponent<MagicCardScript>());
         CardSort();
     }

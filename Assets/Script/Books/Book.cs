@@ -32,9 +32,11 @@ public class Book : ZoneScriptBase
 
     public bool initFlg { get; private set; } = false;
 
-    public void Init()
+    public override void Init(Player _player, GameManager _manager)
     {
+        base.Init(_player, _manager);
         if (initFlg) return;
+
         initFlg = true;
         
         for (int i = 0; i<paperObject.Length; i++)
@@ -50,12 +52,12 @@ public class Book : ZoneScriptBase
         ActiveTest(backButton, false);
     }
 
-    public void InitCard(Player _player,GameManager _manager,CardData[] _cardList)
+    public void InitCard(CardData[] _cardList)
     {
         foreach(var card in _cardList)
         {
-            card.havePlayer = _manager.GetPlayerNum(_player);
-            PutCard(_player,_manager, card);
+            card.havePlayer = player;
+            PutCard(card);
         }
     }
 
@@ -119,11 +121,11 @@ public class Book : ZoneScriptBase
         ActiveTest(backButton, nowPage > 0 );
     }
 
-    public void PutCard(Player _player, GameManager _manager,CardData _card)
+    public void PutCard(CardData _card)
     {
         if (_card == null) return;
-        if (_manager == null) return;
-        cardSocketList[_card.initBookPos].PutCard(_player, _manager, _card, this);
+        if (manager == null) return;
+        cardSocketList[_card.initBookPos].PutCard(player, manager, _card, this);
     }
 
     override public void RemoveCard(CardData _card)

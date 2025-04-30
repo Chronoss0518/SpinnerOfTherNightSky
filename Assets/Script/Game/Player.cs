@@ -96,7 +96,9 @@ public class Player : MonoBehaviour
     {
         cardData = _cardData;
 
-        itemZone.Init(gameManager);
+        itemZone.Init(this,gameManager);
+        trashZone.Init(this,gameManager);
+        magicZone.Init(this,gameManager);
 
         initFlg = true;
 
@@ -104,8 +106,8 @@ public class Player : MonoBehaviour
         if (book == null) return;
         if (book.initFlg) return;
 
-        book.Init();
-        book.InitCard(this, gameManager, cardData);
+        book.Init(this, gameManager);
+        book.InitCard(cardData);
 
         UpdateBookParent();
 

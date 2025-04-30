@@ -16,11 +16,12 @@ public class ItemZoneManager : ZoneScriptBase
         zoneType = ScriptManager.ZoneType.ItemZone;
     }
 
-    public void Init(GameManager _manager)
+    public override void Init(Player _player, GameManager _manager)
     {
+        base.Init(_player, _manager);
         for (int i = 0; i<PUT_ITEM_COUNT; i++)
         {
-            items[i].Init(this,i, _manager);
+            items[i].Init(this,i, manager);
         }
     }
 
@@ -91,14 +92,14 @@ public class ItemZoneManager : ZoneScriptBase
         }
     }
 
-    public void PutCard(int _num, Player _player, GameManager _manager, CardData _card,bool _openFlg = false)
+    public void PutCard(int _num, CardData _card,bool _openFlg = false)
     {
         if (_card == null) return;
         if (_card.cardType == (int)CardData.CardType.Magic) return;
-        if (_manager == null) return;
-        if (_manager.cardPrefab == null) return;
+        if (manager == null) return;
+        if (manager.cardPrefab == null) return;
         if (!IsNumTest(_num)) return;
-        items[_num].SetItemCard(_card, _player, _manager,this, _openFlg);
+        items[_num].SetItemCard(_card, player, manager,this, _openFlg);
     }
 
     public void RemoveCard(int _num)
