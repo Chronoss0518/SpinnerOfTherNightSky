@@ -33,7 +33,23 @@ public class ItemZoneManager : ZoneScriptBase
 
             for (int i = 0; i < PUT_ITEM_COUNT; i++)
             {
-                if (items[i] == null) continue;
+                if (!items[i].IsPutCard()) continue;
+                res++;
+            }
+
+            return res;
+        }
+    }
+
+    public int nowCanPutCount
+    {
+        get
+        {
+            int res = 0;
+
+            for (int i = 0; i < PUT_ITEM_COUNT; i++)
+            {
+                if (items[i].IsPutCard()) continue;
                 res++;
             }
 
@@ -107,14 +123,12 @@ public class ItemZoneManager : ZoneScriptBase
     {
         if (!IsNumTest(_num)) return;
         if (items[_num] == null) return;
-
-        items[_num] = Instantiate(items[_num], transform);
-        items[_num].transform.localPosition = new Vector3((_num - 1) * PUT_POSITION, 0.0f, 0.0f);
+        items[_num].SetOpenFlg(true);
     }
 
     private bool IsNumTest(int _num)
     {
-        return (_num > 0 && _num < PUT_ITEM_COUNT);
+        return (_num >= 0 && _num < PUT_ITEM_COUNT);
     }
 
 }
