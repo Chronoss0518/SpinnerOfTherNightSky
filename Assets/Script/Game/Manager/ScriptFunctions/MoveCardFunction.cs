@@ -1,3 +1,5 @@
+using System.Collections.Generic;
+
 public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 {
     public MoveCardFunction(ScriptManager _manager) : base(_manager) { }
@@ -56,6 +58,8 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 
         var act = (ScriptManager.MoveCardArgument)_script;
 
+        List<CardScript> moveAfterCard = new List<CardScript>();
+
         for (int i = 0; i< targetCards.Count; i++)
         {
             if (act.moveZone == ScriptManager.ZoneType.MagicZone && targetCards[i].type == CardData.CardType.Item) continue;
@@ -71,19 +75,24 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 
             zone.RemoveCard(card);
 
+
             if (act.moveZone == ScriptManager.ZoneType.MagicZone)
-                player.magicZone.PutCard(card);
+                moveAfterCard.Add(player.magicZone.PutCard(card));
 
             if (act.moveZone == ScriptManager.ZoneType.ItemZone)
-                player.itemZone.PutCard(targetItemZonePos.position, card, act.openFlg);
+                moveAfterCard.Add(player.itemZone.PutCard(targetItemZonePos.position, card, act.openFlg));
 
             if (act.moveZone == ScriptManager.ZoneType.TrashZone)
-                player.trashZone.PutCard(card);
+                moveAfterCard.Add(player.trashZone.PutCard(card));
 
             if (act.moveZone == ScriptManager.ZoneType.Book)
-                player.bookZone.PutCard(card);
+                moveAfterCard.Add(player.bookZone.PutCard(card));
 
         }
+
+        targetCards.RemoveAll(card=>true);
+
+        targetCards.AddRange(moveAfterCard);
 
         AddUseScriptCount();
 
