@@ -44,7 +44,6 @@ public class OpenItemZoneCardFunction : ScriptManager.ScriptFunctionBase
         if (targetItemZonePos.IsOpen()) return;
 
         targetItemZonePos.SetOpenFlg(true);
-
     }
 
 }

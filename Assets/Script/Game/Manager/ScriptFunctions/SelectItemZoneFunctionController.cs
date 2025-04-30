@@ -40,6 +40,21 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
             return true;
         }
 
+        bool actionFlg = false;
+
+        foreach(var card in targetCards)
+        {
+            if (card.zone.zoneType == ZoneType.ItemZone) continue;
+            actionFlg = true;
+            break;
+        }
+
+        if(!actionFlg)
+        {
+            manager.AddUseScriptCount();
+            return true;
+        }
+
         var act = (SelectItemZoneArgument)_script;
 
         _controller.ActionStart();
