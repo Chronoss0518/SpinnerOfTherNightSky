@@ -90,7 +90,7 @@ public class MoveCardFunction : ScriptManager.ScriptFunctionBase
 
         }
 
-        targetCards.RemoveAll(card=>true);
+        targetCards.Clear();
 
         targetCards.AddRange(moveAfterCard);
 
