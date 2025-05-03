@@ -5,7 +5,8 @@ using UnityEngine;
 
 public class MagicCardScript : CardScript.CardScriptBase
 {
-    RectInt starPosSize = new RectInt(0, 0, 0, 0);
+    Vector2Int starPosMaxPos = Vector2Int.zero;
+    Vector2Int starPosMinPos = new Vector2Int(99,99);
     
     //ˆê”Ô¶‘¤‚É‚ ‚èŽž“_‚Åˆê”Ôã‚ÌˆÊ’u((1,2)‚Æ(2,1)‚Å‚Í(1,2)‚ð—Dæ‚·‚é)//
     Vector2Int starPosLeftTopPos = Vector2Int.zero;
@@ -47,20 +48,26 @@ public class MagicCardScript : CardScript.CardScriptBase
         SetAttribute(magicData.month);
         SetPoint(magicData.point);
 
-        starPosSize.xMin =  starPosSize.yMin = 99;
-        starPosSize.xMax = starPosSize.yMax = 0;
+
 
         foreach (var pos in magicData.starPos)
         {
-            starPosSize.xMin = starPosSize.xMin > pos.x ? pos.x : starPosSize.xMin;
-            starPosSize.xMax = starPosSize.xMax < pos.x ? pos.x : starPosSize.xMax;
-            starPosSize.yMin = starPosSize.yMin > pos.y ? pos.y : starPosSize.yMin;
-            starPosSize.yMax = starPosSize.yMax > pos.y ? pos.y : starPosSize.yMax;
+            starPosMinPos.x = starPosMinPos.x > pos.x ? pos.x : starPosMinPos.x;
+            starPosMaxPos.x = starPosMaxPos.x < pos.x ? pos.x : starPosMaxPos.x;
+            starPosMinPos.y = starPosMinPos.y > pos.y ? pos.y : starPosMinPos.y;
+            starPosMaxPos.y = starPosMaxPos.y < pos.y ? pos.y : starPosMaxPos.y;
 
-            if (starPosLeftTopPos.x < pos.x) continue;
-            if (starPosLeftTopPos.y < pos.y) continue;
+            if (starPosLeftTopPos.x <= pos.x) continue;
+            if (starPosLeftTopPos.y <= pos.y) continue;
             starPosLeftTopPos = pos;
         }
+
+
+
+        Debug.Log($"[{_data.name}] Is Create StarData \n" +
+            $"StarPosSize MinX[{starPosMinPos.x}]MinY[{starPosMinPos.y}] MaxX[{starPosMaxPos.x}]MaxY[{starPosMaxPos.y}] \n"+
+            $"starPosLeftTopPos X[{starPosLeftTopPos.x}]Y[{starPosLeftTopPos.y}]");
+
     }
 
     public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
@@ -108,9 +115,9 @@ public class MagicCardScript : CardScript.CardScriptBase
 
         var stoneBoard = manager.stoneBoardObj;
 
-        for (int v = starPosLeftTopPos.y; v < stoneBoard.VERTICAL_SIZE - starPosSize.yMax; v++)
+        for (int v = starPosLeftTopPos.y; v < stoneBoard.VERTICAL_SIZE - (starPosMaxPos.y - starPosMinPos.y); v++)
         {
-            for (int h = starPosLeftTopPos.x; h < stoneBoard.VERTICAL_SIZE - starPosSize.xMax; h++)
+            for (int h = starPosLeftTopPos.x; h < stoneBoard.VERTICAL_SIZE -(starPosMaxPos.x - starPosMinPos.x); h++)
             {
                 if (!stoneBoard.IsPutStone(v, h)) continue;
                 if (!FindStarPos(h, v, _data, stoneBoard)) continue;
@@ -126,6 +133,7 @@ public class MagicCardScript : CardScript.CardScriptBase
     {
         foreach(var pos in _data.starPos)
         {
+            Debug.Log($"Test Value  X[{targetX + pos.x}],Y[{targetY + pos.y}]");
             if (!_stoneBoard.IsPutStone(targetX + pos.x, targetY + pos.y))
                 return false;
         }
