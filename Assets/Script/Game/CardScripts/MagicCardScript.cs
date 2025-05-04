@@ -119,7 +119,7 @@ public class MagicCardScript : CardScript.CardScriptBase
         {
             for (int h = starPosLeftTopPos.x; h < stoneBoard.HOLYZONTAL_SIZE -(starPosMaxPos.x - starPosMinPos.x); h++)
             {
-                if (!stoneBoard.IsPutStone(h, v)) continue;
+                if (!stoneBoard.IsPutStone(h + starPosLeftTopPos.x, v + starPosLeftTopPos.y)) continue;
                 if (!FindStarPos(h, v, _data, stoneBoard)) continue;
                 return true;
             }
@@ -131,13 +131,10 @@ public class MagicCardScript : CardScript.CardScriptBase
 
     bool FindStarPos(int targetX, int targetY, MagicCardData _data,StoneBoardManager _stoneBoard)
     {
-        var startPos = _data.starPos[0];
-
 
         foreach (var pos in _data.starPos)
         {
-            Debug.Log($"[{_data.name}]: Test Value  X[{targetX + pos.x}],Y[{targetY + pos.y}]");
-            if (!_stoneBoard.IsPutStone(targetX + pos.x - startPos.x, targetY + pos.y - startPos.y))
+            if (!_stoneBoard.IsPutStone(targetX + pos.x - starPosLeftTopPos.x, targetY + pos.y - starPosLeftTopPos.y))
                 return false;
         }
 
