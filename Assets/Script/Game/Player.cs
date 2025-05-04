@@ -68,6 +68,9 @@ public class Player : MonoBehaviour
 
     public void SelectTargetStart(ScriptManager.SelectCardArgument _action, Player _runPlayer)
     {
+        if (_action.playerType == 1 && ReferenceEquals(_runPlayer, this)) return;
+        if (_action.playerType == 0 && !ReferenceEquals(_runPlayer, this)) return;
+
         if ((_action.zoneType & ScriptManager.ZoneType.Book) > 0 && book != null) book.SelectTargetTest(_action, _runPlayer);
         if ((_action.zoneType & ScriptManager.ZoneType.ItemZone) > 0 && itemZone != null) itemZone.SelectTargetTest(_action, _runPlayer);
         if ((_action.zoneType & ScriptManager.ZoneType.TrashZone) > 0 && trashZone != null) trashZone.SelectTargetTest(_action, _runPlayer);
