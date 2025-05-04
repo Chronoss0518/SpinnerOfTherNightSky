@@ -5,7 +5,7 @@ using UnityEngine;
 
 public class TrashZoneManager : ZoneScriptBase
 {
-    const float PUT_POSITION = 1.5f;
+    const float PUT_POSITION = 0.3f;
     const float PUT_OVERLAP_POSITION = 0.02f;
 
     public TrashZoneManager()
