@@ -19,7 +19,6 @@ public class SetTrap : TurnManager.TurnClass
 
     public override void Init()
     {
-        base.Init();
         var player = gameManager.GetNowPlayer();
         beforeSetCount = player.itemZone.nowPutCount;
     }

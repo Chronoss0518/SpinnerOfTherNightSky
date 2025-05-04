@@ -11,8 +11,6 @@ public class UseItem : TurnManager.TurnClass
 
     int beforeStackCount = 0;
 
-    int tmpNowPlayerCount = 0;
-
     int scriptUsePlayerCount = 0;
 
     int passPlayerCount = 0;
@@ -41,8 +39,7 @@ public class UseItem : TurnManager.TurnClass
         scriptUsePlayerCount = 0;
         beforeStackCount = 0;
         passPlayerCount = 0;
-        tmpNowPlayerCount = gameManager.nowPlayerCount;
-        gameManager.RegistScript(selectItem);
+        gameManager.RegistScript(selectItem, gameManager.nowPlayerNo);
     }
 
     public override void Update()
@@ -50,21 +47,20 @@ public class UseItem : TurnManager.TurnClass
         if (reRunFlg)
         {
             reRunFlg = false;
-            gameManager.SetNowPlayerCount(tmpNowPlayerCount);
             Init();
             return;
         }
 
-
         int tmpCount = gameManager.stackCount;
 
-        if (beforeStackCount <= 0 && beforeStackCount >= tmpCount)
+        if (beforeStackCount <= 0 &&
+            beforeStackCount >= tmpCount)
         {
             ChangeTurn();
             return;
         }
 
-        if(gameManager.playersCount >= passPlayerCount)
+        if(gameManager.playersCount <= passPlayerCount + 1)
         {
             gameManager.RunStackScriptStart();
             reRunFlg = true;
@@ -73,24 +69,22 @@ public class UseItem : TurnManager.TurnClass
 
         if(beforeStackCount < tmpCount)
         {
-            scriptUsePlayerCount = gameManager.nowPlayerCount + passPlayerCount;
+            scriptUsePlayerCount = scriptUsePlayerCount + passPlayerCount;
             passPlayerCount = 0;
-            gameManager.SetNowPlayerCount(scriptUsePlayerCount + 1);
-            gameManager.RegistScript(selectTrap);
+            beforeStackCount = tmpCount;
+
+            gameManager.RegistScript(selectTrap, scriptUsePlayerCount + 1);
             return;
         }
 
         passPlayerCount++;
 
-        gameManager.SetNowPlayerCount(scriptUsePlayerCount + passPlayerCount);
-
-        gameManager.RegistScript(selectItem);
+        gameManager.RegistScript(selectTrap, scriptUsePlayerCount + passPlayerCount);
 
     }
 
     public override void Next()
     {
-        gameManager.SetNowPlayerCount(tmpNowPlayerCount);
         SetMainStep(TurnManager.MainStep.PutStone);
     }
 }

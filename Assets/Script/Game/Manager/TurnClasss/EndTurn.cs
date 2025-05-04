@@ -10,7 +10,7 @@ public class EndTurn : TurnManager.TurnClass
 
     public override void Next()
     {
-        gameManager.AddNowPlayerCount();
+        gameManager.AddNowPlayerNo();
         SetMainStep(TurnManager.MainStep.StartTurn);
     }
 }

@@ -13,7 +13,7 @@ public class PlayMagic : TurnManager.TurnClass
         selectCard = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 0 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5 --normal-playing"),
-               new ScriptParts((int)ScriptManager.ScriptType.MoveCard, "--open-item-zone"),
+               new ScriptParts((int)ScriptManager.ScriptType.OpenItemZoneCard, ""),
                 new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
     }
 
@@ -25,51 +25,64 @@ public class PlayMagic : TurnManager.TurnClass
 
     int beforeStackCount = 0;
 
-    int tmpNowPlayerCount = 0;
-
     int scriptUsePlayerCount = 0;
 
     int passPlayerCount = 0;
 
+    int nowMagicPlayerCount = 0;
+
     public override void Init()
     {
-        base.Init();
         beforeStackCount = 0;
-        tmpNowPlayerCount = gameManager.nowPlayerCount;
+        nowMagicPlayerCount = 0;
+        passPlayerCount = 0;
+
         gameManager.RegistScript(selectMagic);
     }
 
     public override void Update()
     {
+        if(gameManager.playersCount <= nowMagicPlayerCount)
+        {
+            ChangeTurn();
+            return;
+        }
+
         int tmpCount = gameManager.stackCount;
 
-        if (gameManager.playersCount >= passPlayerCount)
+        if (beforeStackCount <= 0 &&
+            beforeStackCount >= tmpCount)
+        {
+            nowMagicPlayerCount++;
+            passPlayerCount = 0;
+            gameManager.RegistScript(selectMagic,gameManager.nowPlayerNo + nowMagicPlayerCount);
+            return;
+        }
+
+        if (gameManager.playersCount <= passPlayerCount + 1)
         {
             gameManager.RunStackScriptStart();
-            ChangeTurn();
             return;
         }
 
         if (beforeStackCount < tmpCount)
         {
-            scriptUsePlayerCount = gameManager.nowPlayerCount + passPlayerCount;
-            passPlayerCount = 1;
-            gameManager.SetNowPlayerCount(scriptUsePlayerCount + 1);
-            gameManager.RegistScript(selectCard);
+            scriptUsePlayerCount = gameManager.nowPlayerNo + passPlayerCount + nowMagicPlayerCount;
+            beforeStackCount = tmpCount;
+            passPlayerCount = 0;
+            gameManager.RegistScript(selectCard, scriptUsePlayerCount + 1);
             return;
         }
 
         passPlayerCount++;
 
-        gameManager.SetNowPlayerCount(scriptUsePlayerCount + passPlayerCount);
+        gameManager.RegistScript(selectCard, scriptUsePlayerCount + passPlayerCount);
 
-        gameManager.RegistScript(selectCard);
 
     }
 
     public override void Next()
     {
-        gameManager.SetNowPlayerCount(tmpNowPlayerCount);
         SetMainStep(TurnManager.MainStep.SetTrap);
     }
 }
