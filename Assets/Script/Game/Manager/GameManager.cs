@@ -25,8 +25,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Camera cameraObject = null;
 
-    [SerializeField]
-    public int nowPlayerCount { get; private set; } = 0;
+    public int nowPlayerNo { get; private set; } = 0;
+    
+    public int useScriptPlayerNo { get; private set; } = 0;
 
     //ScriptŠÖŒW//
 
@@ -35,7 +36,6 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
-
 
     public class StackObject
     {
@@ -101,7 +101,7 @@ public class GameManager : MonoBehaviour
     {
         for(int i = 0;i<players.Count;i++)
         {
-            players[i].SelectTargetStart(_action, players[nowPlayerCount]);
+            players[i].SelectTargetStart(_action, players[nowPlayerNo]);
         }
     }
 
@@ -122,8 +122,8 @@ public class GameManager : MonoBehaviour
     {
         for (int i = 0; i<players.Count; i++)
         {
-            if (_action.selectTarget == 1 && i != nowPlayerCount) continue;
-            if (_action.selectTarget == 2 && i == nowPlayerCount) continue;
+            if (_action.selectTarget == 1 && i != nowPlayerNo) continue;
+            if (_action.selectTarget == 2 && i == nowPlayerNo) continue;
 
             players[i].SelectTargetItemZoneStart();
         }
@@ -159,33 +159,24 @@ public class GameManager : MonoBehaviour
         return players[_num];
     }
 
-    public int GetPlayerNum(Player _player)
-    {
-        if (_player == null) return -1;
-        for(int i = 0;i<players.Count;i++)
-        {
-            if (!players[i].gameObject.Equals(_player.gameObject)) continue;
-            return i;
-        }
-        return -1;
-    }
-
     public Player GetNowPlayer()
     {
-        return players[nowPlayerCount];
+        return players[nowPlayerNo];
     }
 
-    public void AddNowPlayerCount()
+    public void AddNowPlayerNo()
     {
-        nowPlayerCount++;
-        nowPlayerCount %= players.Count;
+        nowPlayerNo++;
+        nowPlayerNo %= players.Count;
     }
 
-    public void SetNowPlayerCount(int _count)
+    public void SetUseScriptPlayerNo(int _count)
     {
-        if (_count <= 0) return;
-        nowPlayerCount = _count;
-        nowPlayerCount %= players.Count;
+        if (_count <= 0)
+            _count = nowPlayerNo;
+
+        useScriptPlayerNo = _count;
+        useScriptPlayerNo %= players.Count;
     }
 
     public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data)
@@ -193,8 +184,9 @@ public class GameManager : MonoBehaviour
         return scriptManager.CreateScript(_data);
     }
 
-    public void RegistScript(ScriptManager.ScriptArgumentData _script)
+    public void RegistScript(ScriptManager.ScriptArgumentData _script,int _useScriptPlayerNo = -1)
     {
+        SetUseScriptPlayerNo(_useScriptPlayerNo);
         scriptManager.SetRunScript(_script);
     }
 
@@ -243,7 +235,7 @@ public class GameManager : MonoBehaviour
 
         StackUpdate();
 
-        var controller = players[nowPlayerCount].GetComponent<ControllerBase>();
+        var controller = players[useScriptPlayerNo].GetComponent<ControllerBase>();
 
         scriptManager.RunScript(controller, this);
         
@@ -269,6 +261,8 @@ public class GameManager : MonoBehaviour
 
         scriptManager.CreateScript(playCardScript.card.script[0], true);
 
+        useScriptPlayerNo = playCardScript.player.playerNo;
+
         if (stack.Count > 0) return;
         runStackFlg = false;
     }
@@ -280,8 +274,12 @@ public class GameManager : MonoBehaviour
         if (!IsInitializPlayers()) return;
 
 
-
         stoneBoard.PutRandomStone(manager.randomPutStone, initRandomPutStone);
+
+        for(int i = 0;i<players.Count;i++)
+        {
+            players[i].transform.localRotation = Quaternion.Euler(0.0f, 90 * i, 0.0f);
+        }
 
         initFlg = true;
     }
@@ -343,7 +341,7 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            playerCom.Init(cards.ToArray(), true);
+            playerCom.Init(cards.ToArray(),playersCount - 1, true);
         }));
 
         cameraObject.transform.SetParent(playerCom.transform);
@@ -383,7 +381,7 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            _player.Init(cards.ToArray());
+            _player.Init(cards.ToArray(), playersCount - 1);
         }));
     }
 
