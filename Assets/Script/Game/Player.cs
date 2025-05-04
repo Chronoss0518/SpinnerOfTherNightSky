@@ -102,12 +102,11 @@ public class Player : MonoBehaviour
 
         initFlg = true;
 
-        if (!_createBookObject) return;
-        if (book == null) return;
-        if (book.initFlg) return;
-
         book.Init(this, gameManager);
         book.InitCard(cardData);
+
+        if (!_createBookObject)
+            book.gameObject.SetActive(false);
 
         UpdateBookParent();
 
@@ -149,8 +148,6 @@ public class Player : MonoBehaviour
 
     void RemoveUnLocalPlayerObject()
     {
-        if (book != null)
-            Destroy(book.gameObject);
         if (bookObjectPos != null)
             Destroy(bookObjectPos);
         if (visibleButtonCanvas != null)
