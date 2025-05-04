@@ -16,13 +16,13 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField]
     private int HOLYZONTAL = 13;
 
-    public int HOLYZONTAL_SIZE { get { return HOLYZONTAL; } }
+    public int HOLYZONTAL_SIZE { get { return HOLYZONTAL - 1; } }
 
     [SerializeField]
     //Vertical : êÇíº//
     private int VERTICAL = 13;
 
-    public int VERTICAL_SIZE { get { return VERTICAL; } }
+    public int VERTICAL_SIZE { get { return VERTICAL - 1; } }
 
     [SerializeField]
     MeshFilter boardObject = null;
@@ -59,7 +59,7 @@ public class StoneBoardManager : MonoBehaviour
     {
         if (!IsRange(_x, _y)) return;
 
-        stoneList[_x][_y].PutStone(_stone);
+        stoneList[_y][_x].PutStone(_stone);
     }
 
     public void PutRandomStone(int putCount, GameObject _stone)
@@ -67,7 +67,7 @@ public class StoneBoardManager : MonoBehaviour
         if (_stone == null) return;
         if (putCount <= 0) return;
 
-        int fieldSize = (VERTICAL -1) * (HOLYZONTAL - 1);
+        int fieldSize = (VERTICAL_SIZE) * (HOLYZONTAL_SIZE);
         Vector2Int[] positions = new Vector2Int[fieldSize];
         int[] numList = new int[fieldSize];
 
@@ -75,7 +75,7 @@ public class StoneBoardManager : MonoBehaviour
 
         for (tmpLoopCount = 0; tmpLoopCount < fieldSize; tmpLoopCount++)
         {
-            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (HOLYZONTAL - 1), tmpLoopCount / (HOLYZONTAL - 1));
+            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (HOLYZONTAL_SIZE), tmpLoopCount / (VERTICAL_SIZE));
             numList[tmpLoopCount] = tmpLoopCount;
         }
 
@@ -108,48 +108,48 @@ public class StoneBoardManager : MonoBehaviour
     {
         if (IsPutStone(_x,_y)) return;
 
-        stoneList[_x][_y].RemovePutStone();
+        stoneList[_y][_x].RemovePutStone();
     }
 
     public void SelectStonePos(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return;
 
-        stoneList[_x][_y].SelectStonePos();
+        stoneList[_y][_x].SelectStonePos();
     }
 
     public void UnSelectStonePos(int _x, int _y)
     {
         if (!IsSelectStonePos(_x, _y)) return;
 
-        stoneList[_x][_y].UnSelectStonePos();
+        stoneList[_y][_x].UnSelectStonePos();
     }
 
     public bool IsRange(int _x, int _y)
     {
         return
-            _x >= 0 && _x < HOLYZONTAL &&
-            _y >= 0 && _y < VERTICAL;
+            _x >= 0 && _x < HOLYZONTAL_SIZE &&
+            _y >= 0 && _y < VERTICAL_SIZE;
     }
 
     public bool IsPutStone(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return false;
 
-        return stoneList[_x][_y].IsPutStone();
+        return stoneList[_y][_x].IsPutStone();
     }
 
     public bool IsSelectStonePos(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return false;
 
-        return stoneList[_x][_y].IsPutStone();
+        return stoneList[_y][_x].IsPutStone();
     }
 
     public StonePosScript GetStonePosScript(int _x,int _y)
     {
         if (!IsRange(_x, _y)) return null;
-        return stoneList[_x][_y];
+        return stoneList[_y][_x];
     }
 
     public void Init()
@@ -162,7 +162,7 @@ public class StoneBoardManager : MonoBehaviour
 
         stoneList.Clear();
 
-        for (int i = 0; i<VERTICAL - 1; i++)
+        for (int i = 0; i<VERTICAL_SIZE; i++)
         {
             pos.x = startPos.x;
             stoneList.Add(new List<StonePosScript>());
@@ -171,11 +171,11 @@ public class StoneBoardManager : MonoBehaviour
             verticalPos.transform.SetParent(transform);
             verticalPos.transform.localPosition = pos;
             float tmpVPos = 0.0f;
-            for (int j = 0; j < HOLYZONTAL - 1; j++)
+            for (int j = 0; j < HOLYZONTAL_SIZE; j++)
             {
                 var stonePos = Instantiate(stonePosPrefab, verticalPos.transform);
 
-                InitStonePos(stonePos, tmpVPos, new Vector2Int(i, j));
+                InitStonePos(stonePos, tmpVPos, new Vector2Int(j,i));
 
                 stoneList[i].Add(stonePos.GetComponent<StonePosScript>());
                 tmpVPos += interval.x;
