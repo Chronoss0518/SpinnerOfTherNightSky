@@ -355,19 +355,21 @@ MonoBehaviour:
   playerPrefab: {fileID: 2431698666257173391, guid: 2449ad3d1ab7e13489b79cd49a1faae1, type: 3}
   cameraObject: {fileID: 849056416}
   scriptManager:
+    targetCards: []
+    targetItemZonePos: {fileID: 0}
     useScriptCount: 0
     errorMessageDrawMaxCount: 180
     errorMessageDrawCount: -1
     errorType: 0
   turnManager:
     mainStep: 0
-  stack: []
   stoneBoard: {fileID: 340119966476239371}
   manager:
     IS_DEBUG_FLG: 1
     IS_MOCK_FLG: 1
     gameType: 0
     memberFlgs: 00000000010000000300000003000000
+    localGameFlg: 1
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
@@ -831,11 +833,13 @@ MonoBehaviour:
     IS_MOCK_FLG: 1
     gameType: 0
     memberFlgs: 00000000010000000300000003000000
+    localGameFlg: 1
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
   gameType: 0
   memberFlgs: 00000000010000000300000003000000
+  localGameFlg: 1
   useBookNo: 0
   randomPutStone: 10
 --- !u!4 &1813436577
