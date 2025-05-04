@@ -48,8 +48,6 @@ public class MagicCardScript : CardScript.CardScriptBase
         SetAttribute(magicData.month);
         SetPoint(magicData.point);
 
-
-
         foreach (var pos in magicData.starPos)
         {
             starPosMinPos.x = starPosMinPos.x > pos.x ? pos.x : starPosMinPos.x;
@@ -61,12 +59,6 @@ public class MagicCardScript : CardScript.CardScriptBase
             if (starPosLeftTopPos.y <= pos.y) continue;
             starPosLeftTopPos = pos;
         }
-
-
-
-        Debug.Log($"[{_data.name}] Is Create StarData \n" +
-            $"StarPosSize MinX[{starPosMinPos.x}]MinY[{starPosMinPos.y}] MaxX[{starPosMaxPos.x}]MaxY[{starPosMaxPos.y}] \n"+
-            $"starPosLeftTopPos X[{starPosLeftTopPos.x}]Y[{starPosLeftTopPos.y}]");
 
     }
 
@@ -86,23 +78,26 @@ public class MagicCardScript : CardScript.CardScriptBase
         SelectTargetTestSuccess();
     }
 
-    public void RemoveStoneTest()
+    public void RemoveStone()
     {
-        
+        var magic = (MagicCardData)baseData;
+        FindStarPosOnBoard(magic);
+
     }
 
     bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
     {
         if (_argument.magicAttributeMonth.Count > 0)
         {
-            int loopCount = 0;
-            for (loopCount = 0; loopCount < _argument.magicAttributeMonth.Count; loopCount++)
+            bool findFlg = false;
+            for (int loopCount = 0; loopCount < _argument.magicAttributeMonth.Count; loopCount++)
             {
                 int month = _argument.magicAttributeMonth[loopCount];
-                if (_data.month == month) break;
+                if (_data.month != month) continue;
+                findFlg = true;
+                break;
             }
-
-            if (loopCount >= _argument.magicAttributeMonth.Count) return false;
+            if (!findFlg) return false;
         }
 
         return true;
@@ -113,13 +108,18 @@ public class MagicCardScript : CardScript.CardScriptBase
     {
         if (!_argument.normalPlaying) return true;
 
+        return FindStarPosOnBoard(_data);
+    }
+
+    bool FindStarPosOnBoard(MagicCardData _data)
+    {
         var stoneBoard = manager.stoneBoardObj;
 
         for (int v = starPosLeftTopPos.y; v < stoneBoard.VERTICAL_SIZE - (starPosMaxPos.y - starPosMinPos.y); v++)
         {
-            for (int h = starPosLeftTopPos.x; h < stoneBoard.VERTICAL_SIZE -(starPosMaxPos.x - starPosMinPos.x); h++)
+            for (int h = starPosLeftTopPos.x; h < stoneBoard.HOLYZONTAL_SIZE -(starPosMaxPos.x - starPosMinPos.x); h++)
             {
-                if (!stoneBoard.IsPutStone(v, h)) continue;
+                if (!stoneBoard.IsPutStone(h, v)) continue;
                 if (!FindStarPos(h, v, _data, stoneBoard)) continue;
                 return true;
             }
@@ -131,10 +131,13 @@ public class MagicCardScript : CardScript.CardScriptBase
 
     bool FindStarPos(int targetX, int targetY, MagicCardData _data,StoneBoardManager _stoneBoard)
     {
-        foreach(var pos in _data.starPos)
+        var startPos = _data.starPos[0];
+
+
+        foreach (var pos in _data.starPos)
         {
-            Debug.Log($"Test Value  X[{targetX + pos.x}],Y[{targetY + pos.y}]");
-            if (!_stoneBoard.IsPutStone(targetX + pos.x, targetY + pos.y))
+            Debug.Log($"[{_data.name}]: Test Value  X[{targetX + pos.x}],Y[{targetY + pos.y}]");
+            if (!_stoneBoard.IsPutStone(targetX + pos.x - startPos.x, targetY + pos.y - startPos.y))
                 return false;
         }
 
