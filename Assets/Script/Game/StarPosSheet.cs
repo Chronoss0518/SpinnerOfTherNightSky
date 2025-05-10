@@ -1,3 +1,4 @@
+using ChUnity.Input;
 using System.Collections;
 using System.Collections.Generic;
 using System.Drawing;
@@ -6,6 +7,9 @@ using UnityEngine;
 
 public class StarPosSheet : MonoBehaviour
 {
+    [SerializeField,ReadOnly]
+    PointerManager pointer = PointerManager.instance;
+
     //Horyzontal : êÖïΩ//
     [SerializeField]
     private int HOLYZONTAL = 7;
@@ -35,11 +39,11 @@ public class StarPosSheet : MonoBehaviour
     [SerializeField, ReadOnly]
     private Vector3 startPos = Vector3.zero;
 
-    public Vector2 beforePoint = Vector2.zero;
 
     [SerializeField,ReadOnly]
     StoneBoardManager stoneBoard = null;
 
+    [SerializeField,ReadOnly]
     bool movePanelFlg = false;
 
     public void PointDownGrip() { movePanelFlg = true; }
@@ -79,11 +83,11 @@ public class StarPosSheet : MonoBehaviour
     {
         InitPanelSize();
 
-        starPosList = new GameObject[HOLYZONTAL_SIZE][];
+        starPosList = new GameObject[VERTICAL_SIZE][];
 
 
         Vector3 pos = startPos;
-        for (int i = 0; i < HOLYZONTAL_SIZE; i++)
+        for (int i = 0; i < VERTICAL_SIZE; i++)
         {
             pos.x = startPos.x;
             starPosList[i] = new GameObject[HOLYZONTAL_SIZE];
@@ -131,11 +135,23 @@ public class StarPosSheet : MonoBehaviour
             _y >= 0 && _y < VERTICAL_SIZE;
     }
 
+    public void ClearPos()
+    {
+        for (int i = 0; i < VERTICAL_SIZE; i++)
+        {
+            for (int j = 0; j < HOLYZONTAL_SIZE; j++)
+            {
+                starPosList[j][i].SetActive(false);
+            }
+        }
+    }
+
     void InitStoneSheetPos(float _vPos, Vector2Int _pos, GameObject _verticalPos)
     {
         var starPos = Instantiate(starPosPrefab, _verticalPos.transform);
 
         starPos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
+        starPos.SetActive(false);
 
         starPosList[_pos.y][_pos.x] = starPos;
     }
@@ -177,8 +193,14 @@ public class StarPosSheet : MonoBehaviour
     {
         if (!movePanelFlg) return;
 
-        
+        Vector2 tmp = pointer.endPoint - pointer.beforePoint;
 
+        Vector3 movePos = Vector3.zero;
+
+        movePos.x += tmp.x;
+        movePos.z += tmp.y;
+
+        transform.localPosition += movePos;
     }
 
 
