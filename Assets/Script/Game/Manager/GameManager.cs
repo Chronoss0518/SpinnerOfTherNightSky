@@ -3,9 +3,14 @@ using System.Collections.Generic;
 using UnityEngine;
 using Unity.Collections;
 using UnityEngine.UI;
+using ChUnity.Input;
+using Unity.VisualScripting;
+
 
 public class GameManager : MonoBehaviour
 {
+    PointerManager pointerManager = PointerManager.instance;
+
     //Initialize//
     [SerializeField]
     GameObject initRandomPutStone = null;
@@ -76,6 +81,9 @@ public class GameManager : MonoBehaviour
     GameObject cardPrefabBase = null;
 
     public GameObject cardPrefab { get { return cardPrefabBase; } }
+
+    [SerializeField]
+    StarPosSheet starPosSheet = null;
 
     public void AddStackCard(StackObject _card)
     {
@@ -199,7 +207,7 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
-        if (stoneBoard != null) stoneBoard.Init();
+        InitStoneBoadAndStarPos();
 
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
         {
@@ -211,6 +219,20 @@ public class GameManager : MonoBehaviour
         turnManager.Init(this);
 
     }
+
+    void InitStoneBoadAndStarPos()
+    {
+        if (stoneBoard == null) return;
+        stoneBoard.Init();
+
+        if (starPosSheet == null) return;
+
+        starPosSheet.Init();
+
+        starPosSheet.SetStoneBoard(stoneBoard);
+
+    }
+
 
     bool IsInitializPlayers()
     {
@@ -226,6 +248,8 @@ public class GameManager : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
+        pointerManager.Update();
 
         StartDice();
 
