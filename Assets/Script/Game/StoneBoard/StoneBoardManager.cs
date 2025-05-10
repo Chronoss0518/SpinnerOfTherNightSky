@@ -2,9 +2,6 @@ using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
-using UnityEngine.UIElements;
-
-
 
 public class StoneBoardManager : MonoBehaviour
 {
@@ -36,14 +33,16 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField,ReadOnly]
     private Vector2 interval = Vector2.zero;
 
+    public Vector3 size { get; private set; } = Vector3.zero;
+
     [SerializeField, ReadOnly]
     private Vector3 startPos = Vector3.zero;
 
-    [SerializeField,ReadOnly]
-    List<List<StonePosScript>> stoneList = new List<List<StonePosScript>>();
+    public float stonePosTop { get { return startPos.y; } }
 
-    [SerializeField]
-    List<int> putStoneList = new List<int>();
+
+    [SerializeField,ReadOnly]
+    StonePosScript[][] stoneList = null;
 
     [SerializeField, ReadOnly]
     private bool isBlockFlg = false;
@@ -160,12 +159,13 @@ public class StoneBoardManager : MonoBehaviour
 
         Vector3 pos = startPos;
 
-        stoneList.Clear();
+        stoneList = null;
+        stoneList = new StonePosScript[VERTICAL_SIZE][];
 
         for (int i = 0; i<VERTICAL_SIZE; i++)
         {
             pos.x = startPos.x;
-            stoneList.Add(new List<StonePosScript>());
+            stoneList[i] = new StonePosScript[HOLYZONTAL_SIZE];
 
             var verticalPos = new GameObject("VerticalStonePos");
             verticalPos.transform.SetParent(transform);
@@ -173,11 +173,10 @@ public class StoneBoardManager : MonoBehaviour
             float tmpVPos = 0.0f;
             for (int j = 0; j < HOLYZONTAL_SIZE; j++)
             {
-                var stonePos = Instantiate(stonePosPrefab, verticalPos.transform);
+                var tmpPos = new Vector2Int(j, i);
 
-                InitStonePos(stonePos, tmpVPos, new Vector2Int(j,i));
+                InitStonePos(tmpVPos, tmpPos, verticalPos);
 
-                stoneList[i].Add(stonePos.GetComponent<StonePosScript>());
                 tmpVPos += interval.x;
             }
 
@@ -191,36 +190,43 @@ public class StoneBoardManager : MonoBehaviour
         if (boardObject == null) return;
         var bounds = boardObject.mesh.bounds;
 
-        var size = bounds.max - bounds.min;
+        var tmp = bounds.max - bounds.min;
 
+        tmp = boardObject.transform.localToWorldMatrix.MultiplyPoint(tmp);
 
-        size = boardObject.transform.localToWorldMatrix.MultiplyPoint(size);
+        interval.y = tmp.z / VERTICAL;
+        interval.x = tmp.x / HOLYZONTAL;
 
-        interval.y = size.z / VERTICAL;
-        interval.x = size.x / HOLYZONTAL;
+        var minPos = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.min);
+        var maxPos = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.max);
 
-        var min = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.min);
-        var max = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.max);
-
-        startPos = min;
+        startPos = minPos;
 
         startPos.x += interval.x;
         startPos.z += interval.y;
-        startPos.y = max.y;
+        startPos.y = maxPos.y;
 
+
+        tmp.x = Mathf.Abs(tmp.x);
+        tmp.y = Mathf.Abs(tmp.y);
+        tmp.z = Mathf.Abs(tmp.z);
+        size = tmp;
     }
 
 
 
-    void InitStonePos(GameObject _obj,float _vPos,Vector2Int _pos)
+    void InitStonePos(float _vPos,Vector2Int _pos, GameObject _verticalPos)
     {
-        _obj.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
-        var col = _obj.GetComponent<BoxCollider>();
+        var stonePos = Instantiate(stonePosPrefab, _verticalPos.transform);
+
+        stonePos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
+        var col = stonePos.GetComponent<BoxCollider>();
         col.size = new Vector3(Mathf.Abs(interval.x), 1.0f, Mathf.Abs(interval.y)) * 0.5f;
 
-        var stonePosScript = _obj.GetComponent<StonePosScript>();
+        var stonePosScript = stonePos.GetComponent<StonePosScript>();
         stonePosScript.Init(gameManager, _pos);
 
+        stoneList[_pos.y][_pos.x] = stonePos.GetComponent<StonePosScript>();
     }
 
 
