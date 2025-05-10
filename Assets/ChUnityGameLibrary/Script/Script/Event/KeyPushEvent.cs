@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace ChUnity
+namespace ChUnity.Event
 {
     public enum InputType:int
     {
@@ -23,17 +23,17 @@ namespace ChUnity
 
         static private bool GetPushKeyFlg(KeyCode _key)
         {
-            return Input.GetKey(_key);
+            return UnityEngine.Input.GetKey(_key);
         }
 
         static private bool GetKeyDownFlg(KeyCode _key)
         {
-            return Input.GetKeyDown(_key);
+            return UnityEngine.Input.GetKeyDown(_key);
         }
 
         static private bool GetKeyUpFlg(KeyCode _key)
         {
-            return Input.GetKeyUp(_key);
+            return UnityEngine.Input.GetKeyUp(_key);
         }
 
         InputTypeFlg[] GetFlgs = 

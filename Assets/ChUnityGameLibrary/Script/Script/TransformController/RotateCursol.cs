@@ -24,7 +24,7 @@ namespace ChUnity.Transform
         {
             Start();
 
-            var pos = Input.mousePosition;
+            var pos = UnityEngine.Input.mousePosition;
 
             if (target != null)
             {
