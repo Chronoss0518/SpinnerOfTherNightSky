@@ -5,11 +5,18 @@ using UnityEngine;
 
 public class MagicCardScript : CardScript.CardScriptBase
 {
+    [SerializeField,ReadOnly]
     Vector2Int starPosMaxPos = Vector2Int.zero;
+
+    [SerializeField, ReadOnly]
     Vector2Int starPosMinPos = new Vector2Int(99,99);
-    
+
     //ˆê”Ô¶‘¤‚É‚ ‚èŽž“_‚Åˆê”Ôã‚ÌˆÊ’u((1,2)‚Æ(2,1)‚Å‚Í(1,2)‚ð—Dæ‚·‚é)//
+    [SerializeField, ReadOnly]
     Vector2Int starPosLeftTopPos = new Vector2Int(99, 99);
+
+    [SerializeField, ReadOnly]
+    MagicCardData baseMagic = null;
 
     [SerializeField,ReadOnly]
     private MagicCardData.CardAttribute attribute = MagicCardData.CardAttribute.Spring;
@@ -22,6 +29,7 @@ public class MagicCardScript : CardScript.CardScriptBase
 
     public bool removeStoneFailedFlg { get; private set; } = false;
     public int point { get; private set; } = 0;
+    public Vector2Int[] starPosList { get { return baseMagic.starPos; } }
     public void SetPoint(int _point) { point = _point; }
 
     public void SetAttribute(int _attribute) {
@@ -44,11 +52,11 @@ public class MagicCardScript : CardScript.CardScriptBase
 
     public override void Init(CardData _data)
     {
-        var magicData = (MagicCardData)_data;
-        SetAttribute(magicData.month);
-        SetPoint(magicData.point);
+        baseMagic = (MagicCardData)_data;
+        SetAttribute(baseMagic.month);
+        SetPoint(baseMagic.point);
 
-        foreach (var pos in magicData.starPos)
+        foreach (var pos in baseMagic.starPos)
         {
             starPosMinPos.x = starPosMinPos.x > pos.x ? pos.x : starPosMinPos.x;
             starPosMaxPos.x = starPosMaxPos.x < pos.x ? pos.x : starPosMaxPos.x;
@@ -63,12 +71,6 @@ public class MagicCardScript : CardScript.CardScriptBase
             if (starPosLeftTopPos.x > pos.x)
                 starPosLeftTopPos = pos;
         }
-
-        Debug.Log($"[{_data.name}] Is \n" +
-            $"MinPos X[{starPosMinPos.x}] Y[{starPosMinPos.y}] \n" +
-            $"MaxPos X[{starPosMaxPos.x}] Y[{starPosMaxPos.y}] \n" +
-            $"LtPos X[{starPosLeftTopPos.x}] Y[{starPosLeftTopPos.y}] ");
-
     }
 
     public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
@@ -91,7 +93,6 @@ public class MagicCardScript : CardScript.CardScriptBase
     {
         var magic = (MagicCardData)baseData;
         FindStarPosOnBoard(magic);
-
     }
 
     bool IsPlayingMagicTest(ScriptManager.SelectCardArgument _argument, MagicCardData _data)
@@ -126,7 +127,7 @@ public class MagicCardScript : CardScript.CardScriptBase
 
         for (int v = starPosLeftTopPos.y; v < stoneBoard.PANEL_COUNT_Y - (starPosMaxPos.y - starPosMinPos.y); v++)
         {
-            for (int h = starPosLeftTopPos.x; h < stoneBoard.PANEL_COUNT_X -(starPosMaxPos.x - starPosMinPos.x); h++)
+            for (int h = starPosLeftTopPos.x; h < stoneBoard.PANEL_COUNT_X - (starPosMaxPos.x - starPosMinPos.x); h++)
             {
                 if (!stoneBoard.IsPutStone(h, v)) continue;
                 if (!FindStarPos(h, v, _data, stoneBoard)) continue;
@@ -140,17 +141,17 @@ public class MagicCardScript : CardScript.CardScriptBase
 
     bool FindStarPos(int targetX, int targetY, MagicCardData _data,StoneBoardManager _stoneBoard)
     {
-
         foreach (var pos in _data.starPos)
         {
             if (_data.name == "“ì\Žš-Complater")
                 Debug.Log($"Test pos x[{targetX + pos.x - starPosLeftTopPos.x}] y[{targetY + pos.y - starPosLeftTopPos.y}]");
 
+            if (starPosLeftTopPos.x == pos.x &&
+                starPosLeftTopPos.y == pos.y) continue;
+
             if (!_stoneBoard.IsPutStone(targetX + pos.x - starPosLeftTopPos.x, targetY + pos.y - starPosLeftTopPos.y))
                 return false;
         }
-
         return true;
     }
-
 }

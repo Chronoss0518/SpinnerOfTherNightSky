@@ -10,14 +10,17 @@ public class ItemCardScript : CardScript.CardScriptBase
     [SerializeField,ReadOnly]
     protected ItemCardData.ItemType type = ItemCardData.ItemType.Normal;
 
+    [SerializeField, ReadOnly]
+    ItemCardData baseItem = null;
+
     public void SetType(ItemCardData.ItemType _type) {  type = _type; }
 
     public bool IsTrap { get { return type == ItemCardData.ItemType.Trap; } }
 
     public override void Init(CardData _data)
     {
-        var itemData = (ItemCardData)_data;
-        SetType((ItemCardData.ItemType)itemData.itemType);
+        baseItem = (ItemCardData)_data;
+        SetType((ItemCardData.ItemType)baseItem.itemType);
     }
 
     public override void SetSelectTargetTest(ScriptManager.SelectCardArgument _argument, Player _runPlayer)
