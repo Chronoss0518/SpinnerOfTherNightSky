@@ -32,13 +32,25 @@ namespace ChUnity.Input
         //Properties//
         public Vector2 startPoint { get; private set; } = Vector2.zero;
 
+        public Vector2 startPointOnWindow { get{ return OnPanelPos(startPoint); } }
+
         public Vector2 beforePoint { get; private set; } = Vector2.zero;
+
+        public Vector2 beforePointOnWindow { get { return OnPanelPos(beforePoint); } }
 
         public Vector2 endPoint { get; private set; } = Vector2.zero;
 
+        public Vector2 endPointOnWindow { get { return OnPanelPos(endPoint); } }
+
         public Vector2 mousePoint { get; private set; } = Vector2.zero;
 
+        public Vector2 mousePointOnWindow { get { return OnPanelPos(mousePoint); } }
 
+
+        public Vector3 GetWorldPosition(Camera _camera,Vector2 _pos,float _zPos)
+        {
+            return _camera.ScreenToWorldPoint(new Vector3(_pos.x, _pos.y, _zPos));
+        }
 
         public bool IsMouseButtonClick(NormalMouseButton _normalMouseButton)
         {
@@ -59,27 +71,15 @@ namespace ChUnity.Input
 
             var touch = UnityEngine.Input.GetTouch(0);
 
-            var tmpPoint = touch.rawPosition;
-            tmpPoint.x /= Screen.width;
-            tmpPoint.y /= Screen.height;
+            startPoint = touch.rawPosition;
 
-            startPoint = tmpPoint;
-
-            tmpPoint = touch.position;
-            tmpPoint.x /= Screen.width;
-            tmpPoint.y /= Screen.height;
-
-            endPoint = tmpPoint;
+            endPoint = touch.position;
 
         }
 
         void UpdateMousePoint()
         {
-            var tmpPoint = UnityEngine.Input.mousePosition;
-            tmpPoint.x /= Screen.width;
-            tmpPoint.y /= Screen.height;
-
-            mousePoint = tmpPoint;
+            mousePoint = UnityEngine.Input.mousePosition;
 
             int beforeCount = mouseButtonClickCount;
 
@@ -107,6 +107,9 @@ namespace ChUnity.Input
             }
 
         }
+
+        Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(startPoint.x / Screen.width, startPoint.y / Screen.height); }
+
 
         bool[] mouseButtonClickFlg = new bool[MOUSE_BUTTON_CHECK_COUNT];
 
