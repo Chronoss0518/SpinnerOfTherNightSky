@@ -108,13 +108,10 @@ namespace ChUnity.Input
 
         }
 
-        Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(startPoint.x / Screen.width, startPoint.y / Screen.height); }
-
+        Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(_pos.x / Screen.width, _pos.y / Screen.height); }
 
         bool[] mouseButtonClickFlg = new bool[MOUSE_BUTTON_CHECK_COUNT];
 
-
-        [SerializeField]
         int mouseButtonClickCount = 0;
 
 
