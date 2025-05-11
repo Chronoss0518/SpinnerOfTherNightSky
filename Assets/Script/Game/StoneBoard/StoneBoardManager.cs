@@ -3,26 +3,11 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class StoneBoardManager : MonoBehaviour
+public class StoneBoardManager : PanelPosBase
 {
 
     [SerializeField]
     int RANDOM_COUNT = 100;
-
-    //Horyzontal : êÖïΩ//
-    [SerializeField]
-    private int HOLYZONTAL = 13;
-
-    public int HOLYZONTAL_SIZE { get { return HOLYZONTAL - 1; } }
-
-    [SerializeField]
-    //Vertical : êÇíº//
-    private int VERTICAL = 13;
-
-    public int VERTICAL_SIZE { get { return VERTICAL - 1; } }
-
-    [SerializeField]
-    MeshFilter boardObject = null;
 
     [SerializeField]
     GameObject stonePosPrefab = null;
@@ -30,15 +15,7 @@ public class StoneBoardManager : MonoBehaviour
     [SerializeField]
     GameManager gameManager = null;
 
-    [SerializeField,ReadOnly]
-    private Vector2 interval = Vector2.zero;
-
-    public Vector3 size { get; private set; } = Vector3.zero;
-
-    [SerializeField, ReadOnly]
-    private Vector3 startPos = Vector3.zero;
-
-    public float stonePosTop { get { return startPos.y; } }
+    public float stonePosTop { get; private set; } = 0.0f;
 
 
     [SerializeField,ReadOnly]
@@ -66,7 +43,7 @@ public class StoneBoardManager : MonoBehaviour
         if (_stone == null) return;
         if (putCount <= 0) return;
 
-        int fieldSize = (VERTICAL_SIZE) * (HOLYZONTAL_SIZE);
+        int fieldSize = (PANEL_COUNT_Y) * (PANEL_COUNT_X);
         Vector2Int[] positions = new Vector2Int[fieldSize];
         int[] numList = new int[fieldSize];
 
@@ -74,7 +51,7 @@ public class StoneBoardManager : MonoBehaviour
 
         for (tmpLoopCount = 0; tmpLoopCount < fieldSize; tmpLoopCount++)
         {
-            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (HOLYZONTAL_SIZE), tmpLoopCount / (VERTICAL_SIZE));
+            positions[tmpLoopCount] = new Vector2Int(tmpLoopCount % (PANEL_COUNT_X), tmpLoopCount / (PANEL_COUNT_Y));
             numList[tmpLoopCount] = tmpLoopCount;
         }
 
@@ -127,8 +104,8 @@ public class StoneBoardManager : MonoBehaviour
     public bool IsRange(int _x, int _y)
     {
         return
-            _x >= 0 && _x < HOLYZONTAL_SIZE &&
-            _y >= 0 && _y < VERTICAL_SIZE;
+            _x >= 0 && _x < PANEL_COUNT_X &&
+            _y >= 0 && _y < PANEL_COUNT_Y;
     }
 
     public bool IsPutStone(int _x, int _y)
@@ -151,77 +128,47 @@ public class StoneBoardManager : MonoBehaviour
         return stoneList[_y][_x];
     }
 
-    public void Init()
+    override protected void Init(Vector3 _startPos, Vector2 _interval)
     {
         if (stonePosPrefab == null) return;
 
-        InitBoadrSize();
+        stonePosTop = _startPos.y;
 
-        Vector3 pos = startPos;
+        Vector3 pos = _startPos;
 
         stoneList = null;
-        stoneList = new StonePosScript[VERTICAL_SIZE][];
+        stoneList = new StonePosScript[PANEL_COUNT_Y][];
 
-        for (int i = 0; i<VERTICAL_SIZE; i++)
+        for (int i = 0; i<PANEL_COUNT_Y; i++)
         {
-            pos.x = startPos.x;
-            stoneList[i] = new StonePosScript[HOLYZONTAL_SIZE];
+            pos.x = _startPos.x;
+            stoneList[i] = new StonePosScript[PANEL_COUNT_X];
 
             var verticalPos = new GameObject("VerticalStonePos");
             verticalPos.transform.SetParent(transform);
             verticalPos.transform.localPosition = pos;
             float tmpVPos = 0.0f;
-            for (int j = 0; j < HOLYZONTAL_SIZE; j++)
+            for (int j = 0; j < PANEL_COUNT_X; j++)
             {
                 var tmpPos = new Vector2Int(j, i);
 
-                InitStonePos(tmpVPos, tmpPos, verticalPos);
+                InitStonePos(tmpVPos, tmpPos, verticalPos, _interval);
 
-                tmpVPos += interval.x;
+                tmpVPos += _interval.x;
             }
 
-            pos.z += interval.y;
+            pos.z += _interval.y;
         }
     }
 
-    void InitBoadrSize()
-    {
 
-        if (boardObject == null) return;
-        var bounds = boardObject.mesh.bounds;
-
-        var tmp = bounds.max - bounds.min;
-
-        tmp = boardObject.transform.localToWorldMatrix.MultiplyPoint(tmp);
-
-        interval.y = tmp.z / VERTICAL;
-        interval.x = tmp.x / HOLYZONTAL;
-
-        var minPos = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.min);
-        var maxPos = boardObject.transform.localToWorldMatrix.MultiplyPoint(bounds.max);
-
-        startPos = minPos;
-
-        startPos.x += interval.x;
-        startPos.z += interval.y;
-        startPos.y = maxPos.y;
-
-
-        tmp.x = Mathf.Abs(tmp.x);
-        tmp.y = Mathf.Abs(tmp.y);
-        tmp.z = Mathf.Abs(tmp.z);
-        size = tmp;
-    }
-
-
-
-    void InitStonePos(float _vPos,Vector2Int _pos, GameObject _verticalPos)
+    void InitStonePos(float _vPos,Vector2Int _pos, GameObject _verticalPos,Vector2 _interval)
     {
         var stonePos = Instantiate(stonePosPrefab, _verticalPos.transform);
 
         stonePos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
         var col = stonePos.GetComponent<BoxCollider>();
-        col.size = new Vector3(Mathf.Abs(interval.x), 1.0f, Mathf.Abs(interval.y)) * 0.5f;
+        col.size = new Vector3(Mathf.Abs(_interval.x), 1.0f, Mathf.Abs(_interval.y)) * 0.5f;
 
         var stonePosScript = stonePos.GetComponent<StonePosScript>();
         stonePosScript.Init(gameManager, _pos);

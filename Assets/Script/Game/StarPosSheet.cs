@@ -5,22 +5,9 @@ using System.Drawing;
 using Unity.Collections;
 using UnityEngine;
 
-public class StarPosSheet : MonoBehaviour
+public class StarPosSheet : PanelPosBase
 {
-    [SerializeField,ReadOnly]
     PointerManager pointer = PointerManager.instance;
-
-    //Horyzontal : êÖïΩ//
-    [SerializeField]
-    private int HOLYZONTAL = 7;
-
-    public int HOLYZONTAL_SIZE { get { return HOLYZONTAL - 1; } }
-
-    [SerializeField]
-    //Vertical : êÇíº//
-    private int VERTICAL = 7;
-
-    public int VERTICAL_SIZE { get { return VERTICAL - 1; } }
 
     [SerializeField]
     GameObject starPosPrefab = null;
@@ -28,84 +15,51 @@ public class StarPosSheet : MonoBehaviour
     [SerializeField, ReadOnly]
     GameObject[][] starPosList = null;
 
-    [SerializeField]
-    MeshFilter meshFilter = null;
-
-    [SerializeField, ReadOnly]
-    private Vector2 interval = Vector2.zero;
-
-    public Vector3 size { get; private set; } = Vector3.zero;
-
-    [SerializeField, ReadOnly]
-    private Vector3 startPos = Vector3.zero;
-
-
     [SerializeField,ReadOnly]
     StoneBoardManager stoneBoard = null;
 
     [SerializeField,ReadOnly]
     bool movePanelFlg = false;
 
+    Camera useCam = null;
+
+    public void SetUseCamera(Camera _cam)
+    {
+        if (_cam == null) return;
+        useCam = _cam;
+    }
+
     public void PointDownGrip() { movePanelFlg = true; }
     
     public void PointUpGrip() { movePanelFlg = false; }
 
 
-    public void InitPanelSize()
+    override protected void Init(Vector3 _startPos, Vector2 _interval)
     {
+        _startPos.y = 0.0f;
 
-        if (meshFilter == null) return;
-        var bounds = meshFilter.mesh.bounds;
+        starPosList = new GameObject[PANEL_COUNT_Y][];
 
-        var tmp = bounds.max - bounds.min;
-
-        tmp = meshFilter.transform.localToWorldMatrix.MultiplyPoint(tmp);
-
-        interval.y = tmp.z / VERTICAL;
-        interval.x = tmp.x / HOLYZONTAL;
-
-        var minPos = meshFilter.transform.localToWorldMatrix.MultiplyPoint(bounds.min);
-        var maxPos = meshFilter.transform.localToWorldMatrix.MultiplyPoint(bounds.max);
-
-        startPos = minPos;
-
-        startPos.x += interval.x;
-        startPos.z += interval.y;
-        startPos.y = 0.0f;
-
-        tmp.x = Mathf.Abs(tmp.x);
-        tmp.y = Mathf.Abs(tmp.y);
-        tmp.z = Mathf.Abs(tmp.z);
-        size = tmp;
-    }
-
-    public void Init()
-    {
-        InitPanelSize();
-
-        starPosList = new GameObject[VERTICAL_SIZE][];
-
-
-        Vector3 pos = startPos;
-        for (int i = 0; i < VERTICAL_SIZE; i++)
+        Vector3 pos = _startPos;
+        for (int i = 0; i < PANEL_COUNT_Y; i++)
         {
-            pos.x = startPos.x;
-            starPosList[i] = new GameObject[HOLYZONTAL_SIZE];
+            pos.x = _startPos.x;
+            starPosList[i] = new GameObject[PANEL_COUNT_X];
 
             var verticalPos = new GameObject("VerticalStonePos");
             verticalPos.transform.SetParent(transform);
             verticalPos.transform.localPosition = pos;
             float tmpVPos = 0.0f;
-            for (int j = 0; j < HOLYZONTAL_SIZE; j++)
+            for (int j = 0; j < PANEL_COUNT_X; j++)
             {
                 var tmpPos = new Vector2Int(j, i);
 
                 InitStoneSheetPos(tmpVPos, tmpPos, verticalPos);
 
-                tmpVPos += interval.x;
+                tmpVPos += _interval.x;
             }
 
-            pos.z += interval.y;
+            pos.z += _interval.y;
         }
 
     }
@@ -131,15 +85,15 @@ public class StarPosSheet : MonoBehaviour
     public bool IsRange(int _x, int _y)
     {
         return
-            _x >= 0 && _x < HOLYZONTAL_SIZE &&
-            _y >= 0 && _y < VERTICAL_SIZE;
+            _x >= 0 && _x < PANEL_COUNT_X &&
+            _y >= 0 && _y < PANEL_COUNT_Y;
     }
 
     public void ClearPos()
     {
-        for (int i = 0; i < VERTICAL_SIZE; i++)
+        for (int i = 0; i < PANEL_COUNT_Y; i++)
         {
-            for (int j = 0; j < HOLYZONTAL_SIZE; j++)
+            for (int j = 0; j < PANEL_COUNT_X; j++)
             {
                 starPosList[j][i].SetActive(false);
             }
@@ -191,9 +145,12 @@ public class StarPosSheet : MonoBehaviour
 
     void MoveTest()
     {
+        if (useCam == null) return;
         if (!movePanelFlg) return;
 
-        Vector2 tmp = pointer.endPoint - pointer.beforePoint;
+        float cameraHeight = useCam.transform.position.y;
+
+        Vector2 tmp = pointer.endPointOnWindow - pointer.beforePointOnWindow;
 
         Vector3 movePos = Vector3.zero;
 
