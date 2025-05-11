@@ -9,6 +9,13 @@ public class StarPosSheet : PanelPosBase
 {
     PointerManager pointer = PointerManager.instance;
 
+    Manager manager = Manager.ins;
+
+    Manager.HandType handType = Manager.HandType.None;
+
+    [SerializeField]
+    GameObject rightButtons = null, leftButtons = null;
+
     [SerializeField]
     GameObject starPosPrefab = null;
 
@@ -100,12 +107,30 @@ public class StarPosSheet : PanelPosBase
 
     void Update()
     {
+        UpdateHandType();
+        UpdatePosition();
+    }
+
+    void UpdateHandType()
+    {
+        if (handType == manager.handType) return;
+        if (leftButtons == null || rightButtons == null) return;
+
+        handType = manager.handType;
+        bool rightHandFlg = manager.handType == Manager.HandType.Right;
+        rightButtons.SetActive(rightHandFlg);
+        leftButtons.SetActive(!rightHandFlg);
+
+    }
+
+    void UpdatePosition()
+    {
         if (stoneBoard == null) return;
 
         MoveTest();
 
         var pos = Vector3.zero;
-        
+
         pos.x -= MinTest(transform.localPosition.x - size.x, stoneBoard.transform.localPosition.x - stoneBoard.size.x);
         pos.z -= MinTest(transform.localPosition.z - size.z, stoneBoard.transform.localPosition.z - stoneBoard.size.z);
 
