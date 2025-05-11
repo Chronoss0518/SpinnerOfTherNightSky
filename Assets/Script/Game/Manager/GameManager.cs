@@ -8,7 +8,7 @@ using ChUnity.Input;
 
 public class GameManager : MonoBehaviour
 {
-    [SerializeField, ReadOnly]
+    [SerializeField,ReadOnly]
     PointerManager pointerManager = PointerManager.instance;
 
     //Initialize//
@@ -86,7 +86,7 @@ public class GameManager : MonoBehaviour
     public GameObject cardPrefab { get { return cardPrefabBase; } }
 
     [SerializeField]
-    StarPosSheet starPosSheet = null;
+    StarPosSheet starPosSheetPrefab = null;
 
     public void AddStackCard(StackObject _card)
     {
@@ -207,6 +207,21 @@ public class GameManager : MonoBehaviour
         runStackFlg = true;
     }
 
+    public StarPosSheet CreateStarPanelSheet()
+    {
+        if (starPosSheetPrefab == null) return null;
+
+        var obj = Instantiate(starPosSheetPrefab.gameObject);
+
+        var script = obj.GetComponent<StarPosSheet>();
+        panelPosManager.CreatePanel(script);
+
+        script.SetStoneBoard(stoneBoard);
+        script.SetUseCamera(cameraObject);
+
+        return script;
+    }
+
     // Start is called before the first frame update
     void Start()
     {
@@ -227,15 +242,7 @@ public class GameManager : MonoBehaviour
     {
         if (stoneBoard == null) return;
         panelPosManager.CreatePanel(stoneBoard);
-
-        if (starPosSheet == null) return;
-
-        panelPosManager.CreatePanel(starPosSheet);
-
-        starPosSheet.SetStoneBoard(stoneBoard);
-        starPosSheet.SetUseCamera(cameraObject);
     }
-
 
     bool IsInitializPlayers()
     {
