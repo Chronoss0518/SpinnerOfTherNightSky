@@ -57,6 +57,20 @@ namespace ChUnity.Input
             return mouseButtonClickFlg[(int)_normalMouseButton];
         }
 
+        public bool IsTouch() { return touchFlg; }
+
+        public bool IsPushFlg()
+        {
+            bool res = touchFlg;
+
+            for(int i = 0;i < MOUSE_BUTTON_CHECK_COUNT;i++)
+            {
+                res |= mouseButtonClickFlg[i];
+            }
+
+            return res;
+        }
+
         // Update is called once per frame
         public void Update()
         {
@@ -67,7 +81,8 @@ namespace ChUnity.Input
 
         void UpdateTouchPoint()
         {
-            if (UnityEngine.Input.touchCount <= 0) return;
+            touchFlg = UnityEngine.Input.touchCount > 0;
+            if (!touchFlg) return;
 
             var touch = UnityEngine.Input.GetTouch(0);
 
@@ -111,6 +126,8 @@ namespace ChUnity.Input
         Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(_pos.x / Screen.width, _pos.y / Screen.height); }
 
         bool[] mouseButtonClickFlg = new bool[MOUSE_BUTTON_CHECK_COUNT];
+
+        bool touchFlg = false;
 
         int mouseButtonClickCount = 0;
 
