@@ -83,7 +83,7 @@ public abstract class PanelPosBase : MonoBehaviour
             var tmpStartPos = minPos;
 
             tmpStartPos.x += tmpInterval.x;
-            tmpStartPos.z += tmpInterval.y;
+            tmpStartPos.z = maxPos.z - tmpInterval.y;
             tmpStartPos.y = maxPos.y;
 
             startPos = tmpStartPos;
@@ -119,7 +119,7 @@ public abstract class PanelPosBase : MonoBehaviour
                     tmpVPos += interval.x;
                 }
 
-                pos.z += interval.y;
+                pos.z -= interval.y;
             }
         }
 
