@@ -34,34 +34,21 @@ public class StarPosSheet : PanelPosBase
     public void PointUpGrip() { movePanelFlg = false; }
 
 
-    override protected void Init(Vector3 _startPos, Vector2 _interval)
+    override protected void InitHoryzontalList(int _nowCount)
+    {
+        starPosList[_nowCount] = new GameObject[PANEL_COUNT_X];
+    }
+
+    override protected void InitVerticalList()
+    {
+        starPosList = null;
+        starPosList = new GameObject[PANEL_COUNT_Y][];
+    }
+
+    override protected Vector3 SetStartPos(Vector3 _startPos) 
     {
         _startPos.y = 0.0f;
-
-        starPosList = new GameObject[PANEL_COUNT_Y][];
-
-        Vector3 pos = _startPos;
-        for (int i = 0; i < PANEL_COUNT_Y; i++)
-        {
-            pos.x = _startPos.x;
-            starPosList[i] = new GameObject[PANEL_COUNT_X];
-
-            var verticalPos = new GameObject("VerticalStonePos");
-            verticalPos.transform.SetParent(transform);
-            verticalPos.transform.localPosition = pos;
-            float tmpVPos = 0.0f;
-            for (int j = 0; j < PANEL_COUNT_X; j++)
-            {
-                var tmpPos = new Vector2Int(j, i);
-
-                InitStoneSheetPos(tmpVPos, tmpPos, verticalPos);
-
-                tmpVPos += _interval.x;
-            }
-
-            pos.z += _interval.y;
-        }
-
+        return _startPos;
     }
 
     public void SetStoneBoard(StoneBoardManager _stoneBoard)
@@ -100,16 +87,16 @@ public class StarPosSheet : PanelPosBase
         }
     }
 
-    void InitStoneSheetPos(float _vPos, Vector2Int _pos, GameObject _verticalPos)
+    protected override void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos, PanelPosManager _builder)
     {
         var starPos = Instantiate(starPosPrefab, _verticalPos.transform);
 
+        starPos.name = $"X[{_pos.x}]Y[{_pos.y}]";
         starPos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
         starPos.SetActive(false);
 
         starPosList[_pos.y][_pos.x] = starPos;
     }
-
 
     void Update()
     {

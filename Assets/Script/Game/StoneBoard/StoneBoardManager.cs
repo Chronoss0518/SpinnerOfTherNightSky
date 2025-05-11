@@ -128,47 +128,31 @@ public class StoneBoardManager : PanelPosBase
         return stoneList[_y][_x];
     }
 
-    override protected void Init(Vector3 _startPos, Vector2 _interval)
+    override protected void InitHoryzontalList(int _nowCount)
     {
-        if (stonePosPrefab == null) return;
-
-        stonePosTop = _startPos.y;
-
-        Vector3 pos = _startPos;
-
-        stoneList = null;
-        stoneList = new StonePosScript[PANEL_COUNT_Y][];
-
-        for (int i = 0; i<PANEL_COUNT_Y; i++)
-        {
-            pos.x = _startPos.x;
-            stoneList[i] = new StonePosScript[PANEL_COUNT_X];
-
-            var verticalPos = new GameObject("VerticalStonePos");
-            verticalPos.transform.SetParent(transform);
-            verticalPos.transform.localPosition = pos;
-            float tmpVPos = 0.0f;
-            for (int j = 0; j < PANEL_COUNT_X; j++)
-            {
-                var tmpPos = new Vector2Int(j, i);
-
-                InitStonePos(tmpVPos, tmpPos, verticalPos, _interval);
-
-                tmpVPos += _interval.x;
-            }
-
-            pos.z += _interval.y;
-        }
+        stoneList[_nowCount] = new StonePosScript[PANEL_COUNT_X];
     }
 
+    override protected void InitVerticalList()
+    {
+        stoneList = null;
+        stoneList = new StonePosScript[PANEL_COUNT_Y][];
+    }
 
-    void InitStonePos(float _vPos,Vector2Int _pos, GameObject _verticalPos,Vector2 _interval)
+    override protected Vector3 SetStartPos(Vector3 _startPos)
+    {
+        stonePosTop = _startPos.y;
+        return _startPos;
+    }
+
+    protected override void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos, PanelPosManager _builder)
     {
         var stonePos = Instantiate(stonePosPrefab, _verticalPos.transform);
 
+        stonePos.name = $"X[{_pos.x}]Y[{_pos.y}]";
         stonePos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
         var col = stonePos.GetComponent<BoxCollider>();
-        col.size = new Vector3(Mathf.Abs(_interval.x), 1.0f, Mathf.Abs(_interval.y)) * 0.5f;
+        col.size = new Vector3(Mathf.Abs(_builder.interval.x), 1.0f, Mathf.Abs(_builder.interval.y)) * 0.5f;
 
         var stonePosScript = stonePos.GetComponent<StonePosScript>();
         stonePosScript.Init(gameManager, _pos);

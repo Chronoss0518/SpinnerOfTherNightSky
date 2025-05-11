@@ -18,15 +18,18 @@ public abstract class PanelPosBase : MonoBehaviour
 
     public Vector3 size { get; private set; } = Vector3.zero;
 
-    abstract protected void Init(Vector3 _startPos,Vector2 _interval);
+    abstract protected void InitHoryzontalList(int _nowCount);
+    abstract protected void InitVerticalList();
+
+    protected virtual Vector3 SetStartPos(Vector3 _startPos) { return _startPos; }
+
+    protected abstract void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos,PanelPosManager _builder);
 
     public class PanelPosManager
     {
-        [SerializeField, ReadOnly]
-        private Vector2 interval = Vector2.zero;
+        public Vector2 interval { get; private set; } = Vector2.zero;
 
-        [SerializeField, ReadOnly]
-        private Vector3 startPos = Vector3.zero;
+        public Vector3 startPos { get; private set; } = Vector2.zero;
 
 
         public void CreatePanel(PanelPosBase _createPanel)
@@ -36,7 +39,7 @@ public abstract class PanelPosBase : MonoBehaviour
 
             InitSize(_createPanel);
 
-            _createPanel.Init(startPos,interval);
+            InitPanel(_createPanel);
 
         }
 
@@ -65,8 +68,10 @@ public abstract class PanelPosBase : MonoBehaviour
             tmp.y = Mathf.Abs(tmp.y);
             tmp.z = Mathf.Abs(tmp.z);
 
-            interval.x = tmp.x / _createPanel.PANEL_COUNT.x;
-            interval.y = tmp.z / _createPanel.PANEL_COUNT.y;
+            var tmpInterval = Vector2.zero;
+
+            tmpInterval.x = tmp.x / _createPanel.PANEL_COUNT.x;
+            tmpInterval.y = tmp.z / _createPanel.PANEL_COUNT.y;
 
             var minPos = _createPanel.meshFilter.transform.localToWorldMatrix.MultiplyPoint(bounds.min);
             var maxPos = _createPanel.meshFilter.transform.localToWorldMatrix.MultiplyPoint(bounds.max);
@@ -75,13 +80,47 @@ public abstract class PanelPosBase : MonoBehaviour
             MaxMinChangeTest(ref maxPos.y, ref minPos.y);
             MaxMinChangeTest(ref maxPos.z, ref minPos.z);
 
-            startPos = minPos;
+            var tmpStartPos = minPos;
 
-            startPos.x += interval.x;
-            startPos.z += interval.y;
-            startPos.y = maxPos.y;
+            tmpStartPos.x += tmpInterval.x;
+            tmpStartPos.z += tmpInterval.y;
+            tmpStartPos.y = maxPos.y;
 
+            startPos = tmpStartPos;
+
+            interval = tmpInterval;
             _createPanel.size = tmp;
+        }
+
+        void InitPanel(PanelPosBase _createPanel)
+        {
+            Vector3 useStartPos = _createPanel.SetStartPos(startPos);
+
+            Vector3 pos = useStartPos;
+
+            _createPanel.InitVerticalList();
+
+            for (int i = 0; i < _createPanel.PANEL_COUNT_Y; i++)
+            {
+                pos.x = useStartPos.x;
+
+                _createPanel.InitHoryzontalList(i);
+
+                var verticalPos = new GameObject($"VerticalStonePos[{i + 1}]");
+                verticalPos.transform.SetParent(_createPanel.transform);
+                verticalPos.transform.localPosition = pos;
+                float tmpVPos = 0.0f;
+                for (int j = 0; j < _createPanel.PANEL_COUNT_X; j++)
+                {
+                    var tmpPos = new Vector2Int(j, i);
+
+                    _createPanel.CreateOobject(tmpVPos, tmpPos, verticalPos,this);
+
+                    tmpVPos += interval.x;
+                }
+
+                pos.z += interval.y;
+            }
         }
 
     }
