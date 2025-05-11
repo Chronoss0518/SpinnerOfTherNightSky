@@ -45,14 +45,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 9e0583d99a7d8b1468231744203c1859, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  HOLYZONTAL: 13
-  VERTICAL: 13
-  boardObject: {fileID: 1489688669168522235}
+  PANEL_COUNT: {x: 13, y: 13}
+  meshFilter: {fileID: 1489688669168522235}
+  RANDOM_COUNT: 100
   stonePosPrefab: {fileID: 3299226540242646060, guid: 4bc75d798a9ccfe41a86010342d425b6, type: 3}
-  interval: {x: 0.46, y: 0.46}
-  startPos: {x: -2.78, y: 0.48, z: -2.78}
-  createVerticalStonePos: []
-  beforeActive: 0
+  gameManager: {fileID: 0}
+  isBlockFlg: 0
 --- !u!1001 &8880560438470624106
 PrefabInstance:
   m_ObjectHideFlags: 0

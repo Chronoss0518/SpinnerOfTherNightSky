@@ -4,11 +4,11 @@ using UnityEngine;
 using Unity.Collections;
 using UnityEngine.UI;
 using ChUnity.Input;
-using Unity.VisualScripting;
 
 
 public class GameManager : MonoBehaviour
 {
+    [SerializeField, ReadOnly]
     PointerManager pointerManager = PointerManager.instance;
 
     //Initialize//
@@ -41,6 +41,9 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
+
+    [SerializeField, ReadOnly]
+    PanelPosBase.PanelPosManager panelPosManager = new PanelPosBase.PanelPosManager();
 
     public class StackObject
     {
@@ -223,14 +226,14 @@ public class GameManager : MonoBehaviour
     void InitStoneBoadAndStarPos()
     {
         if (stoneBoard == null) return;
-        stoneBoard.Init();
+        panelPosManager.CreatePanel(stoneBoard);
 
         if (starPosSheet == null) return;
 
-        starPosSheet.Init();
+        panelPosManager.CreatePanel(starPosSheet);
 
         starPosSheet.SetStoneBoard(stoneBoard);
-
+        starPosSheet.SetUseCamera(cameraObject);
     }
 
 
@@ -249,8 +252,6 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
-        pointerManager.Update();
-
         StartDice();
 
         if (!initFlg) return;
@@ -265,6 +266,12 @@ public class GameManager : MonoBehaviour
         
         StackCardScriptEnd();
     }
+
+    private void FixedUpdate()
+    {
+        pointerManager.Update();
+    }
+
 
     void MainUpdate()
     {

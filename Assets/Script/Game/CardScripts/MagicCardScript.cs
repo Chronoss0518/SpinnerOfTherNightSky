@@ -9,7 +9,7 @@ public class MagicCardScript : CardScript.CardScriptBase
     Vector2Int starPosMinPos = new Vector2Int(99,99);
     
     //ˆê”Ô¶‘¤‚É‚ ‚èŽž“_‚Åˆê”Ôã‚ÌˆÊ’u((1,2)‚Æ(2,1)‚Å‚Í(1,2)‚ð—Dæ‚·‚é)//
-    Vector2Int starPosLeftTopPos = Vector2Int.zero;
+    Vector2Int starPosLeftTopPos = new Vector2Int(99, 99);
 
     [SerializeField,ReadOnly]
     private MagicCardData.CardAttribute attribute = MagicCardData.CardAttribute.Spring;
@@ -55,10 +55,19 @@ public class MagicCardScript : CardScript.CardScriptBase
             starPosMinPos.y = starPosMinPos.y > pos.y ? pos.y : starPosMinPos.y;
             starPosMaxPos.y = starPosMaxPos.y < pos.y ? pos.y : starPosMaxPos.y;
 
-            if (starPosLeftTopPos.x <= pos.x) continue;
-            if (starPosLeftTopPos.y <= pos.y) continue;
-            starPosLeftTopPos = pos;
+            
+            if (starPosLeftTopPos.x == pos.x)
+                if (starPosLeftTopPos.y > pos.y) 
+                    starPosLeftTopPos.y = pos.y;
+
+            if (starPosLeftTopPos.x > pos.x)
+                starPosLeftTopPos = pos;
         }
+
+        Debug.Log($"[{_data.name}] Is \n" +
+            $"MinPos X[{starPosMinPos.x}] Y[{starPosMinPos.y}] \n" +
+            $"MaxPos X[{starPosMaxPos.x}] Y[{starPosMaxPos.y}] \n" +
+            $"LtPos X[{starPosLeftTopPos.x}] Y[{starPosLeftTopPos.y}] ");
 
     }
 
@@ -115,11 +124,11 @@ public class MagicCardScript : CardScript.CardScriptBase
     {
         var stoneBoard = manager.stoneBoardObj;
 
-        for (int v = starPosLeftTopPos.y; v < stoneBoard.VERTICAL_SIZE - (starPosMaxPos.y - starPosMinPos.y); v++)
+        for (int v = starPosLeftTopPos.y; v < stoneBoard.PANEL_COUNT_Y - (starPosMaxPos.y - starPosMinPos.y); v++)
         {
-            for (int h = starPosLeftTopPos.x; h < stoneBoard.HOLYZONTAL_SIZE -(starPosMaxPos.x - starPosMinPos.x); h++)
+            for (int h = starPosLeftTopPos.x; h < stoneBoard.PANEL_COUNT_X -(starPosMaxPos.x - starPosMinPos.x); h++)
             {
-                if (!stoneBoard.IsPutStone(h + starPosLeftTopPos.x, v + starPosLeftTopPos.y)) continue;
+                if (!stoneBoard.IsPutStone(h, v)) continue;
                 if (!FindStarPos(h, v, _data, stoneBoard)) continue;
                 return true;
             }
@@ -134,6 +143,9 @@ public class MagicCardScript : CardScript.CardScriptBase
 
         foreach (var pos in _data.starPos)
         {
+            if (_data.name == "“ì\Žš-Complater")
+                Debug.Log($"Test pos x[{targetX + pos.x - starPosLeftTopPos.x}] y[{targetY + pos.y - starPosLeftTopPos.y}]");
+
             if (!_stoneBoard.IsPutStone(targetX + pos.x - starPosLeftTopPos.x, targetY + pos.y - starPosLeftTopPos.y))
                 return false;
         }

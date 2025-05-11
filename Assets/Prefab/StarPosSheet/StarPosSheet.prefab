@@ -46,14 +46,12 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 48886e7d1d47f3b4db39462f203d0d77, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
+  PANEL_COUNT: {x: 7, y: 7}
+  meshFilter: {fileID: 7054727360613241606}
   pointer:
     mouseButtonClickCount: 0
-  HOLYZONTAL: 7
-  VERTICAL: 7
   starPosPrefab: {fileID: 6587334211265289130, guid: d4b3c7aeee7581b4e9784ecb0adb6954, type: 3}
   meshFilter: {fileID: 7054727360613241606}
-  interval: {x: 0, y: 0}
-  startPos: {x: 0, y: 0, z: 0}
   stoneBoard: {fileID: 0}
   movePanelFlg: 0
 --- !u!1 &7054727360613241626

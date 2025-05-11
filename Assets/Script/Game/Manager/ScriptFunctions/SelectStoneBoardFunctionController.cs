@@ -28,7 +28,7 @@ public class SelectStoneBoardFunctionController : SelectScriptControllerBase
             return;
         }
 
-        int pos = _x + (_y * _manager.stoneBoardObj.HOLYZONTAL_SIZE);
+        int pos = _x + (_y * _manager.stoneBoardObj.PANEL_COUNT_X);
 
         if (targetStonePos.ContainsKey(pos))
         {
