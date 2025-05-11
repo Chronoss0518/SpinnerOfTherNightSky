@@ -94,6 +94,11 @@ public class StarPosSheet : PanelPosBase
         }
     }
 
+    public void Close()
+    {
+        Destroy(gameObject);
+    }
+
     protected override void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos, PanelPosManager _builder)
     {
         var starPos = Instantiate(starPosPrefab, _verticalPos.transform);
