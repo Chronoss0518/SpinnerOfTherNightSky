@@ -373,7 +373,9 @@ MonoBehaviour:
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
+    handType: 0
   cardPrefabBase: {fileID: 7100464425579502893, guid: 24e42c1359b92674b8912f89d799756c, type: 3}
+  starPosSheetPrefab: {fileID: 7054727360167560936, guid: f503d0575f67ecf43bbcd81a8cc13e0f, type: 3}
 --- !u!4 &1028437353
 Transform:
   m_ObjectHideFlags: 0
@@ -837,6 +839,7 @@ MonoBehaviour:
     useBookNo: 0
     aspectType: 2
     randomPutStone: 0
+    handType: 0
   gameType: 0
   memberFlgs: 00000000010000000300000003000000
   localGameFlg: 1
