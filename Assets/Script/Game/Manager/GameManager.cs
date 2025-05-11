@@ -207,8 +207,9 @@ public class GameManager : MonoBehaviour
         runStackFlg = true;
     }
 
-    public StarPosSheet CreateStarPanelSheet()
+    public StarPosSheet CreateStarPanelSheet(MagicCardScript _script)
     {
+        if (_script == null) return null;
         if (starPosSheetPrefab == null) return null;
 
         var obj = Instantiate(starPosSheetPrefab.gameObject);
@@ -219,7 +220,20 @@ public class GameManager : MonoBehaviour
         script.SetStoneBoard(stoneBoard);
         script.SetUseCamera(cameraObject);
 
+        foreach(var pos in _script.starPosList)
+        {
+            script.SetStarPosFlg(pos.x, pos.y, true);
+        }
+
         return script;
+    }
+
+    public void OpenCardDescription(CardScript _script)
+    {
+        if (_script == null) return;
+        if (_script.baseData == null) return;
+
+        Debug.Log("Open Card Description");
     }
 
     // Start is called before the first frame update
