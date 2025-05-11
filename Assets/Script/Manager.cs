@@ -70,4 +70,13 @@ public class Manager
     [ReadOnly]
     public int randomPutStone = 0;
 
+    public enum HandType
+    {
+        Right,
+        Left,
+        None
+    }
+
+    [ReadOnly]
+    public HandType handType = HandType.Right;
 }
