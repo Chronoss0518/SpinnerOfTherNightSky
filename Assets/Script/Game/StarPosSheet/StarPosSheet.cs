@@ -15,6 +15,11 @@ public class StarPosSheet : PanelPosBase
     [SerializeField]
     GameObject buttons = null;
 
+    [SerializeField, ReadOnly]
+    Vector3 localTouchPos;
+
+    bool touchInitFlg = false;
+
     PointerManager pointer = PointerManager.instance;
 
     Manager manager = Manager.ins;
@@ -45,9 +50,16 @@ public class StarPosSheet : PanelPosBase
         useCam = _cam;
     }
 
-    public void PointDownGrip() { movePanelFlg = true; }
+    public void PointDownGrip()
+    {
+        movePanelFlg = true;
+    }
     
-    public void PointUpGrip() { movePanelFlg = false; }
+    public void PointUpGrip()
+    {
+        movePanelFlg = false;
+        touchInitFlg = false;
+    }
 
 
     override protected void InitHoryzontalList(int _nowCount)
@@ -173,14 +185,21 @@ public class StarPosSheet : PanelPosBase
         if (useCam == null) return;
         if (!movePanelFlg) return;
 
-        moveVec = 
-            pointer.GetCameraToWorldPosition(useCam, pointer.endPoint, -useCam.transform.position.y)
-            - pointer.GetCameraToWorldPosition(useCam, pointer.beforePoint, -useCam.transform.position.y);
+        if(!touchInitFlg)
+        {
+            touchInitFlg = true;
+            localTouchPos =  transform.position - grid.touchPosition;
+            return;
+        }
 
-        moveVec.y = 0.0f;
-        moveVec.z *= -1;
-        moveVec.x *= -1;
+        float tmpY = transform.localPosition.y;
+        float tmpLen = tmpY - useCam.transform.position.y;
 
-        transform.localPosition += moveVec;
+        moveVec = pointer.GetCameraToWorldPosition(useCam, pointer.endPoint, Mathf.Abs(tmpLen));
+
+        Vector3 tmp = moveVec + localTouchPos;
+
+        tmp.y = tmpY;
+        transform.localPosition = tmp;
     }
 }
