@@ -1,16 +1,25 @@
 using ChUnity.Input;
-using System.Collections;
-using System.Collections.Generic;
-using System.Drawing;
 using Unity.Collections;
 using UnityEngine;
 
 public class StarPosSheet : PanelPosBase
 {
+    [SerializeField, ReadOnly]
+    Vector2 movePoint;
+    [SerializeField, ReadOnly]
+    Vector3 moveVec;
+
+    [SerializeField]
+    StarPosGrid grid = null;
+
+    [SerializeField]
+    GameObject buttons = null;
+
     PointerManager pointer = PointerManager.instance;
 
     Manager manager = Manager.ins;
 
+    [SerializeField,ReadOnly]
     Manager.HandType handType = Manager.HandType.None;
 
     [SerializeField]
@@ -119,13 +128,12 @@ public class StarPosSheet : PanelPosBase
     void UpdateHandType()
     {
         if (handType == manager.handType) return;
-        if (leftButtons == null || rightButtons == null) return;
+        if (leftButtons == null || rightButtons == null || buttons == null) return;
 
         handType = manager.handType;
         bool rightHandFlg = manager.handType == Manager.HandType.Right;
-        rightButtons.SetActive(rightHandFlg);
-        leftButtons.SetActive(!rightHandFlg);
-
+        buttons.transform.SetParent((rightHandFlg ? rightButtons : leftButtons).transform);
+        buttons.transform.localPosition = Vector3.zero;
     }
 
     void UpdatePosition()
@@ -165,17 +173,14 @@ public class StarPosSheet : PanelPosBase
         if (useCam == null) return;
         if (!movePanelFlg) return;
 
-        float cameraHeight = useCam.transform.position.y;
+        moveVec = 
+            pointer.GetCameraToWorldPosition(useCam, pointer.endPoint, -useCam.transform.position.y)
+            - pointer.GetCameraToWorldPosition(useCam, pointer.beforePoint, -useCam.transform.position.y);
 
-        Vector2 tmp = pointer.endPointOnWindow - pointer.beforePointOnWindow;
+        moveVec.y = 0.0f;
+        moveVec.z *= -1;
+        moveVec.x *= -1;
 
-        Vector3 movePos = Vector3.zero;
-
-        movePos.x += tmp.x;
-        movePos.z += tmp.y;
-
-        transform.localPosition += movePos;
+        transform.localPosition += moveVec;
     }
-
-
 }
