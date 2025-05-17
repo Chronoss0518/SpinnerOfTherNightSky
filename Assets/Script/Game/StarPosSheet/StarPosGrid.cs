@@ -10,7 +10,7 @@ public class StarPosGrid : MonoBehaviour, IPointerDownHandler
 
     public void OnPointerDown(PointerEventData eventData)
     {
-        touchPosition = eventData.pointerPressRaycast.worldPosition;
+        touchPosition = eventData.pointerCurrentRaycast.worldPosition;
     }
 
 
