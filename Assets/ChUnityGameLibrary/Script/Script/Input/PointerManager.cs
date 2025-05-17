@@ -47,9 +47,14 @@ namespace ChUnity.Input
         public Vector2 mousePointOnWindow { get { return OnPanelPos(mousePoint); } }
 
 
-        public Vector3 GetWorldPosition(Camera _camera,Vector2 _pos,float _zPos)
+        public Vector3 GetCameraToWorldPosition(Camera _camera,Vector2 _pos,float _len)
         {
-            return _camera.ScreenToWorldPoint(new Vector3(_pos.x, _pos.y, _zPos));
+            return _camera.ScreenToWorldPoint(new Vector3(_pos.x, _pos.y, _len));
+        }
+
+        public Vector2 GetWorldToCamera(Camera _camera, Vector3 _pos)
+        {
+            return _camera.WorldToScreenPoint(_pos);
         }
 
         public bool IsMouseButtonClick(NormalMouseButton _normalMouseButton)
@@ -123,7 +128,7 @@ namespace ChUnity.Input
 
         }
 
-        Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(_pos.x / Screen.width, _pos.y / Screen.height); }
+        Vector2 OnPanelPos(Vector2 _pos){ return new Vector2(_pos.x / Screen.width * 2 - 1, _pos.y / Screen.height * -2 + 1); }
 
         bool[] mouseButtonClickFlg = new bool[MOUSE_BUTTON_CHECK_COUNT];
 
