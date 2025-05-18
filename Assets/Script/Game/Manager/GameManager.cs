@@ -231,6 +231,7 @@ public class GameManager : MonoBehaviour
             CreateNetworkPlayer(memberFlgs);
         }
         turnManager.Init(this);
+        stackManager.Init(this);
 
     }
 
