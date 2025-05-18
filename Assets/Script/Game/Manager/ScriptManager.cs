@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Security.Cryptography;
 using Unity.Collections;
 using UnityEngine;
 
@@ -43,7 +44,9 @@ public class ScriptManager
     {
         BlockStone,//石を取り除かせない・カードを無効にする//
         BlockCard,//石を取り除かせない・カードを無効にする//
+        ClearScript,//現在登録されているスクリプトを全て削除する//
         SelectStoneBoard,//盤面の場所を選択する//
+        SelectStoneBoardFromMagic,//術の発動に伴う盤面の石を選択させる//
         SelectCard,//魔導書からカードを選択する//
         SelectItemZone,//魔導書からカードを選択する//
         MoveStone,//石の置く・石を取り除く//
@@ -138,6 +141,10 @@ public class ScriptManager
             mgr.Stack(_script, _manager);
         }
 
+        public void ClearScript()
+        {
+            mgr.ClearScript();
+        }
         protected ScriptManager manager { get { return mgr; } }
 
         ScriptManager mgr = null;
@@ -191,6 +198,16 @@ public class ScriptManager
         public int minCount = 0;
         public int maxCount = 0;
         public bool isPutPos = true;
+    }
+
+    public class SelectStoneBoardFromMagicArgument : ScriptArgument
+    {
+        public SelectStoneBoardFromMagicArgument()
+        {
+            type = ScriptType.SelectStoneBoardFromMagic;
+        }
+
+        public CardData playMagicCard = null;
     }
 
     public class SelectCardArgument : ScriptArgument
@@ -302,6 +319,8 @@ public class ScriptManager
 
     public ScriptType RunScriptType { get { return runScript.actions[useScriptCount].type; } }
 
+    bool clearScriptFlg = false;
+
     List<ScriptArgumentData> stayScript = new List<ScriptArgumentData>();
 
 
@@ -396,19 +415,26 @@ public class ScriptManager
         return selectItemZoneFunctionController.SelectPos(_pos, _manager, action);
     }
 
+    public void ClearScript()
+    {
+        clearScriptFlg = true;
+    }
+
     void Stack(StackManager.StackObject _script, GameManager _manager)
     {
         _manager.AddStackCard(_script);
     }
 
-    public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false)
+    public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false, CardData _playCard = null)
     {
 
         var res = new ScriptArgumentData();
         if (_script.parts == null) return res;
         if (_script.parts.Length <= 0) return res;
 
-        for(int i = 0;i<_script.parts.Length;i++)
+        AddSelectStoneBoardFromMagic(res, _playCard);
+
+        for (int i = 0;i<_script.parts.Length;i++)
         {
             var scr = _script.parts[i];
 
@@ -440,6 +466,14 @@ public class ScriptManager
 
     public void RunScript(ControllerBase _controller, GameManager _gameManager)
     {
+
+        if(clearScriptFlg)
+        {
+            clearScriptFlg = false;
+            RunScriptEnd();
+            return;
+        }
+
         if (runScript == null) return;
 
         var argument = runScript.actions[useScriptCount];
@@ -449,12 +483,28 @@ public class ScriptManager
 
         if (runScript.actions.Count > useScriptCount) return;
 
+        RunScriptEnd();
+    }
+
+    void RunScriptEnd()
+    {
         useScriptCount = 0;
         runScript = null;
         foreach (var func in functions)
         {
             func.Release();
         }
+    }
+
+    void AddSelectStoneBoardFromMagic(ScriptArgumentData _result, CardData _playCard)
+    {
+        if (_result == null) return;
+        if (_playCard == null) return;
+        if (_playCard.cardType != (int)CardData.CardType.Magic) return;
+
+        var arg = new SelectStoneBoardFromMagicArgument();
+        arg.playMagicCard = _playCard;
+        _result.actions.Add(arg);
     }
 
     List<string> GenerateArgument(string _args)
