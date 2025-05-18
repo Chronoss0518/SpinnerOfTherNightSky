@@ -156,11 +156,11 @@ public class StarPosSheet : PanelPosBase
 
         var pos = Vector3.zero;
 
-        pos.x -= MinTest(transform.localPosition.x - size.x, stoneBoard.transform.localPosition.x - stoneBoard.size.x);
-        pos.z -= MinTest(transform.localPosition.z - size.z, stoneBoard.transform.localPosition.z - stoneBoard.size.z);
+        pos.x -= MinTest(transform.localPosition.x, stoneBoard.transform.localPosition.x - size.x);
+        pos.z -= MinTest(transform.localPosition.z, stoneBoard.transform.localPosition.z - size.z);
 
-        pos.x += MaxTest(transform.localPosition.x + size.x, stoneBoard.transform.localPosition.x + stoneBoard.size.x);
-        pos.z += MaxTest(transform.localPosition.z + size.z, stoneBoard.transform.localPosition.z + stoneBoard.size.z);
+        pos.x += MaxTest(transform.localPosition.x, stoneBoard.transform.localPosition.x + size.x);
+        pos.z += MaxTest(transform.localPosition.z, stoneBoard.transform.localPosition.z + size.z);
 
         transform.localPosition += pos;
     }
