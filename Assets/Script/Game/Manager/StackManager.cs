@@ -56,21 +56,31 @@ public class StackManager
         gameManager = _gameManager;
     }
 
-    public void Update()
+    public bool Update()
     {
-        if (gameManager.isRunScript) return;
-        if (!runStackFlg) return;
+        if (gameManager.isRunScript) return true;
+        if (!runStackFlg) return true;
 
-        playCardScript = stack[stack.Count - 1];
+        if (playCardScript == null)
+        {
+            playCardScript = stack[stack.Count - 1];
 
-        stack.RemoveAt(stack.Count - 1);
+            stack.RemoveAt(stack.Count - 1);
+        }
 
-        var script = gameManager.CreateScript(playCardScript.card.script[0],true);
+        if(playCardScript.card.type == CardData.CardType.Magic)
+        {
+
+        }
+
+        var script = gameManager.CreateScript(playCardScript.card.script[0]);
 
         gameManager.SetUseScriptPlayerNo(playCardScript.player.playerNo);
 
-        if (stack.Count > 0) return;
+        if (stack.Count > 0) return true;
         runStackFlg = false;
+
+        return true;
     }
 
     void MagicActionEnd()
