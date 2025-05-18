@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using Unity.Collections;
-using Unity.VisualScripting;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Player : MonoBehaviour
 {
+    public GameManager.PlayerPosition position { get; private set; }
+
     [SerializeField]
     GameManager gameManager = null;
 
@@ -116,6 +114,19 @@ public class Player : MonoBehaviour
 
         UpdateBookParent();
 
+    }
+
+    public void SetPlayerPosition(GameManager.PlayerPosition _position)
+    {
+
+        if (_position == GameManager.PlayerPosition.Right)
+            transform.rotation = Quaternion.AngleAxis(90.0f, Vector3.up);
+        if (_position == GameManager.PlayerPosition.Back)
+            transform.rotation = Quaternion.AngleAxis(180.0f, Vector3.up);
+        if (_position == GameManager.PlayerPosition.Left)
+            transform.rotation = Quaternion.AngleAxis(270.0f, Vector3.up);
+
+        position = _position;
     }
 
     public void SetCPUController()
