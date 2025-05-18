@@ -173,9 +173,9 @@ public class GameManager : MonoBehaviour
         useScriptPlayerNo %= players.Count;
     }
 
-    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data)
+    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data,bool _registFlg = false)
     {
-        return scriptManager.CreateScript(_data);
+        return scriptManager.CreateScript(_data, _registFlg);
     }
 
     public void RegistScript(ScriptManager.ScriptArgumentData _script,int _useScriptPlayerNo = -1)
@@ -221,6 +221,8 @@ public class GameManager : MonoBehaviour
     // Start is called before the first frame update
     void Start()
     {
+        stackManager.Init(this);
+
         InitStoneBoadAndStarPos();
 
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
@@ -231,7 +233,6 @@ public class GameManager : MonoBehaviour
             CreateNetworkPlayer(memberFlgs);
         }
         turnManager.Init(this);
-        stackManager.Init(this);
 
     }
 
