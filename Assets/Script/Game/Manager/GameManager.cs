@@ -35,6 +35,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     Player playerPrefab = null;
 
+    [SerializeField, ReadOnly]
+    Player localPlayer = null;
+
     [SerializeField]
     Camera cameraObject = null;
 
@@ -359,8 +362,8 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            playerCom.Init(cards.ToArray(),_no, true);
-            playerCom.SetPlayerPosition((PlayerPosition)_no);
+            playerCom.Init(cards.ToArray(), true);
+            localPlayer = playerCom;
         }));
 
         cameraObject.transform.SetParent(playerCom.transform);
@@ -400,8 +403,7 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            _player.Init(cards.ToArray(), _no);
-            _player.SetPlayerPosition((PlayerPosition)_no);
+            _player.Init(cards.ToArray());
         }));
     }
 
@@ -411,6 +413,8 @@ public class GameManager : MonoBehaviour
         var playerCom = player.GetComponent<Player>();
         playerCom.SetGameManager(this);
 
+        playerCom.SetPlayerNo(players.Count);
+        playerCom.SetPlayerPosition((PlayerPosition)players.Count);
         players.Add(playerCom);
         return playerCom;
     }
