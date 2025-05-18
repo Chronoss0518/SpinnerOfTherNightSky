@@ -4,10 +4,18 @@ using UnityEngine;
 using Unity.Collections;
 using UnityEngine.UI;
 using ChUnity.Input;
-
+using UnityEngine.UIElements;
 
 public class GameManager : MonoBehaviour
 {
+    public enum PlayerPosition
+    {
+        Front,
+        Right,
+        Back,
+        Left,
+    }
+
     [SerializeField,ReadOnly]
     PointerManager pointerManager = PointerManager.instance;
 
@@ -173,9 +181,9 @@ public class GameManager : MonoBehaviour
         useScriptPlayerNo %= players.Count;
     }
 
-    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data,bool _registFlg = false)
+    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data,bool _registFlg = false,CardData _playCard = null)
     {
-        return scriptManager.CreateScript(_data, _registFlg);
+        return scriptManager.CreateScript(_data, _registFlg, _playCard);
     }
 
     public void RegistScript(ScriptManager.ScriptArgumentData _script,int _useScriptPlayerNo = -1)
@@ -228,9 +236,9 @@ public class GameManager : MonoBehaviour
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
         {
             var memberFlgs = manager.memberFlgs[i];
-            CreateLocalPlayer(memberFlgs);
-            CreateCPUPlayer(memberFlgs);
-            CreateNetworkPlayer(memberFlgs);
+            CreateLocalPlayer(memberFlgs,i);
+            CreateCPUPlayer(memberFlgs, i);
+            CreateNetworkPlayer(memberFlgs, i);
         }
         turnManager.Init(this);
 
@@ -257,6 +265,8 @@ public class GameManager : MonoBehaviour
     void Update()
     {
 
+        pointerManager.Update();
+
         StartDice();
 
         if (!initFlg) return;
@@ -270,11 +280,6 @@ public class GameManager : MonoBehaviour
         scriptManager.RunScript(controller, this);
 
         stackManager.RunEnd();
-    }
-
-    private void FixedUpdate()
-    {
-        pointerManager.Update();
     }
 
 
@@ -292,13 +297,7 @@ public class GameManager : MonoBehaviour
 
         if (!IsInitializPlayers()) return;
 
-
         stoneBoard.PutRandomStone(manager.randomPutStone, initRandomPutStone);
-
-        for(int i = 0;i<players.Count;i++)
-        {
-            players[i].transform.localRotation = Quaternion.Euler(0.0f, 90 * i, 0.0f);
-        }
 
         initFlg = true;
     }
@@ -343,7 +342,7 @@ public class GameManager : MonoBehaviour
 
     }
 
-    void CreateLocalPlayer(Manager.MemberType _type)
+    void CreateLocalPlayer(Manager.MemberType _type, int _no)
     {
         if (_type != Manager.MemberType.LocalPlayer) return;
 
@@ -360,13 +359,14 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            playerCom.Init(cards.ToArray(),playersCount - 1, true);
+            playerCom.Init(cards.ToArray(),_no, true);
+            playerCom.SetPlayerPosition((PlayerPosition)_no);
         }));
 
         cameraObject.transform.SetParent(playerCom.transform);
     }
 
-    void CreateCPUPlayer(Manager.MemberType _type)
+    void CreateCPUPlayer(Manager.MemberType _type,int _no)
     {
         if (_type != Manager.MemberType.CPU) return;
 
@@ -374,10 +374,10 @@ public class GameManager : MonoBehaviour
 
         playerCom.SetCPUController();
 
-        CreateOtherPlayerBase(playerCom);
+        CreateOtherPlayerBase(playerCom, _no);
     }
 
-    void CreateNetworkPlayer(Manager.MemberType _type)
+    void CreateNetworkPlayer(Manager.MemberType _type, int _no)
     {
         if (_type != Manager.MemberType.NetWorkPlayer) return;
 
@@ -385,10 +385,10 @@ public class GameManager : MonoBehaviour
 
         playerCom.SetNetController();
 
-        CreateOtherPlayerBase(playerCom);
+        CreateOtherPlayerBase(playerCom, _no);
     }
 
-    void CreateOtherPlayerBase(Player _player)
+    void CreateOtherPlayerBase(Player _player, int _no)
     {
         //StartCoroutine(GetBookData(manager.useBookNo, (res)=>{}));
         StartCoroutine(GetCardsFromBookData(1, (res) =>
@@ -400,7 +400,8 @@ public class GameManager : MonoBehaviour
                 cards.Add(CardData.CreateCardDataFromDTO(card));
             }
 
-            _player.Init(cards.ToArray(), playersCount - 1);
+            _player.Init(cards.ToArray(), _no);
+            _player.SetPlayerPosition((PlayerPosition)_no);
         }));
     }
 
