@@ -19,7 +19,7 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
             return true;
         }
 
-        var obj = new GameManager.StackObject(_controller.GetComponent<Player>(), targetCards[0]);
+        var obj = new StackManager.StackObject(_controller.GetComponent<Player>(), targetCards[0]);
 
         Stack(obj, _gameManager);
 

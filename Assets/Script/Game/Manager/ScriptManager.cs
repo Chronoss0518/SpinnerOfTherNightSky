@@ -133,7 +133,7 @@ public class ScriptManager
             mgr.AddUseScriptCount();
         }
 
-        protected void Stack(GameManager.StackObject _script,GameManager _manager)
+        protected void Stack(StackManager.StackObject _script,GameManager _manager)
         {
             mgr.Stack(_script, _manager);
         }
@@ -396,7 +396,7 @@ public class ScriptManager
         return selectItemZoneFunctionController.SelectPos(_pos, _manager, action);
     }
 
-    void Stack(GameManager.StackObject _script, GameManager _manager)
+    void Stack(StackManager.StackObject _script, GameManager _manager)
     {
         _manager.AddStackCard(_script);
     }

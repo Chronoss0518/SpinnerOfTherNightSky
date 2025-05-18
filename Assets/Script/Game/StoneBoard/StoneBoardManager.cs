@@ -111,8 +111,15 @@ public class StoneBoardManager : PanelPosBase
     public bool IsPutStone(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return false;
-
         return stoneList[_y][_x].IsPutStone();
+    }
+
+    public bool IsMagicStarTest(Vector2Int[] _posList,Player _player)
+    {
+
+
+
+        return true;
     }
 
     public bool IsSelectStonePos(int _x, int _y)
