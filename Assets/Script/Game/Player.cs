@@ -8,7 +8,7 @@ public class Player : MonoBehaviour
     [SerializeField]
     GameManager gameManager = null;
 
-    public int playerNo { get; private set; } = 0;
+    public int playerNo { get; private set; } = -1;
 
     [SerializeField]
     ItemZoneManager myItemZone = null;
@@ -95,7 +95,6 @@ public class Player : MonoBehaviour
 
     public void Init(
         CardData[] _cardData,
-        int _playerNo,
         bool _createBookObject = false)
     {
         cardData = _cardData;
@@ -114,6 +113,12 @@ public class Player : MonoBehaviour
 
         UpdateBookParent();
 
+    }
+
+    public void SetPlayerNo(int _playerNo)
+    {
+        if (playerNo >= 0) return;
+        playerNo = _playerNo;
     }
 
     public void SetPlayerPosition(GameManager.PlayerPosition _position)
