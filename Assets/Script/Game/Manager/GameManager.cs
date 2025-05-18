@@ -39,35 +39,18 @@ public class GameManager : MonoBehaviour
     [SerializeField, ReadOnly]
     ScriptManager scriptManager = new ScriptManager();
 
+    public bool isRunScript { get { return scriptManager.isRunScript; } }
+
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
 
     [SerializeField, ReadOnly]
     PanelPosBase.PanelPosManager panelPosManager = new PanelPosBase.PanelPosManager();
 
-    public class StackObject
-    {
-        public StackObject(Player _player, CardScript _card)
-        {
-            player = _player;
-            card = _card;
-        }
+    [SerializeField,ReadOnly]
+    StackManager stackManager = new StackManager();
 
-        public Player player = null;
-        public CardScript card = null;
-    }
-
-
-    [SerializeField, ReadOnly]
-    List<StackObject> stack = new List<StackObject>();
-
-    [SerializeField, ReadOnly]
-    StackObject playCardScript = null;
-
-
-    bool runStackFlg = false;
-
-    public int stackCount { get { return stack.Count; } }
+    public int stackCount { get { return stackManager.stackCount; } }
 
     [SerializeField]
     StoneBoardManager stoneBoard = null;
@@ -88,9 +71,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     StarPosSheet starPosSheetPrefab = null;
 
-    public void AddStackCard(StackObject _card)
+    public void AddStackCard(StackManager.StackObject _card)
     {
-        stack.Add(_card);
+        stackManager.AddStackCard(_card);
     }
 
     public void SelectStonePos(int _x,int _y)
@@ -203,8 +186,7 @@ public class GameManager : MonoBehaviour
 
     public void RunStackScriptStart()
     {
-        if (stack.Count <= 0) return;
-        runStackFlg = true;
+        stackManager.RunStart();
     }
 
     public StarPosSheet CreateStarPanelSheet(MagicCardScript _script)
@@ -279,13 +261,13 @@ public class GameManager : MonoBehaviour
 
         MainUpdate();
 
-        StackUpdate();
+        stackManager.Update();
 
         var controller = players[useScriptPlayerNo].GetComponent<ControllerBase>();
 
         scriptManager.RunScript(controller, this);
-        
-        StackCardScriptEnd();
+
+        stackManager.RunEnd();
     }
 
     private void FixedUpdate()
@@ -297,26 +279,9 @@ public class GameManager : MonoBehaviour
     void MainUpdate()
     {
         if (scriptManager.isRunScript) return;
-        if (runStackFlg) return;
+        if (stackManager.runStackFlg) return;
 
         turnManager.Update();
-    }
-
-    void StackUpdate()
-    {
-        if (scriptManager.isRunScript) return;
-        if (!runStackFlg) return;
-
-        playCardScript = stack[stack.Count - 1];
-
-        stack.RemoveAt(stack.Count - 1);
-
-        scriptManager.CreateScript(playCardScript.card.script[0], true);
-
-        useScriptPlayerNo = playCardScript.player.playerNo;
-
-        if (stack.Count > 0) return;
-        runStackFlg = false;
     }
 
     void StartDice()
@@ -447,47 +412,4 @@ public class GameManager : MonoBehaviour
         return playerCom;
     }
 
-    void StackCardScriptEnd()
-    {
-        if (scriptManager.isRunScript) return;
-        if (playCardScript == null) return;
-
-        MagicActionEnd();
-        ItemActionEnd();
-
-        playCardScript = null;
-    }
-
-    void MagicActionEnd()
-    {
-        if (playCardScript.card.type != CardData.CardType.Magic) return;
-
-        var magic = playCardScript.card.GetComponent<MagicCardScript>();
-
-        bool removeStoneFailedFlg = magic.removeStoneFailedFlg;
-
-        var cardData = playCardScript.card.baseData;
-        var zone = playCardScript.card.zone;
-
-        zone.RemoveCard(cardData);
-
-        if(!removeStoneFailedFlg)
-            playCardScript.player.magicZone.PutCard(cardData);
-        else
-            cardData.havePlayer.trashZone.PutCard(cardData);
-    }
-
-    void ItemActionEnd()
-    {
-        if (playCardScript.card.type != CardData.CardType.Item) return;
-
-        var cardData = playCardScript.card.baseData;
-        var zone = playCardScript.card.zone;
-
-        var player = cardData.havePlayer;
-
-        zone.RemoveCard(cardData);
-
-        player.trashZone.PutCard(cardData);
-    }
 }
