@@ -23,7 +23,6 @@ public class StackManager
     [SerializeField, ReadOnly]
     List<StackObject> stack = new List<StackObject>();
 
-    [SerializeField, ReadOnly]
     StackObject playCardScript = null;
 
     public int stackCount { get { return stack.Count; } }
@@ -66,7 +65,7 @@ public class StackManager
 
         stack.RemoveAt(stack.Count - 1);
 
-        gameManager.CreateScript(playCardScript.card.script[0]);
+        var script = gameManager.CreateScript(playCardScript.card.script[0],true);
 
         gameManager.SetUseScriptPlayerNo(playCardScript.player.playerNo);
 
