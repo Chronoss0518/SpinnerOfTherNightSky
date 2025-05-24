@@ -11,7 +11,9 @@ public class ScriptManager
     {
        functions[(int)ScriptType.BlockStone] = new BlockStoneFunction(this);
        functions[(int)ScriptType.BlockCard] = new BlockCardFunction(this);
+       //functions[(int)ScriptType.ClearScript] = new ClearScriptFunction(this);
        functions[(int)ScriptType.SelectStoneBoard] = new SelectStoneBoardFunction(this);
+       //functions[(int)ScriptType.SelectStoneBoardFromMagic] = new SelectStoneBoardFromMagicFunction(this);
        functions[(int)ScriptType.SelectCard] = new SelectCardFunction(this);
        functions[(int)ScriptType.SelectItemZone] = new SelectItemZoneFunction(this);
        functions[(int)ScriptType.MoveStone] = new MoveStoneFunction(this);
@@ -436,10 +438,12 @@ public class ScriptManager
 
         for (int i = 0;i<_script.parts.Length;i++)
         {
+
             var scr = _script.parts[i];
 
             int scriptType = (int)scr.type;
 
+            if (functions[scriptType] == null) continue;
             var arg = functions[scriptType].GenerateArgument(_script.parts[i]);
 
             if (arg == null) continue;
@@ -478,6 +482,12 @@ public class ScriptManager
 
         var argument = runScript.actions[useScriptCount];
         int scriptType = (int)argument.type;
+
+        if(functions[scriptType] == null)
+        {
+            useScriptCount++;
+            return;
+        }
 
         functions[scriptType].Run(_controller,_gameManager, argument);
 
