@@ -209,8 +209,6 @@ public class GameManager : MonoBehaviour
 
         var obj = Instantiate(starPosSheetPrefab.gameObject);
 
-        obj.transform.localRotation = localPlayer.transform.localRotation;
-
         var script = obj.GetComponent<StarPosSheet>();
         panelPosManager.CreatePanel(script);
 
@@ -221,6 +219,9 @@ public class GameManager : MonoBehaviour
         {
             script.SetStarPosFlg(pos.x, pos.y, true);
         }
+
+        obj.transform.SetParent(localPlayer.transform);
+        obj.transform.localRotation = Quaternion.identity;
 
         return script;
     }
@@ -370,7 +371,7 @@ public class GameManager : MonoBehaviour
             localPlayer = playerCom;
         }));
 
-        cameraObject.transform.SetParent(playerCom.transform);
+        cameraObject.gameObject.SetActive(false);
     }
 
     void CreateCPUPlayer(Manager.MemberType _type,int _no)
