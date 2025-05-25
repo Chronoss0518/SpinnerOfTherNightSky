@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using Unity.Collections;
@@ -20,26 +21,44 @@ public class CPUController : UnLocalPlayerControllerBase
         if (maxWaitCount > nowWaitCount) return;
 
         nowWaitCount = 0;
-        UpActionFlg();
+        UseItemUpdate();
+        PutStoneUpdate();
+        PlayMagicUpdate();
+        SetTrapUpdate();
     }
 
     void UseItemUpdate()
     {
-
+        if (gameManager.turnStep != TurnManager.MainStep.UseItem) return;
+        UpActionFlg();
     }
 
     void PutStoneUpdate()
     {
+        if (gameManager.turnStep != TurnManager.MainStep.PutStone) return;
 
+        for(int i = 0;i < 3;i++)
+        {
+            var x = Random.Range(0, gameManager.stoneBoardObj.PANEL_COUNT_X);
+            var y = Random.Range(0, gameManager.stoneBoardObj.PANEL_COUNT_Y);
+            if (gameManager.stoneBoardObj.IsPutStone(x,y)) continue;
+
+            gameManager.SelectStonePos(x, y);
+        }
+
+        UpActionFlg();
     }
 
     void PlayMagicUpdate()
     {
-        
+        if (gameManager.turnStep != TurnManager.MainStep.PlayMagic) return;
+        UpActionFlg();
     }
 
-    void SetItemUpdate()
+    void SetTrapUpdate()
     {
+        if (gameManager.turnStep != TurnManager.MainStep.SetTrap) return;
+        UpActionFlg();
 
     }
 
