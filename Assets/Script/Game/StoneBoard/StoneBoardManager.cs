@@ -17,6 +17,8 @@ public class StoneBoardManager : PanelPosBase
 
     public float stonePosTop { get; private set; } = 0.0f;
 
+    private int[][][] transformPositionList = new int[4][][];
+
 
     [SerializeField,ReadOnly]
     StonePosScript[][] stoneList = null;
@@ -25,6 +27,17 @@ public class StoneBoardManager : PanelPosBase
     private bool isBlockFlg = false;
 
     public bool isBlock { get { return isBlockFlg; } }
+
+    public Vector2Int GetPlayerPositionPos(int _x, int _y, GameManager.PlayerPosition _playerPosition)
+    {
+        if (_playerPosition == GameManager.PlayerPosition.Right)
+            return new Vector2Int(_y, PANEL_COUNT_Y - _x);
+        if (_playerPosition == GameManager.PlayerPosition.Back)
+            return new Vector2Int(PANEL_COUNT_X - _x, PANEL_COUNT_Y - _y);
+        if (_playerPosition == GameManager.PlayerPosition.Left)
+            return new Vector2Int(PANEL_COUNT_X - _y, _x);
+        return new Vector2Int(_x, _y);
+    }
 
     public void SetBlockFlg(bool _flg)
     {
@@ -114,14 +127,6 @@ public class StoneBoardManager : PanelPosBase
         return stoneList[_y][_x].IsPutStone();
     }
 
-    public bool IsMagicStarTest(Vector2Int[] _posList,Player _player)
-    {
-
-
-
-        return true;
-    }
-
     public bool IsSelectStonePos(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return false;
@@ -152,7 +157,7 @@ public class StoneBoardManager : PanelPosBase
         return _startPos;
     }
 
-    protected override void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos, PanelPosManager _builder)
+    protected override void CreateObject(float _vPos, Vector2Int _pos, GameObject _verticalPos, PanelPosManager _builder)
     {
         var stonePos = Instantiate(stonePosPrefab, _verticalPos.transform);
 

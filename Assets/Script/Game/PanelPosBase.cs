@@ -23,18 +23,7 @@ public abstract class PanelPosBase : MonoBehaviour
 
     protected virtual Vector3 SetStartPos(Vector3 _startPos) { return _startPos; }
 
-    public Vector2Int GetPlayerPositionPos(int _x,int _y,GameManager.PlayerPosition _playerPosition)
-    {
-        if (_playerPosition == GameManager.PlayerPosition.Right)
-            return new Vector2Int(_y, PANEL_COUNT_Y - _x);
-        if (_playerPosition == GameManager.PlayerPosition.Back)
-            return new Vector2Int(PANEL_COUNT_X - _x, PANEL_COUNT_Y - _y);
-        if (_playerPosition == GameManager.PlayerPosition.Left)
-            return new Vector2Int(PANEL_COUNT_X - _y, _x);
-        return new Vector2Int(_x, _y);
-    }
-
-    protected abstract void CreateOobject(float _vPos, Vector2Int _pos, GameObject _verticalPos,PanelPosManager _builder);
+    protected abstract void CreateObject(float _vPos, Vector2Int _pos, GameObject _verticalPos,PanelPosManager _builder);
 
     public class PanelPosManager
     {
@@ -125,7 +114,7 @@ public abstract class PanelPosBase : MonoBehaviour
                 {
                     var tmpPos = new Vector2Int(j, i);
 
-                    _createPanel.CreateOobject(tmpVPos, tmpPos, verticalPos,this);
+                    _createPanel.CreateObject(tmpVPos, tmpPos, verticalPos,this);
 
                     tmpVPos += interval.x;
                 }
