@@ -49,6 +49,11 @@ public class Player : MonoBehaviour
     [SerializeField, ReadOnly]
     Manager.DisplayAspectType beforeType = Manager.DisplayAspectType.None;
 
+    [SerializeField]
+    Camera cam = null;
+
+
+
     public bool initFlg { get; private set; } = false;
     public GameObject stoneModel { get { return stone; } }
 
@@ -141,6 +146,8 @@ public class Player : MonoBehaviour
         controller.SetPlayer(this);
         controllerCom = controller;
         RemoveUnLocalPlayerObject();
+
+        cam.gameObject.SetActive(false);
     }
 
     public void SetNetController()
@@ -150,6 +157,8 @@ public class Player : MonoBehaviour
         controller.SetPlayer(this);
         controllerCom = controller;
         RemoveUnLocalPlayerObject();
+
+        cam.gameObject.SetActive(false);
     }
 
     public void SetLocalPlayerController()
