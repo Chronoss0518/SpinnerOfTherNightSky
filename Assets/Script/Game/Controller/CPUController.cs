@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using Unity.Collections;
 using UnityEngine;
 
-public class CPUController : ControllerBase
+public class CPUController : UnLocalPlayerControllerBase
 {
     [SerializeField]
     int maxWaitCount = 100;
@@ -22,4 +22,26 @@ public class CPUController : ControllerBase
         nowWaitCount = 0;
         UpActionFlg();
     }
+
+    void UseItemUpdate()
+    {
+
+    }
+
+    void PutStoneUpdate()
+    {
+
+    }
+
+    void PlayMagicUpdate()
+    {
+        
+    }
+
+    void SetItemUpdate()
+    {
+
+    }
+
+
 }

@@ -2,7 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class NetWorkController : ControllerBase
+public class NetWorkController : UnLocalPlayerControllerBase
 {
 
     // Update is called once per frame

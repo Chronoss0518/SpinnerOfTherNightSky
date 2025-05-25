@@ -30,5 +30,4 @@ abstract public class ControllerBase : MonoBehaviour
     virtual protected void RunActionStart() { }
     virtual protected void RunActionEnd() { }
 
-
 }
