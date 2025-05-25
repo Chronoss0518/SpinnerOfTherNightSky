@@ -136,13 +136,19 @@ public class Player : MonoBehaviour
 
     public void SetCPUController()
     {
-        controllerCom = gameObject.AddComponent<CPUController>();
+        var controller = gameObject.AddComponent<CPUController>();
+        controller.SetGameManager(gameManager);
+        controller.SetPlayer(this);
+        controllerCom = controller;
         RemoveUnLocalPlayerObject();
     }
 
     public void SetNetController()
     {
-        controllerCom = gameObject.AddComponent<NetWorkController>();
+        var controller = gameObject.AddComponent<NetWorkController>();
+        controller.SetGameManager(gameManager);
+        controller.SetPlayer(this);
+        controllerCom = controller;
         RemoveUnLocalPlayerObject();
     }
 
