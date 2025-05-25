@@ -17,7 +17,7 @@ public class StoneBoardManager : PanelPosBase
 
     public float stonePosTop { get; private set; } = 0.0f;
 
-    private int[][][] transformPositionList = new int[4][][];
+    private Vector2Int[][][] transformPositionList = new Vector2Int[4][][];
 
 
     [SerializeField,ReadOnly]
@@ -28,15 +28,52 @@ public class StoneBoardManager : PanelPosBase
 
     public bool isBlock { get { return isBlockFlg; } }
 
-    public Vector2Int GetPlayerPositionPos(int _x, int _y, GameManager.PlayerPosition _playerPosition)
+    protected override void Init()
     {
-        if (_playerPosition == GameManager.PlayerPosition.Right)
-            return new Vector2Int(_y, PANEL_COUNT_Y - _x);
-        if (_playerPosition == GameManager.PlayerPosition.Back)
-            return new Vector2Int(PANEL_COUNT_X - _x, PANEL_COUNT_Y - _y);
-        if (_playerPosition == GameManager.PlayerPosition.Left)
-            return new Vector2Int(PANEL_COUNT_X - _y, _x);
-        return new Vector2Int(_x, _y);
+        base.Init();
+
+        for (int i = 0; i< 4; i++)
+        {
+            transformPositionList[i] = new Vector2Int[PANEL_COUNT_Y][];
+            for (int y = 0; y< PANEL_COUNT_Y; y++)
+            {
+                transformPositionList[i][y] = new Vector2Int[PANEL_COUNT_X];
+                for (int x = 0; x < PANEL_COUNT_X; x++)
+                {
+
+                    var playerPosition = (GameManager.PlayerPosition)i;
+
+                    int posX = x;
+                    int posY = y;
+
+                    if (playerPosition == GameManager.PlayerPosition.Right)
+                    {
+                        posX = y;
+                        posY = PANEL_COUNT_Y - x;
+                    }
+
+                    if (playerPosition == GameManager.PlayerPosition.Back)
+                    {
+                        posX = PANEL_COUNT_X - x;
+                        posY = PANEL_COUNT_Y - y;
+                    }
+
+                    if (playerPosition == GameManager.PlayerPosition.Left)
+                    {
+                        posX = PANEL_COUNT_X - y;
+                        posY = x;
+                    }
+
+                    transformPositionList[i][y][x] = new Vector2Int(x, y);
+
+                }
+            }
+        }
+    }
+
+    public Vector2Int GetPlayerPositionPos(int _x,int _y,GameManager.PlayerPosition _playerPosition)
+    {
+        return transformPositionList[(int)_playerPosition][_x][_y];
     }
 
     public void SetBlockFlg(bool _flg)

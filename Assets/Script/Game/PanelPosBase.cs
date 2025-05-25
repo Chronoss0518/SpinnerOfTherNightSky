@@ -18,6 +18,8 @@ public abstract class PanelPosBase : MonoBehaviour
 
     public Vector3 size { get; private set; } = Vector3.zero;
 
+    protected virtual void Init() { }
+
     abstract protected void InitHoryzontalList(int _nowCount);
     abstract protected void InitVerticalList();
 
@@ -121,6 +123,8 @@ public abstract class PanelPosBase : MonoBehaviour
 
                 pos.z -= interval.y;
             }
+
+            _createPanel.Init();
         }
 
     }
