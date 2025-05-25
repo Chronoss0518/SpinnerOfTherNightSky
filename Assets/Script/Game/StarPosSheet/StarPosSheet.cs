@@ -188,7 +188,7 @@ public class StarPosSheet : PanelPosBase
         if(!touchInitFlg)
         {
             touchInitFlg = true;
-            localTouchPos =  transform.position - grid.touchPosition;
+            localTouchPos =  transform.localPosition - transform.worldToLocalMatrix.MultiplyPoint(grid.touchPosition);
             return;
         }
 
@@ -202,4 +202,5 @@ public class StarPosSheet : PanelPosBase
         tmp.y = tmpY;
         transform.localPosition = tmp;
     }
+
 }
