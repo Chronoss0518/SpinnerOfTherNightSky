@@ -16,7 +16,7 @@ public class GameManager : MonoBehaviour
         Left,
     }
 
-    [SerializeField,ReadOnly]
+    [SerializeField, ReadOnly]
     PointerManager pointerManager = PointerManager.instance;
 
     //Initialize//
@@ -24,7 +24,7 @@ public class GameManager : MonoBehaviour
     GameObject initRandomPutStone = null;
 
     //Player ŠÖŒW//
-    [SerializeField,ReadOnly]
+    [SerializeField, ReadOnly]
     Text vMessage = null, lMessage = null;
 
     [SerializeField, ReadOnly]
@@ -42,7 +42,7 @@ public class GameManager : MonoBehaviour
     Camera cameraObject = null;
 
     public int nowPlayerNo { get; private set; } = 0;
-    
+
     public int useScriptPlayerNo { get; private set; } = 0;
 
     //ScriptŠÖŒW//
@@ -54,6 +54,8 @@ public class GameManager : MonoBehaviour
 
     [SerializeField, ReadOnly]
     TurnManager turnManager = new TurnManager();
+
+    public TurnManager.MainStep turnStep { get { return turnManager.nowMainStep; } }
 
     [SerializeField, ReadOnly]
     PanelPosBase.PanelPosManager panelPosManager = new PanelPosBase.PanelPosManager();
@@ -206,6 +208,8 @@ public class GameManager : MonoBehaviour
         if (starPosSheetPrefab == null) return null;
 
         var obj = Instantiate(starPosSheetPrefab.gameObject);
+
+        obj.transform.localRotation = localPlayer.transform.localRotation;
 
         var script = obj.GetComponent<StarPosSheet>();
         panelPosManager.CreatePanel(script);
