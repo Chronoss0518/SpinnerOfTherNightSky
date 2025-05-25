@@ -333,11 +333,13 @@ public class ScriptManager
     [SerializeField, ReadOnly]
     Dictionary<int, StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
 
+
     [SerializeField, ReadOnly]
     SelectCardFunctionController selectCardFunctionController = null;
 
     [SerializeField, ReadOnly]
     List<CardScript> targetCards = new List<CardScript>();
+
 
     [SerializeField, ReadOnly]
     SelectItemZoneFunctionController selectItemZoneFunctionController = null;
@@ -502,6 +504,7 @@ public class ScriptManager
         runScript = null;
         foreach (var func in functions)
         {
+            if (func == null) continue;
             func.Release();
         }
     }
