@@ -48,7 +48,7 @@ public class ScriptManager
         BlockCard,//石を取り除かせない・カードを無効にする//
         ClearScript,//現在登録されているスクリプトを全て削除する//
         SelectStoneBoard,//盤面の場所を選択する//
-        SelectStoneBoardFromMagic,//術の発動に伴う盤面の石を選択させる//
+        RemoveStoneFromMagic,//術の発動に伴う盤面の石を選択させる//
         SelectCard,//魔導書からカードを選択する//
         SelectItemZone,//魔導書からカードを選択する//
         MoveStone,//石の置く・石を取り除く//
@@ -202,11 +202,11 @@ public class ScriptManager
         public bool isPutPos = true;
     }
 
-    public class SelectStoneBoardFromMagicArgument : ScriptArgument
+    public class RemoveStoneFromMagicArgument : ScriptArgument
     {
-        public SelectStoneBoardFromMagicArgument()
+        public RemoveStoneFromMagicArgument()
         {
-            type = ScriptType.SelectStoneBoardFromMagic;
+            type = ScriptType.RemoveStoneFromMagic;
         }
 
         public CardData playMagicCard = null;
@@ -433,10 +433,12 @@ public class ScriptManager
     {
 
         var res = new ScriptArgumentData();
+
+        AddRemoveStoneFromMagic(res, _playCard);
+
         if (_script.parts == null) return res;
         if (_script.parts.Length <= 0) return res;
 
-        AddSelectStoneBoardFromMagic(res, _playCard);
 
         for (int i = 0;i<_script.parts.Length;i++)
         {
@@ -509,13 +511,13 @@ public class ScriptManager
         }
     }
 
-    void AddSelectStoneBoardFromMagic(ScriptArgumentData _result, CardData _playCard)
+    void AddRemoveStoneFromMagic(ScriptArgumentData _result, CardData _playCard)
     {
         if (_result == null) return;
         if (_playCard == null) return;
         if (_playCard.cardType != (int)CardData.CardType.Magic) return;
 
-        var arg = new SelectStoneBoardFromMagicArgument();
+        var arg = new RemoveStoneFromMagicArgument();
         arg.playMagicCard = _playCard;
         _result.actions.Add(arg);
     }
