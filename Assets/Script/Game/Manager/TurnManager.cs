@@ -4,7 +4,6 @@ using Unity.Collections;
 [System.Serializable]
 public class TurnManager
 {
-    [System.Serializable]
     abstract public class TurnClass
     {
         public TurnClass(TurnManager _manager){ manager = _manager; }
@@ -44,6 +43,7 @@ public class TurnManager
 
     GameManager gameManager = null;
 
+    [SerializeField,ReadOnly]
     private bool changeTurn = false;
 
     TurnClass[] turnClass = null;
@@ -74,7 +74,7 @@ public class TurnManager
 
     public void Update()
     {
-        if (changeTurn)
+        if(changeTurn)
         {
             runTurn.Next();
             runTurn = null;
@@ -86,4 +86,6 @@ public class TurnManager
 
         runTurn.Update();
     }
+
+
 }
