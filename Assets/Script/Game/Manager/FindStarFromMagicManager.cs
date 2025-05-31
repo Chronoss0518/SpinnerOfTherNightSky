@@ -30,9 +30,6 @@ public class FindStarFromMagicManager
 
     private Dictionary<int, FindData> magicCardFindDataMap = new Dictionary<int, FindData>();
 
-    [SerializeField,ReadOnly]
-    FindData tmp = null;
-
     public void Init(GameManager _manager)
     {
         if (manager != null) return;
@@ -73,7 +70,6 @@ public class FindStarFromMagicManager
                 data.leftTopPos = pos;
         }
 
-        if (_data.id == 0) tmp = data;
 
     }
 
@@ -88,11 +84,13 @@ public class FindStarFromMagicManager
 
         var findData = magicCardFindDataMap[_data.id];
 
-        for (int v = findData.minPos.y; v < stoneBoard.PANEL_COUNT_Y - findData.maxPos.y; v++)
+        //for (int v = findData.minPos.y; v < stoneBoard.PANEL_COUNT_Y - findData.maxPos.y; v++)
+        for (int v = 0; v < stoneBoard.PANEL_COUNT_Y; v++)
         {
-            for (int h = findData.minPos.x; h < stoneBoard.PANEL_COUNT_X - findData.maxPos.x; h++)
+            //for (int h = findData.minPos.x; h < stoneBoard.PANEL_COUNT_X - findData.maxPos.x; h++)
+            for (int h = 0; h < stoneBoard.PANEL_COUNT_X; h++)
             {
-                if (!FindStarPos(h, v, _data, _runPlayer)) continue;
+                if (FindStarPos(h, v, _data, _runPlayer) == null) continue;
                 return true;
             }
         }
@@ -100,38 +98,79 @@ public class FindStarFromMagicManager
         return false;
     }
 
-    public bool FindStarPos(int targetX, int targetY, CardData _data, Player _runPlayer)
+    public List<Vector2Int> FindStarPos(int targetX, int targetY, CardData _data, Player _runPlayer)
     {
-        if (_data == null) return false;
-        if (manager == null) return false;
-        if (_runPlayer == null) return false;
-        if (!magicCardFindDataMap.ContainsKey(_data.id)) return false;
+        if (_data == null) return null;
+        if (manager == null) return null;
+        if (_runPlayer == null) return null;
+        if (!magicCardFindDataMap.ContainsKey(_data.id)) return null;
         
         var stoneBoard = manager.stoneBoardObj;
        
-        var tmpPos = stoneBoard.GetPlayerPositionPos(targetX, targetY, _runPlayer.position);
+        var startPos = GetPlayerPositionPos(targetX, targetY, _runPlayer.position, stoneBoard);
 
-        if (!stoneBoard.IsPutStone(tmpPos.x , tmpPos.y))return false;
-
+        if (!stoneBoard.IsPutStone(startPos.x , startPos.y))return null;
         var findData = magicCardFindDataMap[_data.id];
+
+        var res = new List<Vector2Int>();
+
+        res.Add(startPos);
+        var leftTopPos = GetPlayerPositionPos(findData.leftTopPos.x, findData.leftTopPos.y, _runPlayer.position, findData);
 
         foreach (var pos in findData.magicData.starPos)
         {
             if (pos.x == findData.leftTopPos.x &&
                 pos.y == findData.leftTopPos.y) continue;
 
-            tmpPos = stoneBoard.GetPlayerPositionPos(targetX + pos.x - findData.leftTopPos.x, targetY + pos.y - findData.leftTopPos.y, _runPlayer.position);
+            var tmpPos = GetPlayerPositionPos(pos.x, pos.y, _runPlayer.position,findData);
+            tmpPos.x = startPos.x + tmpPos.x - leftTopPos.x;
+            tmpPos.y = startPos.y + tmpPos.y - leftTopPos.y;
 
-            if (_data.id == 0) Debug.Log($"Test Pos X[{tmpPos.x}],Y[{tmpPos.y}]");
-
-            if (!stoneBoard.IsPutStone(tmpPos.x, tmpPos.y))
-                return false;
+            if (!stoneBoard.IsPutStone(tmpPos.x,tmpPos.y))
+                return null;
+            res.Add(tmpPos);
         }
 
-        return true;
+        return res;
     }
 
     private GameManager manager = null;
 
 
+    public Vector2Int GetPlayerPositionPos(int _x, int _y, GameManager.PlayerPosition _playerPosition,StoneBoardManager _stoneBoard)
+    {
+        return GetPlayerPosotionPosBase(_x, _y, _playerPosition, _stoneBoard.PANEL_COUNT_X, _stoneBoard.PANEL_COUNT_Y);
+    }
+
+
+
+    public Vector2Int GetPlayerPositionPos(int _x, int _y, GameManager.PlayerPosition _playerPosition, FindData _data)
+    {
+        return GetPlayerPosotionPosBase(_x, _y, _playerPosition, _data.maxPos.x, _data.maxPos.y);
+    }
+
+    private Vector2Int GetPlayerPosotionPosBase(int _x, int _y, GameManager.PlayerPosition _playerPosition, int _maxX,int _maxY)
+    {
+        int posX = _x;
+        int posY = _y;
+
+        if (_playerPosition == GameManager.PlayerPosition.Right)
+        {
+            posX = _maxX - _y;
+            posY = _x;
+        }
+        if (_playerPosition == GameManager.PlayerPosition.Back)
+        {
+            posX = _maxX - _x;
+            posY = _maxY - _y;
+        }
+
+        if (_playerPosition == GameManager.PlayerPosition.Left)
+        {
+            posX = _y;
+            posY = _maxY - _x;
+        }
+
+        return new Vector2Int(posX, posY);
+    }
 }
