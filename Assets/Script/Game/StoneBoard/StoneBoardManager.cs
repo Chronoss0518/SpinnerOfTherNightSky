@@ -180,7 +180,7 @@ public class StoneBoardManager : PanelPosBase
         stonePos.name = $"X[{_pos.x}]Y[{_pos.y}]";
         stonePos.transform.localPosition = new Vector3(_vPos, 0.0f, 0.0f);
         var col = stonePos.GetComponent<BoxCollider>();
-        col.size = new Vector3(Mathf.Abs(_builder.interval.x), 1.0f, Mathf.Abs(_builder.interval.y)) * 0.5f;
+        col.size = new Vector3(Mathf.Abs(_builder.interval.x), 1.0f, Mathf.Abs(_builder.interval.y));
 
         var stonePosScript = stonePos.GetComponent<StonePosScript>();
         stonePosScript.Init(gameManager, _pos);
