@@ -23,11 +23,16 @@ public class CardPutScript : MonoBehaviour
 
     DateTime startTime;
 
+    bool nowSelectFlg = false;
 
     public void SetTexture(Texture2D _tex) { if (image != null) image.texture = _tex; }
 
     public Texture GetTexture() { return image.texture; }
 
+    void OnEnable()
+    {
+        SetAnimation(nowSelectFlg);
+    }
 
     public void SetAnimation(bool _flg)
     {
@@ -37,6 +42,8 @@ public class CardPutScript : MonoBehaviour
 
         if(!_flg) animator.Play("CardUnSelectAnimation");
         else animator.Play("CardSelectAnimation");
+
+        nowSelectFlg = _flg;
     }
 
     public void SetAnimationVisible(bool _flg)
