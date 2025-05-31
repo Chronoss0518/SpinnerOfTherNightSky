@@ -17,9 +17,6 @@ public class StoneBoardManager : PanelPosBase
 
     public float stonePosTop { get; private set; } = 0.0f;
 
-    private Vector2Int[][][] transformPositionList = new Vector2Int[4][][];
-
-
     [SerializeField,ReadOnly]
     StonePosScript[][] stoneList = null;
 
@@ -31,49 +28,31 @@ public class StoneBoardManager : PanelPosBase
     protected override void Init()
     {
         base.Init();
-
-        for (int i = 0; i< 4; i++)
-        {
-            transformPositionList[i] = new Vector2Int[PANEL_COUNT_Y][];
-            for (int y = 0; y< PANEL_COUNT_Y; y++)
-            {
-                transformPositionList[i][y] = new Vector2Int[PANEL_COUNT_X];
-                for (int x = 0; x < PANEL_COUNT_X; x++)
-                {
-
-                    var playerPosition = (GameManager.PlayerPosition)i;
-
-                    int posX = x;
-                    int posY = y;
-
-                    if (playerPosition == GameManager.PlayerPosition.Right)
-                    {
-                        posX = y;
-                        posY = PANEL_COUNT_Y - x;
-                    }
-
-                    if (playerPosition == GameManager.PlayerPosition.Back)
-                    {
-                        posX = PANEL_COUNT_X - x;
-                        posY = PANEL_COUNT_Y - y;
-                    }
-
-                    if (playerPosition == GameManager.PlayerPosition.Left)
-                    {
-                        posX = PANEL_COUNT_X - y;
-                        posY = x;
-                    }
-
-                    transformPositionList[i][y][x] = new Vector2Int(x, y);
-
-                }
-            }
-        }
     }
 
     public Vector2Int GetPlayerPositionPos(int _x,int _y,GameManager.PlayerPosition _playerPosition)
     {
-        return transformPositionList[(int)_playerPosition][_x][_y];
+        int posX = _x;
+        int posY = _y;
+
+        if (_playerPosition == GameManager.PlayerPosition.Right)
+        {
+            posX = _y;
+            posY = PANEL_COUNT_Y - _x;
+        }
+
+        if (_playerPosition == GameManager.PlayerPosition.Back)
+        {
+            posX = PANEL_COUNT_X - _x;
+            posY = PANEL_COUNT_Y - _y;
+        }
+
+        if (_playerPosition == GameManager.PlayerPosition.Left)
+        {
+            posX = PANEL_COUNT_X - _y;
+            posY = _x;
+        }
+        return new Vector2Int(posX, posY);
     }
 
     public void SetBlockFlg(bool _flg)
