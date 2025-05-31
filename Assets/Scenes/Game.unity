@@ -353,7 +353,9 @@ MonoBehaviour:
   lMessage: {fileID: 0}
   players: []
   playerPrefab: {fileID: 2431698666257173391, guid: 2449ad3d1ab7e13489b79cd49a1faae1, type: 3}
+  localPlayer: {fileID: 0}
   cameraObject: {fileID: 849056416}
+  viewUseScriptPlayerNo: 0
   scriptManager:
     targetCards: []
     targetItemZonePos: {fileID: 0}
@@ -362,7 +364,10 @@ MonoBehaviour:
     errorMessageDrawCount: -1
     errorType: 0
   turnManager:
+    changeTurn: 0
     mainStep: 0
+  stackManager:
+    stack: []
   stoneBoard: {fileID: 340119966476239371}
   manager:
     IS_DEBUG_FLG: 1
@@ -841,10 +846,10 @@ MonoBehaviour:
     randomPutStone: 0
     handType: 0
   gameType: 0
-  memberFlgs: 00000000010000000300000003000000
+  memberFlgs: 01000000010000000100000000000000
   localGameFlg: 1
   useBookNo: 0
-  randomPutStone: 10
+  randomPutStone: 0
 --- !u!4 &1813436577
 Transform:
   m_ObjectHideFlags: 0
