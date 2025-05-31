@@ -30,31 +30,6 @@ public class StoneBoardManager : PanelPosBase
         base.Init();
     }
 
-    public Vector2Int GetPlayerPositionPos(int _x,int _y,GameManager.PlayerPosition _playerPosition)
-    {
-        int posX = _x;
-        int posY = _y;
-
-        if (_playerPosition == GameManager.PlayerPosition.Right)
-        {
-            posX = _y;
-            posY = PANEL_COUNT_Y - _x;
-        }
-
-        if (_playerPosition == GameManager.PlayerPosition.Back)
-        {
-            posX = PANEL_COUNT_X - _x;
-            posY = PANEL_COUNT_Y - _y;
-        }
-
-        if (_playerPosition == GameManager.PlayerPosition.Left)
-        {
-            posX = PANEL_COUNT_X - _y;
-            posY = _x;
-        }
-        return new Vector2Int(posX, posY);
-    }
-
     public void SetBlockFlg(bool _flg)
     {
         isBlockFlg = _flg;
