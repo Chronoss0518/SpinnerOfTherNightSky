@@ -27,6 +27,11 @@ public abstract class PanelPosBase : MonoBehaviour
 
     protected abstract void CreateObject(float _vPos, Vector2Int _pos, GameObject _verticalPos,PanelPosManager _builder);
 
+    public int CreatePosKey(int _x,int _y)
+    { 
+        return _x + (_y * PANEL_COUNT_X);
+    }
+
     public class PanelPosManager
     {
         public Vector2 interval { get; private set; } = Vector2.zero;
