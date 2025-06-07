@@ -3,7 +3,6 @@ public class SelectStoneBoardFunction : ScriptManager.ScriptFunctionBase
     public SelectStoneBoardFunction(ScriptManager _manager) : base(_manager)
     {
         controller.Init(_manager);
-        SetSelectStoneBoardFunctionController(controller);
     }
 
     public void Init()
@@ -53,7 +52,7 @@ public class SelectStoneBoardFunction : ScriptManager.ScriptFunctionBase
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
         Init();
-
+        SetSelectStoneBoardFunctionController(controller);
         return controller.SelectAction(_controller, _gameManager, _script);
     }
 

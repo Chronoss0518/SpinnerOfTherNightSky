@@ -4,7 +4,7 @@ using Unity.Collections;
 using UnityEngine;
 using static ScriptManager;
 
-public class SelectStoneBoardFunctionController : SelectScriptControllerBase
+public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
 {
     public Dictionary<int, StonePosScript> GetTargetStonePos()
     {
@@ -16,12 +16,14 @@ public class SelectStoneBoardFunctionController : SelectScriptControllerBase
         targetStonePos.Clear();
     }
 
-    public void SelectTargetPos(int _x, int _y, GameManager _manager,SelectStoneBoardArgument _runArgument)
+    public override void SelectTargetPos(int _x, int _y, GameManager _manager, ScriptArgument _runArgument)
     {
-        if (_runArgument == null) return;
-        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == _runArgument.isPutPos)
+
+        var runArgument = (SelectStoneBoardArgument)_runArgument;
+        if (runArgument == null) return;
+        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == runArgument.isPutPos)
         {
-            manager.SetError(_runArgument.isPutPos ?
+            manager.SetError(runArgument.isPutPos ?
                 ErrorType.IsPutStonePosSelect :
                 ErrorType.IsRemoveStonePosSelect);
 
@@ -37,7 +39,7 @@ public class SelectStoneBoardFunctionController : SelectScriptControllerBase
             return;
         }
 
-        if (_runArgument.maxCount <= targetStonePos.Count)
+        if (runArgument.maxCount <= targetStonePos.Count)
         {
             manager.SetError(ErrorType.IsRangeMaxOverCount);
             return;

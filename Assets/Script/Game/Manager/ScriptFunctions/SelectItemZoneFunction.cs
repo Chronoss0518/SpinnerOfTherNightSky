@@ -3,7 +3,6 @@ public class SelectItemZoneFunction : ScriptManager.ScriptFunctionBase
     public SelectItemZoneFunction(ScriptManager _manager) : base(_manager)
     {
         controller.Init(_manager);
-        SetSelectItemZoneFunctionController(controller);
     }
 
     public void Init()
@@ -44,6 +43,7 @@ public class SelectItemZoneFunction : ScriptManager.ScriptFunctionBase
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
         Init();
+        SetSelectItemZoneFunctionController(controller);
         return controller.SelectAction(_controller, _gameManager, _script);
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
-public class SelectItemZoneFunctionController : SelectScriptControllerBase
+public class SelectItemZoneFunctionController : SelectItemZoneControllerBase
 {
 
     public ItemZoneObject GetTargetPos() { return targetItemZonePos; }
@@ -14,8 +14,9 @@ public class SelectItemZoneFunctionController : SelectScriptControllerBase
         targetItemZonePos = null;
     }
 
-    public bool SelectPos(ItemZoneObject _pos, GameManager _manager, SelectItemZoneArgument _runArgument)
+    public override bool SelectPos(ItemZoneObject _pos, GameManager _manager, ScriptArgument _runArgument)
     {
+        var runArgument = (SelectItemZoneArgument)_runArgument;
         if (_runArgument == null) return false;
         if (_pos == null) return false;
 

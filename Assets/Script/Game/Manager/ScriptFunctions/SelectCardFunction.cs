@@ -3,7 +3,6 @@ public class SelectCardFunction : ScriptManager.ScriptFunctionBase
     public SelectCardFunction(ScriptManager _manager) : base(_manager)
     {
         controller.Init(_manager);
-        SetSelectCardFunctionController(controller);
     }
 
     public void Init()
@@ -133,6 +132,7 @@ public class SelectCardFunction : ScriptManager.ScriptFunctionBase
     public override bool Run(ControllerBase _controller, GameManager _gameManager, ScriptManager.ScriptArgument _script)
     {
         Init();
+        SetSelectCardFunctionController(controller);
         return controller.SelectAction(_controller, _gameManager, _script);
     }
 

@@ -4,7 +4,7 @@ using UnityEngine;
 using Unity.Collections;
 using static ScriptManager;
 
-public class SelectCardFunctionController : SelectScriptControllerBase
+public class SelectCardFunctionController : SelectCardControllerBase
 {
     public const string BOOK_ZONE = "魔導書";
     public const string ITEM_ZONE = "トラップゾーン";
@@ -34,8 +34,9 @@ public class SelectCardFunctionController : SelectScriptControllerBase
         targetCards.Clear();
     }
 
-    public void SelectCard(CardScript _card, GameManager _manager, SelectCardArgument _runArgument)
+    public override void SelectCard(CardScript _card, GameManager _manager, ScriptArgument _runArgument)
     {
+        var runArgument = (SelectCardArgument)_runArgument;
         if (_runArgument == null) return;
         if (_card == null) return;
         if(!_card.isSelectTarget)
@@ -53,7 +54,7 @@ public class SelectCardFunctionController : SelectScriptControllerBase
         }
 
 
-        if (_runArgument.selectMaxCount <= targetCards.Count)
+        if (runArgument.selectMaxCount <= targetCards.Count)
         {
             manager.SetError(ErrorType.IsRangeMaxOverCount);
             return;
