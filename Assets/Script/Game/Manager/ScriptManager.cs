@@ -102,22 +102,22 @@ public class ScriptManager
         public abstract bool Run(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script);
 
 
-        protected void SetSelectStoneBoardFunctionController(SelectStoneBoardFunctionController _controller)
+        protected void SetSelectStoneBoardFunctionController(SelectStoneBoardControllerBase _controller)
         {
             if (_controller == null) return;
-            mgr.selectStoneBoardFunctionController = _controller;
+            mgr.selectStoneBoardController = _controller;
         }
 
-        protected void SetSelectCardFunctionController(SelectCardFunctionController _controller)
+        protected void SetSelectCardFunctionController(SelectCardControllerBase _controller)
         {
             if (_controller == null) return;
-            mgr.selectCardFunctionController = _controller;
+            mgr.selectCardController = _controller;
         }
 
-        protected void SetSelectItemZoneFunctionController(SelectItemZoneFunctionController _controller)
+        protected void SetSelectItemZoneFunctionController(SelectItemZoneControllerBase _controller)
         {
             if (_controller == null) return;
-            mgr.selectItemZoneFunctionController = _controller;
+            mgr.selectItemZoneController = _controller;
         }
 
         protected Dictionary<int, StonePosScript> targetStonePos { get { return mgr.targetStonePos; } }
@@ -173,6 +173,22 @@ public class ScriptManager
 
         ScriptManager mgr = null;
     }
+
+    abstract public class SelectCardControllerBase : SelectScriptControllerBase
+    {
+        abstract public void SelectCard(CardScript _card, GameManager _manager, ScriptArgument _runArgument);
+    }
+
+    abstract public class SelectStoneBoardControllerBase : SelectScriptControllerBase
+    {
+        abstract public void SelectTargetPos(int _x, int _y, GameManager _manager, ScriptArgument _runArgument);
+    }
+
+    abstract public class SelectItemZoneControllerBase : SelectScriptControllerBase
+    {
+        abstract public bool SelectPos(ItemZoneObject _pos, GameManager _manager, ScriptArgument _runArgument);
+    }
+
 
     public class BlockStoneArgument : ScriptArgument
     {
@@ -328,21 +344,21 @@ public class ScriptManager
 
 
     [SerializeField,ReadOnly]
-    SelectStoneBoardFunctionController selectStoneBoardFunctionController = null;
+    SelectStoneBoardControllerBase selectStoneBoardController = null;
 
     [SerializeField, ReadOnly]
     Dictionary<int, StonePosScript> targetStonePos = new Dictionary<int, StonePosScript>();
 
 
     [SerializeField, ReadOnly]
-    SelectCardFunctionController selectCardFunctionController = null;
+    SelectCardControllerBase selectCardController = null;
 
     [SerializeField, ReadOnly]
     List<CardScript> targetCards = new List<CardScript>();
 
 
     [SerializeField, ReadOnly]
-    SelectItemZoneFunctionController selectItemZoneFunctionController = null;
+    SelectItemZoneControllerBase selectItemZoneController = null;
 
     [SerializeField, ReadOnly]
     public ItemZoneObject targetItemZonePos = null;
@@ -393,9 +409,7 @@ public class ScriptManager
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
 
-        var action = (SelectStoneBoardArgument)runScript.actions[useScriptCount];
-
-        selectStoneBoardFunctionController.SelectTargetPos(_x, _y, _manager, action);
+        selectStoneBoardController.SelectTargetPos(_x, _y, _manager, runScript.actions[useScriptCount]);
     }
 
     public void SelectCard(CardScript _script, GameManager _manager)
@@ -404,9 +418,7 @@ public class ScriptManager
         if (runScript == null) return;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectCard) return;
 
-        var action = (SelectCardArgument)runScript.actions[useScriptCount];
-
-        selectCardFunctionController.SelectCard(_script, _manager, action);
+        selectCardController.SelectCard(_script, _manager, runScript.actions[useScriptCount]);
     }
 
     public bool SelectTargetItemZonePos(ItemZoneObject _pos, GameManager _manager)
@@ -414,9 +426,7 @@ public class ScriptManager
         if (runScript == null) return false;
         if (runScript.actions[useScriptCount].type != ScriptType.SelectItemZone) return false;
 
-        var action = (SelectItemZoneArgument)runScript.actions[useScriptCount];
-
-        return selectItemZoneFunctionController.SelectPos(_pos, _manager, action);
+        return selectItemZoneController.SelectPos(_pos, _manager, runScript.actions[useScriptCount]);
     }
 
     public void ClearScript()
