@@ -14,19 +14,17 @@ public class StonePosScript : MonoBehaviour
     GameManager manager = null;
 
     [SerializeField]
-    ParticleSystem system = null;
+    GameObject selectEnableObject = null, selectObject = null;
 
     public void Init(GameManager _manager, Vector2Int _pos)
     {
         manager = _manager;
         position = _pos;
-        if (system == null) return;
-        system.Stop();
     }
 
     public bool IsPutStone() { return putStoneObject != null; }
 
-    public bool IsSelectPos() { return system.isPlaying; }
+    public bool IsSelectPos() { return selectObject.activeSelf; }
 
     public void PushEvent()
     { 
@@ -47,17 +45,33 @@ public class StonePosScript : MonoBehaviour
         Destroy(putStoneObject);
     }
 
+    public void SelectEnable()
+    {
+        ObjectActivater(selectEnableObject, true);
+    }
+
+    public void SelectDisable()
+    {
+        ObjectActivater(selectObject, false);
+        ObjectActivater(selectEnableObject, false);
+    }
+
     public void SelectStonePos()
     {
-        if (system == null) return;
-
-        system.Play();
+        ObjectActivater(selectObject, true);
+        ObjectActivater(selectEnableObject, false);
     }
 
     public void UnSelectStonePos()
     {
-        if (system == null) return;
-        system.Stop();
+        ObjectActivater(selectObject, false);
+        ObjectActivater(selectEnableObject, true);
+    }
+
+    private void ObjectActivater(GameObject _obj,bool _flg)
+    {
+        if (_obj == null) return;
+        _obj.SetActive(_flg);
     }
 
     void InitializeObject(GameObject _obj)
