@@ -45,6 +45,9 @@ public class GameManager : MonoBehaviour
 
     public int useScriptPlayerNo { get; private set; } = 0;
 
+    [SerializeField, ReadOnly]
+    int viewUseScriptPlayerNo = 0;
+
     //ScriptŠÖŒW//
 
     [SerializeField, ReadOnly]
@@ -69,6 +72,10 @@ public class GameManager : MonoBehaviour
     StoneBoardManager stoneBoard = null;
 
     public StoneBoardManager stoneBoardObj { get { return stoneBoard; } }
+
+
+    [SerializeField, ReadOnly]
+    FindStarFromMagicManager findStarFromMagicManager = FindStarFromMagicManager.ins;
 
 
     [SerializeField, ReadOnly]
@@ -177,7 +184,7 @@ public class GameManager : MonoBehaviour
         nowPlayerNo %= players.Count;
     }
 
-    public void SetUseScriptPlayerNo(int _count)
+    public void SetUseScriptPlayerNo(int _count = -1)
     {
         if (_count <= 0)
             _count = nowPlayerNo;
@@ -238,7 +245,7 @@ public class GameManager : MonoBehaviour
     void Start()
     {
         stackManager.Init(this);
-
+        findStarFromMagicManager.Init(this);
         InitStoneBoadAndStarPos();
 
         for (int i = 0; i < Manager.MAX_GMAE_PLAYER && i < manager.memberFlgs.Length; i++)
@@ -282,6 +289,9 @@ public class GameManager : MonoBehaviour
         MainUpdate();
 
         stackManager.Update();
+
+
+        viewUseScriptPlayerNo = useScriptPlayerNo;
 
         var controller = players[useScriptPlayerNo].GetComponent<ControllerBase>();
 
@@ -364,7 +374,9 @@ public class GameManager : MonoBehaviour
 
             foreach (var card in res.data)
             {
-                cards.Add(CardData.CreateCardDataFromDTO(card));
+                var cardData = CardData.CreateCardDataFromDTO(card);
+                cards.Add(cardData);
+                findStarFromMagicManager.AddMagicCard(cardData);
             }
 
             playerCom.Init(cards.ToArray(), true);
@@ -405,7 +417,9 @@ public class GameManager : MonoBehaviour
 
             foreach (var card in res.data)
             {
-                cards.Add(CardData.CreateCardDataFromDTO(card));
+                var cardData = CardData.CreateCardDataFromDTO(card);
+                cards.Add(cardData);
+                findStarFromMagicManager.AddMagicCard(cardData);
             }
 
             _player.Init(cards.ToArray());
