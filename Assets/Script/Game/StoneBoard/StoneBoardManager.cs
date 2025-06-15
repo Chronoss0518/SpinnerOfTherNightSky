@@ -91,6 +91,54 @@ public class StoneBoardManager : PanelPosBase
         stoneList[_y][_x].RemovePutStone();
     }
 
+    public void AllSelectEnable()
+    {
+        for (int y = 0; y <PANEL_COUNT_Y; y++)
+        {
+            for (int x = 0; x <PANEL_COUNT_X; x++)
+            {
+                stoneList[y][x].SelectEnable();
+            }
+        }
+    }
+
+    public void AllSelectEnable(bool _putFlg)
+    {
+        for (int y = 0; y <PANEL_COUNT_Y; y++)
+        {
+            for (int x = 0; x <PANEL_COUNT_X; x++)
+            {
+                if (_putFlg != stoneList[y][x].IsPutStone()) continue;
+                stoneList[y][x].SelectEnable();
+            }
+        }
+    }
+
+    public void AllSelectDisable()
+    {
+        for(int y = 0;y <PANEL_COUNT_Y;y++)
+        {
+            for (int x = 0; x <PANEL_COUNT_X; x++)
+            {
+                stoneList[y][x].SelectDisable();
+            }
+        }
+    }
+
+    public void SelectEnable(int _x, int _y)
+    {
+        if (!IsRange(_x, _y)) return;
+
+        stoneList[_y][_x].SelectEnable();
+    }
+
+    public void SelectDisable(int _x, int _y)
+    {
+        if (!IsRange(_x, _y)) return;
+
+        stoneList[_y][_x].SelectDisable();
+    }
+
     public void SelectStonePos(int _x, int _y)
     {
         if (!IsRange(_x, _y)) return;
