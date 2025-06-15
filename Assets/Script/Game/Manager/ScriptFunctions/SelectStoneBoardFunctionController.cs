@@ -14,6 +14,8 @@ public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
     public override void ClearTarget()
     {
         targetStonePos.Clear();
+        if(stoneBoard != null) stoneBoard.AllSelectDisable();
+        stoneBoard = null;
     }
 
     public override void SelectTargetPos(int _x, int _y, GameManager _manager, ScriptArgument _runArgument)
@@ -21,7 +23,9 @@ public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
 
         var runArgument = (SelectStoneBoardArgument)_runArgument;
         if (runArgument == null) return;
-        if (_manager.stoneBoardObj.IsPutStone(_x, _y) == runArgument.isPutPos)
+        if (stoneBoard == null) return;
+
+        if (stoneBoard.IsPutStone(_x, _y) == runArgument.isPutPos)
         {
             manager.SetError(runArgument.isPutPos ?
                 ErrorType.IsPutStonePosSelect :
@@ -30,7 +34,7 @@ public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
             return;
         }
 
-        int pos = _manager.stoneBoardObj.CreatePosKey(_x, _y);
+        int pos = stoneBoard.CreatePosKey(_x, _y);
 
         if (targetStonePos.ContainsKey(pos))
         {
@@ -55,10 +59,10 @@ public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
     public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
         if (_script.type != ScriptType.SelectStoneBoard) return false;
-
         _controller.ActionStart();
 
         var act = (SelectStoneBoardArgument)_script;
+        Init(_gameManager, act);
 
         string message = "";
 
@@ -101,4 +105,13 @@ public class SelectStoneBoardFunctionController : SelectStoneBoardControllerBase
         return true;
     }
 
+    private void Init(GameManager _gameManager, SelectStoneBoardArgument _script)
+    {
+        if (stoneBoard != null) return;
+        stoneBoard = _gameManager.stoneBoardObj;
+
+        stoneBoard.AllSelectEnable(!_script.isPutPos);
+    }
+
+    StoneBoardManager stoneBoard = null;
 }
