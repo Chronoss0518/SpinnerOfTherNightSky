@@ -55,6 +55,7 @@ public class ItemZoneObject : MonoBehaviour
 
     public void SelectTargetEnd()
     {
+        selectFlg = false;
         SetAnimationVisible(false);
     }
 

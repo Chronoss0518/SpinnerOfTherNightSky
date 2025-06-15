@@ -71,6 +71,7 @@ public class ItemZoneManager : ZoneScriptBase
     {
         for (int i = 0; i < PUT_ITEM_COUNT; i++)
         {
+            items[i].SelectTargetEnd();
             if (!items[i].IsPutCard()) continue;
             items[i].itemCard.SetSelectUnTarget();
         }
