@@ -5,16 +5,26 @@ using UnityEngine;
 
 public class StonePosScript : MonoBehaviour
 {
-    [SerializeField, ReadOnly]
-    Vector2Int position = Vector2Int.zero;
+    public Vector2Int position { get; private set; } = Vector2Int.zero;
 
     [SerializeField, ReadOnly]
     GameObject putStoneObject = null;
 
     GameManager manager = null;
 
-    [SerializeField]
-    GameObject selectEnableObject = null, selectObject = null;
+    [System.Serializable]
+    public class ActiveFlagObject
+    {
+        public GameObject obj = null;
+
+        [SerializeField,ReadOnly]
+        public bool activeFlg = false;
+    }
+    
+        [SerializeField,ReadOnly]
+    ActiveFlagObject selectEnableObject = new ActiveFlagObject(),
+        selectObject = new ActiveFlagObject();
+
 
     public void Init(GameManager _manager, Vector2Int _pos)
     {
@@ -24,7 +34,9 @@ public class StonePosScript : MonoBehaviour
 
     public bool IsPutStone() { return putStoneObject != null; }
 
-    public bool IsSelectPos() { return selectObject.activeSelf; }
+    public bool IsSelectPos() { return selectObject.activeFlg; }
+
+    public bool IsSelectEnable() { return selectEnableObject.activeFlg; }
 
     public void PushEvent()
     { 
@@ -47,6 +59,7 @@ public class StonePosScript : MonoBehaviour
 
     public void SelectEnable()
     {
+        if (selectObject.activeFlg) return;
         ObjectActivater(selectEnableObject, true);
     }
 
@@ -68,10 +81,13 @@ public class StonePosScript : MonoBehaviour
         ObjectActivater(selectEnableObject, true);
     }
 
-    private void ObjectActivater(GameObject _obj,bool _flg)
+    private void ObjectActivater(ActiveFlagObject _obj,bool _flg)
     {
         if (_obj == null) return;
-        _obj.SetActive(_flg);
+        if (_obj.obj == null) return;
+        if (_obj.activeFlg == _flg) return;
+        _obj.obj.SetActive(_flg);
+        _obj.activeFlg = _flg;
     }
 
     void InitializeObject(GameObject _obj)
