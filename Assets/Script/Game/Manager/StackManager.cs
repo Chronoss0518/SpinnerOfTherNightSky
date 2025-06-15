@@ -65,7 +65,8 @@ public class StackManager
 
         stack.RemoveAt(stack.Count - 1);
 
-        gameManager.CreateScript(playCardScript.card.script[0], true, playCardScript.card.baseData);
+
+        gameManager.RegistScript(gameManager.CreateScript(playCardScript.card.script[0], false, playCardScript.card.baseData),playCardScript.player.playerNo);
 
         if (stack.Count > 0) return;
         runStackFlg = false;
@@ -77,7 +78,7 @@ public class StackManager
 
         var magic = playCardScript.card.GetComponent<MagicCardScript>();
 
-        bool removeStoneFailedFlg = magic.removeStoneFailedFlg;
+        bool removeStoneFailedFlg = false;
 
         var cardData = playCardScript.card.baseData;
         var zone = playCardScript.card.zone;
