@@ -13,7 +13,7 @@ public class ScriptManager
        functions[(int)ScriptType.BlockCard] = new BlockCardFunction(this);
        //functions[(int)ScriptType.ClearScript] = new ClearScriptFunction(this);
        functions[(int)ScriptType.SelectStoneBoard] = new SelectStoneBoardFunction(this);
-       //functions[(int)ScriptType.SelectStoneBoardFromMagic] = new SelectStoneBoardFromMagicFunction(this);
+       functions[(int)ScriptType.PlayMagicInitialize] = new PlayMagicInitializeFunction(this);
        functions[(int)ScriptType.SelectCard] = new SelectCardFunction(this);
        functions[(int)ScriptType.SelectItemZone] = new SelectItemZoneFunction(this);
        functions[(int)ScriptType.MoveStone] = new MoveStoneFunction(this);
@@ -48,7 +48,7 @@ public class ScriptManager
         BlockCard,//石を取り除かせない・カードを無効にする//
         ClearScript,//現在登録されているスクリプトを全て削除する//
         SelectStoneBoard,//盤面の場所を選択する//
-        RemoveStoneFromMagic,//術の発動に伴う盤面の石を選択させる//
+        PlayMagicInitialize,//術の発動に伴う盤面の石を選択させる//
         SelectCard,//魔導書からカードを選択する//
         SelectItemZone,//魔導書からカードを選択する//
         MoveStone,//石の置く・石を取り除く//
@@ -218,11 +218,11 @@ public class ScriptManager
         public bool isPutPos = true;
     }
 
-    public class RemoveStoneFromMagicArgument : ScriptArgument
+    public class PlayMagicInitializeArgument : ScriptArgument
     {
-        public RemoveStoneFromMagicArgument()
+        public PlayMagicInitializeArgument()
         {
-            type = ScriptType.RemoveStoneFromMagic;
+            type = ScriptType.PlayMagicInitialize;
         }
 
         public CardData playMagicCard = null;
@@ -484,7 +484,6 @@ public class ScriptManager
 
     public void RunScript(ControllerBase _controller, GameManager _gameManager)
     {
-
         if(clearScriptFlg)
         {
             clearScriptFlg = false;
@@ -498,12 +497,9 @@ public class ScriptManager
         int scriptType = (int)argument.type;
 
         if(functions[scriptType] == null)
-        {
             useScriptCount++;
-            return;
-        }
-
-        functions[scriptType].Run(_controller,_gameManager, argument);
+        else
+            functions[scriptType].Run(_controller, _gameManager, argument);
 
         if (runScript.actions.Count > useScriptCount) return;
 
@@ -514,11 +510,14 @@ public class ScriptManager
     {
         useScriptCount = 0;
         runScript = null;
-        foreach (var func in functions)
-        {
+        foreach (var func in functions) {
             if (func == null) continue;
             func.Release();
         }
+
+        if (selectStoneBoardController != null)selectStoneBoardController.ClearTarget();
+        if (selectCardController != null)selectCardController.ClearTarget();
+        if (selectItemZoneController != null) selectItemZoneController.ClearTarget();
     }
 
     void AddRemoveStoneFromMagic(ScriptArgumentData _result, CardData _playCard)
@@ -527,7 +526,7 @@ public class ScriptManager
         if (_playCard == null) return;
         if (_playCard.cardType != (int)CardData.CardType.Magic) return;
 
-        var arg = new RemoveStoneFromMagicArgument();
+        var arg = new PlayMagicInitializeArgument();
         arg.playMagicCard = _playCard;
         _result.actions.Add(arg);
     }
