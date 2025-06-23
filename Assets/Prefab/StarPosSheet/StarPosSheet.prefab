@@ -145,8 +145,11 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   PANEL_COUNT: {x: 8, y: 8}
   meshFilter: {fileID: 7054727360613241606}
+  movePoint: {x: 0, y: 0}
+  moveVec: {x: 0, y: 0, z: 0}
   grid: {fileID: 1000481462735011781}
   buttons: {fileID: 27950828647038879}
+  localTouchPos: {x: 0, y: 0, z: 0}
   handType: 2
   rightButtons: {fileID: 2339689422141129787}
   leftButtons: {fileID: 3256505885635629624}
@@ -179,7 +182,7 @@ Transform:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 7054727360613241626}
   m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
-  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalPosition: {x: 0, y: 0.5, z: 0}
   m_LocalScale: {x: 0.3692308, y: 1, z: 0.36923078}
   m_ConstrainProportionsScale: 0
   m_Children: []

@@ -846,7 +846,7 @@ MonoBehaviour:
     randomPutStone: 0
     handType: 0
   gameType: 0
-  memberFlgs: 01000000010000000100000000000000
+  memberFlgs: 0000000001000000
   localGameFlg: 1
   useBookNo: 0
   randomPutStone: 0
