@@ -138,9 +138,9 @@ public class ScriptManager
             mgr.AddUseScriptCount();
         }
 
-        protected void Stack(StackManager.StackObject _script,GameManager _manager)
+        protected void Stack(StackManager.StackObject _script,GameManager _manager,bool _normalPlayMagicFlg = false)
         {
-            mgr.Stack(_script, _manager);
+            mgr.Stack(_script, _manager, _normalPlayMagicFlg);
         }
 
         public void ClearScript()
@@ -327,6 +327,16 @@ public class ScriptManager
         public int point = 0;
     }
 
+    public class StackArgument : ScriptArgument
+    {
+        public StackArgument()
+        {
+            type = ScriptType.Stack;
+        }
+
+        public bool normalPlayMagicFlg = false;
+    }
+
     public class ScriptArgumentData
     {
         public List<ScriptArgument> actions = new List<ScriptArgument>();
@@ -434,9 +444,9 @@ public class ScriptManager
         clearScriptFlg = true;
     }
 
-    void Stack(StackManager.StackObject _script, GameManager _manager)
+    void Stack(StackManager.StackObject _script, GameManager _manager, bool _normalPlayMagicFlg = false)
     {
-        _manager.AddStackCard(_script);
+        _manager.AddStackCard(_script, _normalPlayMagicFlg);
     }
 
     public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false, CardData _playCard = null)

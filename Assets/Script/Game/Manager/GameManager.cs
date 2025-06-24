@@ -91,9 +91,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     StarPosSheet starPosSheetPrefab = null;
 
-    public void AddStackCard(StackManager.StackObject _card)
+    public void AddStackCard(StackManager.StackObject _card, bool _normalPlayMagicFlg = false)
     {
-        stackManager.AddStackCard(_card);
+        stackManager.AddStackCard(_card, _normalPlayMagicFlg);
     }
 
     public void SelectStonePos(int _x,int _y)

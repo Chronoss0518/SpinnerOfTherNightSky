@@ -29,7 +29,7 @@ public class StackManager
 
     public bool runStackFlg { get; private set; } = false;
 
-    public void AddStackCard(StackObject _card)
+    public void AddStackCard(StackObject _card,bool _normalPlayMagicFlg = false)
     {
         stack.Add(_card);
     }
