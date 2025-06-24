@@ -81,7 +81,7 @@ public class Book : ZoneScriptBase
 
     public void NextPage()
     {
-        if (IsAnimation()) return;
+        //if (IsAnimation()) return;
         
         if (nowPage >= PAGE_MAX_SIZE - 1) return;
 
@@ -96,7 +96,7 @@ public class Book : ZoneScriptBase
 
     public void BackPage()
     {
-        if (IsAnimation()) return;
+        //if (IsAnimation()) return;
 
         if (nowPage < 1) return;
 
@@ -108,6 +108,11 @@ public class Book : ZoneScriptBase
         ActiveTest(nextButton, true);
         if (nowPage > 0) return;
         ActiveTest(backButton, false);
+    }
+
+    private void OnEnable()
+    {
+        SetPage(nowPage);
     }
 
     public void SetPage(int _page)
