@@ -86,8 +86,15 @@ public class StonePosScript : MonoBehaviour
         if (_obj == null) return;
         if (_obj.obj == null) return;
         if (_obj.activeFlg == _flg) return;
-        _obj.obj.SetActive(_flg);
         _obj.activeFlg = _flg;
+    }
+
+    private void UpdateObjectActivater(ActiveFlagObject _obj)
+    {
+        if (_obj == null) return;
+        if (_obj.obj == null) return;
+        if (_obj.activeFlg == _obj.obj.activeSelf) return;
+        _obj.obj.SetActive(_obj.activeFlg);
     }
 
     void InitializeObject(GameObject _obj)
@@ -98,4 +105,10 @@ public class StonePosScript : MonoBehaviour
         _obj.transform.localScale = Vector3.one;
     }
 
+
+    private void Update()
+    {
+        UpdateObjectActivater(selectObject);
+        UpdateObjectActivater(selectEnableObject);
+    }
 }
