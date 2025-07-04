@@ -1,5 +1,7 @@
 public class StackFunction : ScriptManager.ScriptFunctionBase
 {
+    public const string NORMAL_PLAY_MAGIC_ARG = "--normal-play-magic";
+
     public StackFunction(ScriptManager _manager) : base(_manager) { }
 
     public override ScriptManager.ScriptArgument GenerateArgument(ScriptParts _script)
@@ -12,7 +14,7 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
         {
             if (args[i].IndexOf("--") != 0) continue;
 
-            if (args[i] == "--normal-play-magic")
+            if (args[i] == NORMAL_PLAY_MAGIC_ARG)
                 res.normalPlayMagicFlg = true;
         }
 
@@ -32,9 +34,9 @@ public class StackFunction : ScriptManager.ScriptFunctionBase
 
         var arg = (ScriptManager.StackArgument)_script;
 
-        var obj = new StackManager.StackObject(_controller.GetComponent<Player>(), targetCards[0]);
+        var obj = new StackManager.StackObject(_controller.GetComponent<Player>(), targetCards[0], arg.normalPlayMagicFlg);
 
-        Stack(obj, _gameManager, arg.normalPlayMagicFlg);
+        Stack(obj, _gameManager);
 
         AddUseScriptCount();
         return true;
