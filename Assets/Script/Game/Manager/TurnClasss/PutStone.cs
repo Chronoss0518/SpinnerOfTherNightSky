@@ -17,7 +17,7 @@ public class PutStone : TurnManager.TurnClass
 
     public override void Update()
     {
-        gameManager.RegistScript(selectStone);
+        gameManager.RegistScript(selectStone, gameManager.nowPlayerNo);
         ChangeTurn();
     }
 

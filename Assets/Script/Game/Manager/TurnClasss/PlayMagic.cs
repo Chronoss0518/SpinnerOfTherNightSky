@@ -8,13 +8,15 @@ public class PlayMagic : TurnManager.TurnClass
         selectMagic = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 0 --min 0 --max 1 --zone-type-book --card-type 1 --normal-playing"),
-               new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
+               new ScriptParts((int)ScriptManager.ScriptType.Stack, $"{StackFunction.NORMAL_PLAY_MAGIC_ARG}"),}));
+
+        Debug.Log($"NormalPlayMagicArg[{StackFunction.NORMAL_PLAY_MAGIC_ARG}]");
 
         selectCard = gameManager.CreateScript(new ScriptData(
             new ScriptParts[] {
                 new ScriptParts((int)ScriptManager.ScriptType.SelectCard, "--player-type 0 --min 0 --max 1 --zone-type-book --zone-type-item --card-type 5 --normal-playing"),
                new ScriptParts((int)ScriptManager.ScriptType.OpenItemZoneCard, ""),
-                new ScriptParts((int)ScriptManager.ScriptType.Stack, ""),}));
+                new ScriptParts((int)ScriptManager.ScriptType.Stack, $"{StackFunction.NORMAL_PLAY_MAGIC_ARG}"),}));
     }
 
     [SerializeField, ReadOnly]
@@ -37,7 +39,7 @@ public class PlayMagic : TurnManager.TurnClass
         nowMagicPlayerCount = 0;
         passPlayerCount = 0;
 
-        gameManager.RegistScript(selectMagic);
+        gameManager.RegistScript(selectMagic, gameManager.nowPlayerNo);
     }
 
     public override void Update()
