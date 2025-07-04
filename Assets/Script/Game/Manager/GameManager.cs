@@ -91,9 +91,9 @@ public class GameManager : MonoBehaviour
     [SerializeField]
     StarPosSheet starPosSheetPrefab = null;
 
-    public void AddStackCard(StackManager.StackObject _card, bool _normalPlayMagicFlg = false)
+    public void AddStackCard(StackManager.StackObject _card)
     {
-        stackManager.AddStackCard(_card, _normalPlayMagicFlg);
+        stackManager.AddStackCard(_card);
     }
 
     public void SelectStonePos(int _x,int _y)
@@ -193,9 +193,19 @@ public class GameManager : MonoBehaviour
         useScriptPlayerNo %= players.Count;
     }
 
-    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data,bool _registFlg = false,CardData _playCard = null)
+    public ScriptManager.ScriptArgumentData CreateScript(ScriptData _data,bool _registFlg = false, int _useScriptPlayerNo = -1)
     {
-        return scriptManager.CreateScript(_data, _registFlg, _playCard);
+        if (_registFlg)
+            SetUseScriptPlayerNo(_useScriptPlayerNo);
+        return scriptManager.CreateScript(_data, _registFlg);
+    }
+
+
+    public ScriptManager.ScriptArgumentData CreateScript(ScriptManager.ScriptArgument[] _args, bool _registFlg = false, int _useScriptPlayerNo = -1)
+    {
+        if (_registFlg)
+            SetUseScriptPlayerNo(_useScriptPlayerNo);
+        return scriptManager.CreateScript(_args, _registFlg);
     }
 
     public void RegistScript(ScriptManager.ScriptArgumentData _script,int _useScriptPlayerNo = -1)
