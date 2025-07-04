@@ -9,19 +9,23 @@ public class StackManager
     [System.Serializable]
     public class StackObject
     {
-        public StackObject(Player _player, CardScript _card)
+        public StackObject(Player _player, CardScript _card, bool _normalPlayMagicFlg)
         {
             player = _player;
             card = _card;
+            normalPlayMagicFlg = _normalPlayMagicFlg;
         }
 
         public Player player = null;
         public CardScript card = null;
+        public bool normalPlayMagicFlg = false;
     }
 
 
     [SerializeField, ReadOnly]
     List<StackObject> stack = new List<StackObject>();
+
+    ScriptManager.ScriptArgumentData playMagicInitialize = null;
 
     StackObject playCardScript = null;
 
@@ -29,7 +33,7 @@ public class StackManager
 
     public bool runStackFlg { get; private set; } = false;
 
-    public void AddStackCard(StackObject _card,bool _normalPlayMagicFlg = false)
+    public void AddStackCard(StackObject _card)
     {
         stack.Add(_card);
     }
@@ -65,11 +69,39 @@ public class StackManager
 
         stack.RemoveAt(stack.Count - 1);
 
+        if (playCardScript == null) return;
+        if (playCardScript.card == null) return;
 
-        gameManager.RegistScript(gameManager.CreateScript(playCardScript.card.script[0], false, playCardScript.card.baseData),playCardScript.player.playerNo);
+        UpdateRegistOtherCard(playCardScript);
+        UpdateRegistNormalPlayMagic(playCardScript);
 
         if (stack.Count > 0) return;
         runStackFlg = false;
+    }
+
+    bool UpdateRegistOtherCard(StackObject _obj)
+    {
+        if (_obj.normalPlayMagicFlg)
+            if (_obj.card.baseData.cardType == (int)CardData.CardType.Magic) return false;
+
+        gameManager.CreateScript(playCardScript.card.script[0], true, playCardScript.player.playerNo);
+
+        return true;
+
+    }
+
+    bool UpdateRegistNormalPlayMagic(StackObject _obj)
+    {
+        if (!_obj.normalPlayMagicFlg) return false;
+        if (_obj.card.baseData.cardType != (int)CardData.CardType.Magic) return false;
+
+        var arg = new ScriptManager.PlayMagicInitializeArgument();
+        arg.playMagicCard = _obj.card.baseData;
+
+        gameManager.CreateScript(new ScriptManager.ScriptArgument[] { arg }, true, playCardScript.player.playerNo);
+
+        return true;
+
     }
 
     void MagicActionEnd()

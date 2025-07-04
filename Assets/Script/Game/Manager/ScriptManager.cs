@@ -138,9 +138,9 @@ public class ScriptManager
             mgr.AddUseScriptCount();
         }
 
-        protected void Stack(StackManager.StackObject _script,GameManager _manager,bool _normalPlayMagicFlg = false)
+        protected void Stack(StackManager.StackObject _script,GameManager _manager)
         {
-            mgr.Stack(_script, _manager, _normalPlayMagicFlg);
+            mgr.Stack(_script, _manager);
         }
 
         public void ClearScript()
@@ -444,17 +444,14 @@ public class ScriptManager
         clearScriptFlg = true;
     }
 
-    void Stack(StackManager.StackObject _script, GameManager _manager, bool _normalPlayMagicFlg = false)
+    void Stack(StackManager.StackObject _script, GameManager _manager)
     {
-        _manager.AddStackCard(_script, _normalPlayMagicFlg);
+        _manager.AddStackCard(_script);
     }
 
-    public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false, CardData _playCard = null)
+    public ScriptArgumentData CreateScript(ScriptData _script, bool _regist = false)
     {
-
         var res = new ScriptArgumentData();
-
-        AddRemoveStoneFromMagic(res, _playCard);
 
         if (_script.parts == null) return res;
         if (_script.parts.Length <= 0) return res;
@@ -472,6 +469,22 @@ public class ScriptManager
 
             if (arg == null) continue;
 
+            res.actions.Add(arg);
+        }
+
+        if (_regist)
+            runScript = res;
+
+        return res;
+    }
+
+    public ScriptArgumentData CreateScript(ScriptArgument[] _args, bool _regist = false)
+    {
+
+        var res = new ScriptArgumentData();
+
+        foreach(var arg in _args)
+        {
             res.actions.Add(arg);
         }
 
@@ -528,17 +541,6 @@ public class ScriptManager
         if (selectStoneBoardController != null)selectStoneBoardController.ClearTarget();
         if (selectCardController != null)selectCardController.ClearTarget();
         if (selectItemZoneController != null) selectItemZoneController.ClearTarget();
-    }
-
-    void AddRemoveStoneFromMagic(ScriptArgumentData _result, CardData _playCard)
-    {
-        if (_result == null) return;
-        if (_playCard == null) return;
-        if (_playCard.cardType != (int)CardData.CardType.Magic) return;
-
-        var arg = new PlayMagicInitializeArgument();
-        arg.playMagicCard = _playCard;
-        _result.actions.Add(arg);
     }
 
     List<string> GenerateArgument(string _args)
