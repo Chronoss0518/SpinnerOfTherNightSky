@@ -4,7 +4,6 @@ using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using static ScriptManager;
-using static UnityEngine.GraphicsBuffer;
 
 public class RemoveStoneFromMagicFunctionController : SelectStoneBoardControllerBase
 {
@@ -55,7 +54,6 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
                 }
 
                 targetPositions.Add(keyList);
-                Debug.Log($"Run Test {targetPositions.Count}");
             }
         }
 
@@ -118,7 +116,7 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
 
         if(targetPosCount > 0)
         {
-            if (targetPosCount != targetStonePos.Count && targetStonePos.Count <= 0)
+            if (targetPosCount != targetStonePos.Count)
             {
                 manager.SetError(ErrorType.IsRangeMinOverCount);
                 _controller.DownActionFlg();
@@ -175,10 +173,8 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
     {
         var stoneBoard = _manager.stoneBoardObj;
         var script = stoneBoard.GetStonePosScript(_x, _y);
-        if (!script.IsSelectEnable())
-        {
-            return false;
-        }
+        if (!script.IsSelectEnable()) return false;
+
         var pos = stoneBoard.CreatePosKey(_x, _y);
 
         for (int count = 0; count < targetPositions.Count; count++)
@@ -186,7 +182,6 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
             foreach (var targetPos in targetPositions[count])
             {
                 if (targetPos != pos) continue;
-
                 return true;
             }
         }
