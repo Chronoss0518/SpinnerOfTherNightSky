@@ -4,9 +4,11 @@ using Unity.Collections;
 using UnityEditor;
 using UnityEngine;
 using static ScriptManager;
+using static UnityEngine.GraphicsBuffer;
 
 public class RemoveStoneFromMagicFunctionController : SelectStoneBoardControllerBase
 {
+
     public Dictionary<int, StonePosScript> GetTargetStonePos()
     {
         return targetStonePos;
@@ -20,7 +22,7 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
         targetPositions.Clear();
     }
 
-    public void Init(GameManager _manager, PlayMagicInitializeArgument _runArgument)
+    public void Init(GameManager _manager, PlayMagicInitializeArgument _runArgument, ControllerBase _controller)
     {
         if (targetPositions.Count > 0) return;
         if (_runArgument == null) return;
@@ -28,7 +30,7 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
         if (_runArgument.playMagicCard == null) return;
         if (_runArgument.playMagicCard.cardType != (int)CardData.CardType.Magic) return;
 
-        var useScriptPlayer = _manager.GetPlayer(_manager.useScriptPlayerNo);
+        var useScriptPlayer = _controller.GetComponent<Player>();
 
         stoneBoard = _manager.stoneBoardObj;
 
@@ -39,15 +41,21 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
             for (int h = 0; h < stoneBoard.PANEL_COUNT_X; h++)
             {
                 var list = findStarFromMagicManager.FindStarPos(h, v, _runArgument.playMagicCard, useScriptPlayer);
+                if (list == null) continue;
                 if (list.Count <= 0) continue;
+
+                var keyList = new List<int>();
+
                 targetPosCount = list.Count;
 
                 for (int count = 0; count < list.Count; count++)
                 {
                     stoneBoard.SelectEnable(list[count].x, list[count].y);
+                    keyList.Add(stoneBoard.CreatePosKey(list[count].x, list[count].y));
                 }
 
-                targetPositions.Add(list.ToArray());
+                targetPositions.Add(keyList);
+                Debug.Log($"Run Test {targetPositions.Count}");
             }
         }
 
@@ -74,27 +82,33 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
 
         if (targetStonePos.ContainsKey(pos))
         {
+            Debug.Log("Un Selected Stone Pos");
             targetStonePos[pos].UnSelectStonePos();
             targetStonePos.Remove(pos);
+            UpdateSelectEnableStonePos(_manager);
             return;
         }
 
+        if(!IsSelectEnableStonePos(_x, _y, _manager))return;
+        Debug.Log("Selected Stone Pos");
         var script = _manager.stoneBoardObj.GetStonePosScript(_x, _y);
         targetStonePos.Add(pos, script);
-        _manager.stoneBoardObj.SelectStonePos(_x, _y);
+        script.SelectStonePos();
+
+        UpdateSelectEnableStonePos(_manager);
+
     }
 
 
     public override bool SelectAction(ControllerBase _controller, GameManager _gameManager, ScriptArgument _script)
     {
-        if (_script.type != ScriptType.SelectStoneBoard) return false;
-
+        if (_script.type != ScriptType.PlayMagicInitialize) return false;
 
         _controller.ActionStart();
 
         var act = (PlayMagicInitializeArgument)_script;
 
-        Init(_gameManager, act);
+        Init(_gameManager, act, _controller);
         
         SelectActionNormal(_controller, _gameManager);
 
@@ -110,13 +124,13 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
                 _controller.DownActionFlg();
                 return true;
             }
-        }
+            _gameManager.RegistScript(removeStone, _gameManager.useScriptPlayerNo);
 
-        _gameManager.RegistScript(removeStone,_gameManager.useScriptPlayerNo);
+        }
 
         _controller.ActionEnd();
         manager.AddUseScriptCount();
-
+        act.result = targetStonePos.Count > 0;
         return true;
     }
 
@@ -154,22 +168,77 @@ public class RemoveStoneFromMagicFunctionController : SelectStoneBoardController
     {
         if (targetPosCount > 0) return;
 
-        _gameManager.SetMessate("Î‚ğæ‚èœ‚­‚±‚Æ‚ª‚Å‚«‚È‚­‚È‚è‚Ü‚µ‚½");
+        _gameManager.SetMessate("Î‚ğæ‚èœ‚­‚±‚Æ‚ª‚Å‚«‚Ü‚¹‚ñ");
     }
 
-    private void UpdateSelectEnableStonePos(Vector2Int[] _list,GameManager _manager)
+    private bool IsSelectEnableStonePos(int _x, int _y, GameManager _manager)
     {
-        for (int count = 0; count < _list.Length; count++)
+        var stoneBoard = _manager.stoneBoardObj;
+        var script = stoneBoard.GetStonePosScript(_x, _y);
+        if (!script.IsSelectEnable())
         {
-            stoneBoard.SelectEnable(_list[count].x, _list[count].y);
+            return false;
         }
+        var pos = stoneBoard.CreatePosKey(_x, _y);
+
+        for (int count = 0; count < targetPositions.Count; count++)
+        {
+            foreach (var targetPos in targetPositions[count])
+            {
+                if (targetPos != pos) continue;
+
+                return true;
+            }
+        }
+
+        manager.SetError(ErrorType.IsRangeMinOverCount);
+        return false;
+
+    }
+
+    private void UpdateSelectEnableStonePos(GameManager _manager)
+    {
+        var stoneBoard = _manager.stoneBoardObj;
+
+
+        foreach (var target in targetStonePos)
+        {
+            if (target.Value.IsSelectPos()) continue;
+            target.Value.SelectDisable();
+        }
+
+        for (int count = 0; count < targetPositions.Count; count++)
+        {
+            int selectPosCount = 0;
+
+            foreach (var target in targetStonePos)
+            {
+                foreach (var targetPos in targetPositions[count])
+                {
+                    if (target.Key != targetPos) continue;
+                    selectPosCount++;
+                }
+            }
+
+            if (targetStonePos.Count > selectPosCount) continue;
+
+            foreach (var targetPos in targetPositions[count])
+            {
+                if (targetStonePos[targetPos].IsSelectPos()) continue;
+                targetStonePos[targetPos].SelectEnable();
+            }
+
+        }
+
+
     }
 
     FindStarFromMagicManager findStarFromMagicManager = FindStarFromMagicManager.ins;
     int targetPosCount = 0;
-    ScriptArgumentData removeStone = null;
     StoneBoardManager stoneBoard = null;
 
-    List<Vector2Int[]> targetPositions = new List<Vector2Int[]>();
+    ScriptArgumentData removeStone = null;
+
+    List<List<int>> targetPositions = new List<List<int>>();
 
 }
