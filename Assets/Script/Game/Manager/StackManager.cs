@@ -25,7 +25,8 @@ public class StackManager
     [SerializeField, ReadOnly]
     List<StackObject> stack = new List<StackObject>();
 
-    ScriptManager.ScriptArgumentData playMagicInitialize = null;
+    ScriptManager.PlayMagicInitializeArgument playMagicInitialize = 
+        new ScriptManager.PlayMagicInitializeArgument();
 
     StackObject playCardScript = null;
 
@@ -95,10 +96,9 @@ public class StackManager
         if (!_obj.normalPlayMagicFlg) return false;
         if (_obj.card.baseData.cardType != (int)CardData.CardType.Magic) return false;
 
-        var arg = new ScriptManager.PlayMagicInitializeArgument();
-        arg.playMagicCard = _obj.card.baseData;
-
-        gameManager.CreateScript(new ScriptManager.ScriptArgument[] { arg }, true, playCardScript.player.playerNo);
+        playMagicInitialize.playMagicCard = _obj.card.baseData;
+        playMagicInitialize.result = false;
+        gameManager.CreateScript(new ScriptManager.ScriptArgument[] { playMagicInitialize }, true, playCardScript.player.playerNo);
 
         return true;
 
@@ -110,14 +110,12 @@ public class StackManager
 
         var magic = playCardScript.card.GetComponent<MagicCardScript>();
 
-        bool removeStoneFailedFlg = false;
-
         var cardData = playCardScript.card.baseData;
         var zone = playCardScript.card.zone;
 
         zone.RemoveCard(cardData);
 
-        if (!removeStoneFailedFlg)
+        if (!playMagicInitialize.result)
             playCardScript.player.magicZone.PutCard(cardData);
         else
             cardData.havePlayer.trashZone.PutCard(cardData);

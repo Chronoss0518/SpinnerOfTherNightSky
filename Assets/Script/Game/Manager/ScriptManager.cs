@@ -226,6 +226,7 @@ public class ScriptManager
         }
 
         public CardData playMagicCard = null;
+        public bool result = false;
     }
 
     public class SelectCardArgument : ScriptArgument
