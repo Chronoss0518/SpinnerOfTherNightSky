@@ -418,7 +418,7 @@ public class ScriptManager
     public void SelectTargetPos(int _x, int _y, GameManager _manager)
     {
         if (runScript == null) return;
-        if (runScript.actions[useScriptCount].type != ScriptType.SelectStoneBoard) return;
+        if (selectStoneBoardController == null) return;
 
         selectStoneBoardController.SelectTargetPos(_x, _y, _manager, runScript.actions[useScriptCount]);
     }
@@ -427,7 +427,7 @@ public class ScriptManager
     {
         if (_script == null) return;
         if (runScript == null) return;
-        if (runScript.actions[useScriptCount].type != ScriptType.SelectCard) return;
+        if (selectCardController == null) return;
 
         selectCardController.SelectCard(_script, _manager, runScript.actions[useScriptCount]);
     }
@@ -435,7 +435,7 @@ public class ScriptManager
     public bool SelectTargetItemZonePos(ItemZoneObject _pos, GameManager _manager)
     {
         if (runScript == null) return false;
-        if (runScript.actions[useScriptCount].type != ScriptType.SelectItemZone) return false;
+        if (selectItemZoneController == null) return false;
 
         return selectItemZoneController.SelectPos(_pos, _manager, runScript.actions[useScriptCount]);
     }
