@@ -849,7 +849,7 @@ MonoBehaviour:
   memberFlgs: 0000000001000000
   localGameFlg: 1
   useBookNo: 0
-  randomPutStone: 0
+  randomPutStone: 10
 --- !u!4 &1813436577
 Transform:
   m_ObjectHideFlags: 0
